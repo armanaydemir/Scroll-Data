@@ -8,8 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
 
+@property (weak, nonatomic) IBOutlet UITableView *table;
+
+@property (strong, nonatomic) NSDate* startTime;
+
+@property (strong, nonatomic) NSMutableArray<NSString*>* text;
 
 @end
 

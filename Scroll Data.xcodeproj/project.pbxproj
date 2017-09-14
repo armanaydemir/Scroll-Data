@@ -15,6 +15,9 @@
 		F169BDE61EA696CB00C528C7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F169BDE41EA696CB00C528C7 /* LaunchScreen.storyboard */; };
 		F169BDF11EA696CB00C528C7 /* Scroll_DataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F169BDF01EA696CB00C528C7 /* Scroll_DataTests.m */; };
 		F169BDFC1EA696CB00C528C7 /* Scroll_DataUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F169BDFB1EA696CB00C528C7 /* Scroll_DataUITests.m */; };
+		F169BE0C1EA69B4E00C528C7 /* TextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F169BE0A1EA69B4E00C528C7 /* TextCell.m */; };
+		F169BE0D1EA69B4E00C528C7 /* TextCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F169BE0B1EA69B4E00C528C7 /* TextCell.xib */; };
+		F169BE0F1EA69D3000C528C7 /* yeezus.txt in Resources */ = {isa = PBXBuildFile; fileRef = F169BE0E1EA69D3000C528C7 /* yeezus.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +54,10 @@
 		F169BDF71EA696CB00C528C7 /* Scroll DataUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Scroll DataUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F169BDFB1EA696CB00C528C7 /* Scroll_DataUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Scroll_DataUITests.m; sourceTree = "<group>"; };
 		F169BDFD1EA696CB00C528C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F169BE091EA69B4E00C528C7 /* TextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCell.h; sourceTree = "<group>"; };
+		F169BE0A1EA69B4E00C528C7 /* TextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextCell.m; sourceTree = "<group>"; };
+		F169BE0B1EA69B4E00C528C7 /* TextCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TextCell.xib; sourceTree = "<group>"; };
+		F169BE0E1EA69D3000C528C7 /* yeezus.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = yeezus.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +112,9 @@
 				F169BDDA1EA696CB00C528C7 /* AppDelegate.m */,
 				F169BDDC1EA696CB00C528C7 /* ViewController.h */,
 				F169BDDD1EA696CB00C528C7 /* ViewController.m */,
+				F169BE091EA69B4E00C528C7 /* TextCell.h */,
+				F169BE0A1EA69B4E00C528C7 /* TextCell.m */,
+				F169BE0B1EA69B4E00C528C7 /* TextCell.xib */,
 				F169BDDF1EA696CB00C528C7 /* Main.storyboard */,
 				F169BDE21EA696CB00C528C7 /* Assets.xcassets */,
 				F169BDE41EA696CB00C528C7 /* LaunchScreen.storyboard */,
@@ -118,6 +128,7 @@
 			isa = PBXGroup;
 			children = (
 				F169BDD71EA696CB00C528C7 /* main.m */,
+				F169BE0E1EA69D3000C528C7 /* yeezus.txt */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -248,6 +259,8 @@
 			files = (
 				F169BDE61EA696CB00C528C7 /* LaunchScreen.storyboard in Resources */,
 				F169BDE31EA696CB00C528C7 /* Assets.xcassets in Resources */,
+				F169BE0D1EA69B4E00C528C7 /* TextCell.xib in Resources */,
+				F169BE0F1EA69D3000C528C7 /* yeezus.txt in Resources */,
 				F169BDE11EA696CB00C528C7 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -275,6 +288,7 @@
 			files = (
 				F169BDDE1EA696CB00C528C7 /* ViewController.m in Sources */,
 				F169BDDB1EA696CB00C528C7 /* AppDelegate.m in Sources */,
+				F169BE0C1EA69B4E00C528C7 /* TextCell.m in Sources */,
 				F169BDD81EA696CB00C528C7 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -509,6 +523,7 @@
 				F169BE021EA696CB00C528C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		F169BE031EA696CB00C528C7 /* Build configuration list for PBXNativeTarget "Scroll DataTests" */ = {
 			isa = XCConfigurationList;
@@ -517,6 +532,7 @@
 				F169BE051EA696CB00C528C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		F169BE061EA696CB00C528C7 /* Build configuration list for PBXNativeTarget "Scroll DataUITests" */ = {
 			isa = XCConfigurationList;
@@ -525,6 +541,7 @@
 				F169BE081EA696CB00C528C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
