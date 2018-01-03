@@ -73,23 +73,10 @@
     return cell;
 }
 
-
-//- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
-//{
-//    if (!decelerate) { [self scrollingFinish]; }
-//}
-//
-//
-//- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
-//{
-//    [self scrollingFinish]; this is now timerFireMethod, but is exactly the same
-//}
-
-
-- (void)timerFireMethod:(NSTimer *)timer {
-    NSLog(@"---------");
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
     CGFloat scrollVal = self.table.contentOffset.y;
-    CGFloat bottomScroll = scrollVal + self.view.frame.size.height - 50.0;
+    CGFloat bottomScroll = scrollVal + self.table.frame.size.height;
     CGFloat frameTotal = 0.0;
     NSInteger i1 = 0;
     CGFloat lastFrame = 0.0;
@@ -101,7 +88,7 @@
     }
     CGFloat lineNum1 = floor((scrollVal - (frameTotal - lastFrame) - 25.0)/25.0) + 1;
     NSString *line1 = [NSString stringWithFormat: @"%.2f", lineNum1];
-    NSLog(@"first line is line %f of %ld", lineNum1,(long)i1);
+    
     
     //----------------------------------
     frameTotal = 0.0;
@@ -119,7 +106,7 @@
     }
     CGFloat lineNum2 = floor((bottomScroll - (frameTotal - lastFrame) - 25.0)/25.0) + 1;
     NSString *line2 = [NSString stringWithFormat: @"%.2f", lineNum2];
-    NSLog(@"last line is line %f of %ld", lineNum2,(long)i2);
+    
     
     //--------------------------------
     NSString *uniqueIdentifier = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
@@ -129,11 +116,35 @@
     NSDate *currentDate = [NSDate date];
     NSString *dateString = [formatter stringFromDate:currentDate];
     NSString *startTimeString = [formatter stringFromDate:self.startTime];
-    NSDictionary *keys = @{@"device_id":uniqueIdentifier,@"startTime":startTimeString, @"time":dateString, @"top_line":line1, @"top_section": [@(i1) stringValue],@"bottom_line":line2,@"bottom_section":[@(i2) stringValue]};
+    if(![self.recent isEqual:@{@"top_line":line1, @"top_section": [@(i1) stringValue],@"bottom_line":line2,@"bottom_section":[@(i2) stringValue]}]){
+        NSLog(@"---------");
+        NSLog(@"first line is line %f of %ld", lineNum1,(long)i1);
+        NSLog(@"last line is line %f of %ld", lineNum2,(long)i2);
+        self.recent = @{@"top_line":line1, @"top_section": [@(i1) stringValue],@"bottom_line":line2,@"bottom_section":[@(i2) stringValue]};
+        
+        NSDictionary *keys = @{@"device_id":uniqueIdentifier,@"startTime":startTimeString, @"time":dateString, @"top_line":line1, @"top_section": [@(i1) stringValue],@"bottom_line":line2,@"bottom_section":[@(i2) stringValue]};
+        
+        [Networking requestWithHeaders:@{} method:@"POST" fullEndpoint:@"http://localhost:3000/submit_data" body:keys completion:^(NSData *data, NSURLResponse *response, NSError *error) {
+            if(error){ NSLog(@"%@",error); }
+        }];
+    }
+}
+
+//- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+//{
+//    if (!decelerate) { [self scrollingFinish]; }
+//}
+//
+//
+//- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+//{
+//    [self scrollingFinish]; this is now timerFireMethod, but is exactly the same
+//}
+
+
+- (void)timerFireMethod:(NSTimer *)timer {
+   
     
-    [Networking requestWithHeaders:@{} method:@"POST" fullEndpoint:@"http://localhost:3000/submit_data" body:keys completion:^(NSData *data, NSURLResponse *response, NSError *error) {
-        if(error){ NSLog(@"%@",error); }
-    }];
 }
 
 

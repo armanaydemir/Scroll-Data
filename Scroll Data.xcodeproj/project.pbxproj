@@ -18,6 +18,7 @@
 		F169BDFC1EA696CB00C528C7 /* Scroll_DataUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F169BDFB1EA696CB00C528C7 /* Scroll_DataUITests.m */; };
 		F169BE0C1EA69B4E00C528C7 /* TextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F169BE0A1EA69B4E00C528C7 /* TextCell.m */; };
 		F169BE0D1EA69B4E00C528C7 /* TextCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F169BE0B1EA69B4E00C528C7 /* TextCell.xib */; };
+		F1DA03401FFD85D40051B6C7 /* StartingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1DA033F1FFD85D40051B6C7 /* StartingViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,8 @@
 		F169BE091EA69B4E00C528C7 /* TextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCell.h; sourceTree = "<group>"; };
 		F169BE0A1EA69B4E00C528C7 /* TextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextCell.m; sourceTree = "<group>"; };
 		F169BE0B1EA69B4E00C528C7 /* TextCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TextCell.xib; sourceTree = "<group>"; };
+		F1DA033E1FFD85D40051B6C7 /* StartingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StartingViewController.h; sourceTree = "<group>"; };
+		F1DA033F1FFD85D40051B6C7 /* StartingViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StartingViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +122,8 @@
 				F169BE0A1EA69B4E00C528C7 /* TextCell.m */,
 				F169BE0B1EA69B4E00C528C7 /* TextCell.xib */,
 				F169BDDF1EA696CB00C528C7 /* Main.storyboard */,
+				F1DA033E1FFD85D40051B6C7 /* StartingViewController.h */,
+				F1DA033F1FFD85D40051B6C7 /* StartingViewController.m */,
 				F169BDE21EA696CB00C528C7 /* Assets.xcassets */,
 				F169BDE41EA696CB00C528C7 /* LaunchScreen.storyboard */,
 				F169BDE71EA696CB00C528C7 /* Info.plist */,
@@ -292,6 +297,7 @@
 				F169BDDB1EA696CB00C528C7 /* AppDelegate.m in Sources */,
 				F169BE0C1EA69B4E00C528C7 /* TextCell.m in Sources */,
 				F15A41971FCA7CA00040F11D /* request.swift in Sources */,
+				F1DA03401FFD85D40051B6C7 /* StartingViewController.m in Sources */,
 				F169BDD81EA696CB00C528C7 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

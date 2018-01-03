@@ -14,6 +14,8 @@
 
 @property (strong, nonatomic) NSDate* startTime;
 
+@property (strong, nonatomic) NSDictionary* recent;
+
 @property (strong, nonatomic) NSMutableArray<NSString*>* text;
 
 @end
