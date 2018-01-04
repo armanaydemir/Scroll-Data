@@ -16,6 +16,10 @@
 
 @property (strong, nonatomic) NSDictionary* recent;
 
+@property (strong, nonatomic) NSString* articleLink;
+
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spinner;
+
 @property (strong, nonatomic) NSMutableArray<NSString*>* text;
 
 @end

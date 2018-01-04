@@ -4,7 +4,7 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment version="4128" identifier="iOS"/>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -21,23 +21,28 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3kY-ON-KaG">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3kY-ON-KaG">
                                 <rect key="frame" x="164" y="318" width="46" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <connections>
                                     <action selector="startReading:" destination="mbO-Jk-rj2" eventType="touchUpInside" id="LdJ-hH-8XP"/>
                                 </connections>
                             </button>
-                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2aw-Lr-itO">
-                                <rect key="frame" x="139" y="217" width="97" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2aw-Lr-itO">
+                                <rect key="frame" x="16" y="224" width="343" height="30"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="3kY-ON-KaG" firstAttribute="centerX" secondItem="xSG-2C-ts7" secondAttribute="centerX" id="2cy-C3-vaU"/>
+                            <constraint firstItem="3kY-ON-KaG" firstAttribute="top" secondItem="2aw-Lr-itO" secondAttribute="bottom" constant="64" id="5HW-3d-ldF"/>
+                            <constraint firstItem="2aw-Lr-itO" firstAttribute="centerX" secondItem="xSG-2C-ts7" secondAttribute="centerX" id="M2d-OH-gFh"/>
+                            <constraint firstItem="3kY-ON-KaG" firstAttribute="centerY" secondItem="xSG-2C-ts7" secondAttribute="centerY" id="dZo-Hy-wui"/>
+                            <constraint firstItem="2aw-Lr-itO" firstAttribute="leading" secondItem="xSG-2C-ts7" secondAttribute="leading" constant="16" id="nZI-E4-mMe"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="hTg-FQ-wxj"/>
                     <connections>
@@ -82,16 +87,22 @@
                                 <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </tableView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="y80-SR-T2z">
+                                <rect key="frame" x="177" y="323.5" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="k8p-iG-GI0" secondAttribute="bottom" id="KhQ-MG-4qE"/>
+                            <constraint firstItem="y80-SR-T2z" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="QmK-zz-dmB"/>
+                            <constraint firstItem="y80-SR-T2z" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="jNb-8U-rAY"/>
                             <constraint firstItem="k8p-iG-GI0" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="os8-rr-UUL"/>
                             <constraint firstItem="k8p-iG-GI0" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="uxx-pJ-gr9"/>
                             <constraint firstItem="k8p-iG-GI0" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ygy-pQ-lWb"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="spinner" destination="y80-SR-T2z" id="XMk-1Z-Og9"/>
                         <outlet property="table" destination="k8p-iG-GI0" id="48S-kw-7ab"/>
                     </connections>
                 </viewController>

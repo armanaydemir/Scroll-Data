@@ -18,14 +18,19 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.table.hidden = YES;
     self.text = [[NSMutableArray alloc] init];
-    [Networking requestWithHeaders:@{} method:@"GET" fullEndpoint:@"http://localhost:3000" body:@{} completion:^(NSData *data, NSURLResponse *response, NSError *error) {
+    self.spinner.hidesWhenStopped = YES;
+    [self.spinner startAnimating];
+    [Networking requestWithHeaders:@{} method:@"GET" fullEndpoint:@"http://localhost:3000" body:@{@"articleLink":self.articleLink} completion:^(NSData *data, NSURLResponse *response, NSError *error) {
         if(error == nil){
             self.text = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: nil];
         }else{
             self.text[0] = @"problem connecting to server";
         }
         dispatch_async(dispatch_get_main_queue(), ^(void){
+            [self.spinner stopAnimating];
+            self.table.hidden = NO;
             [self.table reloadData];
         });
     }];
@@ -39,11 +44,11 @@
     
     self.table.estimatedRowHeight = 68.0;
     self.table.rowHeight = UITableViewAutomaticDimension;
-    [NSTimer scheduledTimerWithTimeInterval:0.5
-                                     target:self
-                                   selector:@selector(timerFireMethod:)
-                                   userInfo:nil
-                                    repeats:YES];
+//    [NSTimer scheduledTimerWithTimeInterval:0.5
+//                                     target:self
+//                                   selector:@selector(timerFireMethod:)
+//                                   userInfo:nil
+//                                    repeats:YES];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -122,11 +127,11 @@
         NSLog(@"last line is line %f of %ld", lineNum2,(long)i2);
         self.recent = @{@"top_line":line1, @"top_section": [@(i1) stringValue],@"bottom_line":line2,@"bottom_section":[@(i2) stringValue]};
         
-        NSDictionary *keys = @{@"device_id":uniqueIdentifier,@"startTime":startTimeString, @"time":dateString, @"top_line":line1, @"top_section": [@(i1) stringValue],@"bottom_line":line2,@"bottom_section":[@(i2) stringValue]};
+        NSDictionary *keys = @{@"article":self.articleLink, @"device_id":uniqueIdentifier,@"startTime":startTimeString, @"time":dateString, @"top_line":line1, @"top_section": [@(i1) stringValue],@"bottom_line":line2,@"bottom_section":[@(i2) stringValue]};
         
-        [Networking requestWithHeaders:@{} method:@"POST" fullEndpoint:@"http://localhost:3000/submit_data" body:keys completion:^(NSData *data, NSURLResponse *response, NSError *error) {
-            if(error){ NSLog(@"%@",error); }
-        }];
+//        [Networking requestWithHeaders:@{} method:@"POST" fullEndpoint:@"http://localhost:3000/submit_data" body:keys completion:^(NSData *data, NSURLResponse *response, NSError *error) {
+//            if(error){ NSLog(@"%@",error); }
+//        }];
     }
 }
 
@@ -142,10 +147,10 @@
 //}
 
 
-- (void)timerFireMethod:(NSTimer *)timer {
-   
-    
-}
+//- (void)timerFireMethod:(NSTimer *)timer {
+//
+//
+//}
 
 
 @end

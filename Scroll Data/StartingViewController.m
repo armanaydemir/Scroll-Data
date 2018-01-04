@@ -7,6 +7,7 @@
 //
 
 #import "StartingViewController.h"
+#import "ViewController.h"
 
 @interface StartingViewController ()
 
@@ -14,9 +15,14 @@
 
 @implementation StartingViewController
 
+// nytimes articles for testing -----
+// https://www.nytimes.com/2017/02/01/magazine/the-misunderstood-genius-of-russell-westbrook.html
+// https://www.nytimes.com/2017/11/22/us/politics/alliance-defending-freedom-gay-rights.html
+// https://www.nytimes.com/2017/11/21/technology/bitcoin-bitfinex-tether.html
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    self.articleLink.text = @"https://www.nytimes.com/2017/11/21/technology/bitcoin-bitfinex-tether.html";
 }
 
 - (void)didReceiveMemoryWarning {
@@ -25,16 +31,19 @@
 }
 - (IBAction)startReading:(id)sender {
     [self performSegueWithIdentifier:@"startReading" sender:sender];
+    
 }
 
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    UIViewController* vc = [segue destinationViewController];
+    if([vc isKindOfClass:[ViewController class]]){
+        ViewController* destination = (ViewController*)vc;
+        destination.articleLink = self.articleLink.text;
+    }
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
 }
-*/
+
 
 @end
