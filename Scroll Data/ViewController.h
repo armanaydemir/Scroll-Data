@@ -20,6 +20,8 @@
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spinner;
 
+@property (assign, nonatomic) BOOL throttle;
+
 @property (strong, nonatomic) NSMutableArray<NSString*>* text;
 
 @end

@@ -23,6 +23,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.articleLink.text = @"https://www.nytimes.com/2017/11/21/technology/bitcoin-bitfinex-tether.html";
+    [self.startButton setTitle:@"Tap to Start Reading" forState:UIControlStateNormal];
 }
 
 - (void)didReceiveMemoryWarning {

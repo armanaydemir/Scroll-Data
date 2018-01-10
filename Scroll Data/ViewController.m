@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "TextCell.h"
 #import "Scroll_Data-Swift.h"
+#import <sys/utsname.h>
 
 @interface ViewController ()
 
@@ -18,20 +19,29 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.throttle = YES;
     self.table.hidden = YES;
     self.text = [[NSMutableArray alloc] init];
     self.spinner.hidesWhenStopped = YES;
     [self.spinner startAnimating];
-    [Networking requestWithHeaders:@{} method:@"GET" fullEndpoint:@"http://localhost:3000" body:@{@"articleLink":self.articleLink} completion:^(NSData *data, NSURLResponse *response, NSError *error) {
+    [Networking requestWithHeaders:@{} method:@"GET" fullEndpoint:@"http://159.203.207.54:22364" body:@{@"articleLink":self.articleLink} completion:^(NSData *data, NSURLResponse *response, NSError *error) {
         if(error == nil){
-            self.text = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: nil];
+            NSError *err;
+            self.text = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&err];
+            NSLog(@"%@", err);
         }else{
             self.text[0] = @"problem connecting to server";
         }
         dispatch_async(dispatch_get_main_queue(), ^(void){
             [self.spinner stopAnimating];
-            self.table.hidden = NO;
-            [self.table reloadData];
+            if(self.text != nil){
+                self.throttle = NO;
+                self.table.hidden = NO;
+                [self.table reloadData];
+            }else{
+                //put code in here to show error label and retry button
+            }
+            
         });
     }];
    
@@ -44,11 +54,11 @@
     
     self.table.estimatedRowHeight = 68.0;
     self.table.rowHeight = UITableViewAutomaticDimension;
-//    [NSTimer scheduledTimerWithTimeInterval:0.5
-//                                     target:self
-//                                   selector:@selector(timerFireMethod:)
-//                                   userInfo:nil
-//                                    repeats:YES];
+    NSTimer *timer = [NSTimer timerWithTimeInterval:0.2
+                                             target:self
+                                           selector:@selector(timerFireMethod:)
+                                           userInfo:nil repeats:YES];
+    [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -115,23 +125,28 @@
     
     //--------------------------------
     NSString *uniqueIdentifier = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
+    struct utsname systemInfo;
+    uname(&systemInfo);
+    NSString *temp = [NSString stringWithCString:systemInfo.machine
+                                        encoding:NSUTF8StringEncoding]; //device type identifier
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"dd-MM-yyyy HH:mm:ss.SSS"];
     
     NSDate *currentDate = [NSDate date];
     NSString *dateString = [formatter stringFromDate:currentDate];
     NSString *startTimeString = [formatter stringFromDate:self.startTime];
-    if(![self.recent isEqual:@{@"top_line":line1, @"top_section": [@(i1) stringValue],@"bottom_line":line2,@"bottom_section":[@(i2) stringValue]}]){
+    if(self.throttle == NO && ![self.recent isEqual:@{@"top_line":line1, @"top_section": [@(i1) stringValue],@"bottom_line":line2,@"bottom_section":[@(i2) stringValue]}]){
+        self.throttle = YES;
         NSLog(@"---------");
         NSLog(@"first line is line %f of %ld", lineNum1,(long)i1);
         NSLog(@"last line is line %f of %ld", lineNum2,(long)i2);
         self.recent = @{@"top_line":line1, @"top_section": [@(i1) stringValue],@"bottom_line":line2,@"bottom_section":[@(i2) stringValue]};
         
-        NSDictionary *keys = @{@"article":self.articleLink, @"device_id":uniqueIdentifier,@"startTime":startTimeString, @"time":dateString, @"top_line":line1, @"top_section": [@(i1) stringValue],@"bottom_line":line2,@"bottom_section":[@(i2) stringValue]};
+        NSDictionary *keys = @{@"device_type":temp, @"article":self.articleLink, @"device_id":uniqueIdentifier,@"startTime":startTimeString, @"time":dateString, @"top_line":line1, @"top_section": [@(i1) stringValue],@"bottom_line":line2,@"bottom_section":[@(i2) stringValue]};
         
-//        [Networking requestWithHeaders:@{} method:@"POST" fullEndpoint:@"http://localhost:3000/submit_data" body:keys completion:^(NSData *data, NSURLResponse *response, NSError *error) {
-//            if(error){ NSLog(@"%@",error); }
-//        }];
+        [Networking requestWithHeaders:@{} method:@"POST" fullEndpoint:@"http://159.203.207.54:22364/submit_data" body:keys completion:^(NSData *data, NSURLResponse *response, NSError *error) {
+            if(error){ NSLog(@"%@",error); }
+        }];
     }
 }
 
@@ -147,10 +162,9 @@
 //}
 
 
-//- (void)timerFireMethod:(NSTimer *)timer {
-//
-//
-//}
+- (void)timerFireMethod:(NSTimer *)timer {
+    self.throttle = NO;
+}
 
 
 @end
