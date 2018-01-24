@@ -108,6 +108,7 @@
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Release"
+      customArchiveName = "Scroll Data"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>
