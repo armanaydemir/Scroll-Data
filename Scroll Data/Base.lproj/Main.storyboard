@@ -84,8 +84,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="k8p-iG-GI0">
-                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                                <rect key="frame" x="27.5" y="64" width="320" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" priority="750" constant="320" id="Ezi-fd-eyj"/>
+                                </constraints>
                             </tableView>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="y80-SR-T2z">
                                 <rect key="frame" x="177" y="323.5" width="20" height="20"/>
@@ -96,7 +99,7 @@
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="k8p-iG-GI0" secondAttribute="bottom" id="KhQ-MG-4qE"/>
                             <constraint firstItem="y80-SR-T2z" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="QmK-zz-dmB"/>
                             <constraint firstItem="y80-SR-T2z" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="jNb-8U-rAY"/>
-                            <constraint firstItem="k8p-iG-GI0" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="os8-rr-UUL"/>
+                            <constraint firstItem="k8p-iG-GI0" firstAttribute="width" relation="lessThanOrEqual" secondItem="8bC-Xf-vdC" secondAttribute="width" id="os8-rr-UUL"/>
                             <constraint firstItem="k8p-iG-GI0" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="uxx-pJ-gr9"/>
                             <constraint firstItem="k8p-iG-GI0" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ygy-pQ-lWb"/>
                         </constraints>
