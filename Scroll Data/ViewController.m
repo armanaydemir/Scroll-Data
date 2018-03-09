@@ -21,6 +21,7 @@
     [super viewDidLoad];
     self.throttle = YES;
     self.table.hidden = YES;
+    [self.table setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     self.text = [[NSMutableArray alloc] init];
     self.spinner.hidesWhenStopped = YES;
     [self.spinner startAnimating];
@@ -50,7 +51,7 @@
     self.table.dataSource = self;
     [self.table registerNib:[UINib nibWithNibName:@"TextCell" bundle:nil] forCellReuseIdentifier:@"default"];
     [self.table setDelegate:self];
-    [self.table setCellLayoutMarginsFollowReadableWidth:YES];
+    [self.table setCellLayoutMarginsFollowReadableWidth:NO];
     
     self.table.estimatedRowHeight = 68.0;
     self.table.rowHeight = UITableViewAutomaticDimension;
@@ -76,7 +77,6 @@
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     paragraphStyle.minimumLineHeight = 25;
     paragraphStyle.maximumLineHeight = 25;
-    paragraphStyle.firstLineHeadIndent = 20;
     UIFont *font = [UIFont fontWithName:@"Palatino-Roman" size:11.5];
     NSDictionary *attributtes = @{NSParagraphStyleAttributeName : paragraphStyle,NSFontAttributeName: font};
     cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:aString
