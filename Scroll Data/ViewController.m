@@ -79,10 +79,8 @@
     paragraphStyle.firstLineHeadIndent = 20;
     UIFont *font = [UIFont fontWithName:@"Palatino-Roman" size:11.5];
     NSDictionary *attributtes = @{NSParagraphStyleAttributeName : paragraphStyle,NSFontAttributeName: font};
-    cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:aString
+    cell.textSection.attributedText = [[NSAttributedString alloc] initWithString:aString
                                                              attributes:attributtes];
-    
-    [cell.textLabel sizeToFit];
     [cell setSelected:NO];
     
     return cell;
