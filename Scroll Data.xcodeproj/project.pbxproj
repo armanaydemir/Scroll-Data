@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		F15A41971FCA7CA00040F11D /* request.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15A41961FCA7CA00040F11D /* request.swift */; };
+		F15A535C2070748200C2F7B6 /* ArticleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15A535B2070748200C2F7B6 /* ArticleViewController.swift */; };
 		F169BDD81EA696CB00C528C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F169BDD71EA696CB00C528C7 /* main.m */; };
 		F169BDDB1EA696CB00C528C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F169BDDA1EA696CB00C528C7 /* AppDelegate.m */; };
-		F169BDDE1EA696CB00C528C7 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F169BDDD1EA696CB00C528C7 /* ViewController.m */; };
 		F169BDE11EA696CB00C528C7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F169BDDF1EA696CB00C528C7 /* Main.storyboard */; };
 		F169BDE31EA696CB00C528C7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F169BDE21EA696CB00C528C7 /* Assets.xcassets */; };
 		F169BDE61EA696CB00C528C7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F169BDE41EA696CB00C528C7 /* LaunchScreen.storyboard */; };
@@ -41,12 +41,11 @@
 /* Begin PBXFileReference section */
 		F15A41951FCA7C9F0040F11D /* Scroll Data-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Scroll Data-Bridging-Header.h"; sourceTree = "<group>"; };
 		F15A41961FCA7CA00040F11D /* request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = request.swift; sourceTree = "<group>"; };
+		F15A535B2070748200C2F7B6 /* ArticleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleViewController.swift; sourceTree = "<group>"; };
 		F169BDD31EA696CB00C528C7 /* Scroll Data.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Scroll Data.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F169BDD71EA696CB00C528C7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		F169BDD91EA696CB00C528C7 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		F169BDDA1EA696CB00C528C7 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		F169BDDC1EA696CB00C528C7 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		F169BDDD1EA696CB00C528C7 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		F169BDE01EA696CB00C528C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		F169BDE21EA696CB00C528C7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F169BDE51EA696CB00C528C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -116,8 +115,7 @@
 			children = (
 				F169BDD91EA696CB00C528C7 /* AppDelegate.h */,
 				F169BDDA1EA696CB00C528C7 /* AppDelegate.m */,
-				F169BDDC1EA696CB00C528C7 /* ViewController.h */,
-				F169BDDD1EA696CB00C528C7 /* ViewController.m */,
+				F15A535B2070748200C2F7B6 /* ArticleViewController.swift */,
 				F169BE091EA69B4E00C528C7 /* TextCell.h */,
 				F169BE0A1EA69B4E00C528C7 /* TextCell.m */,
 				F169BE0B1EA69B4E00C528C7 /* TextCell.xib */,
@@ -220,7 +218,7 @@
 		F169BDCB1EA696CB00C528C7 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Arman Aydemir";
 				TargetAttributes = {
 					F169BDD21EA696CB00C528C7 = {
@@ -296,8 +294,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F169BDDE1EA696CB00C528C7 /* ViewController.m in Sources */,
 				F169BDDB1EA696CB00C528C7 /* AppDelegate.m in Sources */,
+				F15A535C2070748200C2F7B6 /* ArticleViewController.swift in Sources */,
 				F169BE0C1EA69B4E00C528C7 /* TextCell.m in Sources */,
 				F15A41971FCA7CA00040F11D /* request.swift in Sources */,
 				F1DA03401FFD85D40051B6C7 /* StartingViewController.m in Sources */,
@@ -360,7 +358,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -371,6 +368,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -378,6 +376,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -418,7 +417,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -429,6 +427,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -436,6 +435,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;

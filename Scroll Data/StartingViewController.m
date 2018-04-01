@@ -6,8 +6,8 @@
 //  Copyright © 2018 Arman Aydemir. All rights reserved.
 //
 
+#import "Scroll_Data-Swift.h"
 #import "StartingViewController.h"
-#import "ViewController.h"
 
 @interface StartingViewController ()
 
@@ -38,8 +38,8 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     UIViewController* vc = [segue destinationViewController];
-    if([vc isKindOfClass:[ViewController class]]){
-        ViewController* destination = (ViewController*)vc;
+    if([vc isKindOfClass:[ArticleViewController class]]){
+        ArticleViewController* destination = (ArticleViewController*)vc;
         destination.articleLink = self.articleLink.text;
     }
     // Get the new view controller using [segue destinationViewController].

@@ -71,10 +71,10 @@
             </objects>
             <point key="canvasLocation" x="-1116" y="-629"/>
         </scene>
-        <!--View Controller-->
+        <!--Article View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ArticleViewController" customModule="Scroll_Data" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -104,8 +104,8 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="spinner" destination="y80-SR-T2z" id="XMk-1Z-Og9"/>
-                        <outlet property="table" destination="k8p-iG-GI0" id="48S-kw-7ab"/>
+                        <outlet property="spinner" destination="y80-SR-T2z" id="u7m-WR-EOU"/>
+                        <outlet property="table" destination="k8p-iG-GI0" id="ADc-Rt-bsU"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
