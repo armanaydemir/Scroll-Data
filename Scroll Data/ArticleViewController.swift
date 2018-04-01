@@ -18,50 +18,57 @@ import UIKit
     var recent: Dictionary<AnyHashable, String>?
     var articleLink: String?
     let paragraphStyle = NSMutableParagraphStyle()
-    let font:UIFont! = UIFont.init(name: "Palatino-Roman", size: 11.5) as UIFont?
+    let font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
     
-    @IBOutlet weak var table: UITableView!
-    @IBOutlet weak var spinner: UIActivityIndicatorView!
+    @IBOutlet weak var table: UITableView?
+    @IBOutlet weak var spinner: UIActivityIndicatorView?
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        guard let table = self.table, let spinner = self.spinner else {
+            print("couldn't connect outlets! bad things coming.....")
+            return
+        }
         
         
         self.paragraphStyle.minimumLineHeight = 25
         self.paragraphStyle.maximumLineHeight = 25
         let attributes = [NSFontAttributeName: font] as [String : Any]
         
-        self.table.separatorStyle = UITableViewCellSeparatorStyle.none
-        self.table.isHidden = true;
-        self.spinner.hidesWhenStopped = true
-        self.spinner.startAnimating()
+        table.separatorStyle = UITableViewCellSeparatorStyle.none
+        table.isHidden = true;
+        spinner.hidesWhenStopped = true
+        spinner.startAnimating()
         Networking.request(headers:nil, method: "GET", fullEndpoint: "http://159.203.207.54:22364", body: ["articleLink":self.articleLink ?? ""], completion: { data, response, error in
-            if(error == nil){
-                if let dataExists = data {
-                    do {
-                        self.text = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as! Array<String>
-                        self.cells = self.createCells(text: self.text, attributes: attributes)
-                    }catch let err{
-                        self.text[0] = err.localizedDescription;
+            if let dataExists = data, error == nil {
+                do {
+                    if let text = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<String> {
+                        self.text = text
+                        self.cells = self.createCells(text: text, attributes: attributes)
+                    } else {
+                        throw NSError(domain: "invalid json", code: 1, userInfo: nil)
                     }
+                }catch let err{
+                    self.text[0] = err.localizedDescription;
                 }
             }else{
                 self.text[0] = "problem connecting to server";
             }
             DispatchQueue.main.async{
-                self.spinner?.stopAnimating()
+                spinner.stopAnimating()
                 self.throttle = false
-                self.table?.isHidden = false
-                self.table?.reloadData()
+                table.isHidden = false
+                table.reloadData()
             }
         })
-        self.table?.dataSource = self
-        self.table?.register(UINib.init(nibName: "TextCell", bundle: nil), forCellReuseIdentifier: "default")
-        self.table?.delegate = self
-        self.table?.cellLayoutMarginsFollowReadableWidth = false
-        self.table?.estimatedRowHeight = 68.0
-        self.table?.rowHeight = UITableViewAutomaticDimension
+        table.dataSource = self
+        table.register(UINib.init(nibName: "TextCell", bundle: nil), forCellReuseIdentifier: "default")
+        table.delegate = self
+        table.cellLayoutMarginsFollowReadableWidth = false
+        table.estimatedRowHeight = 68.0
+        table.rowHeight = UITableViewAutomaticDimension
         
         
         let timer = Timer.init(timeInterval: 0.2, target: self, selector: #selector(self.timerFireMethod(timer:)), userInfo: nil, repeats: true)
@@ -78,11 +85,13 @@ import UIKit
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell:TextCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath) as! TextCell
-        let aString = self.cells[indexPath.item]
-        let attributes = [NSFontAttributeName: font] as [String : Any]
-        cell.textSection.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
-        cell.isSelected = false
+        let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
+        if let cell: TextCell = cell as? TextCell {
+            let aString = self.cells[indexPath.item]
+            let attributes = [NSFontAttributeName: font] as [String : Any]
+            cell.textSection.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
+            cell.isSelected = false
+        }
         return cell
     }
     
