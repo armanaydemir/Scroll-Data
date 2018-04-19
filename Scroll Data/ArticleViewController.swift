@@ -11,11 +11,9 @@ import UIKit
 
 @objc class ArticleViewController: UIViewController,UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
     
-    var throttle = true
     var text: Array<String> = []
     var cells: Array<String> = []
     var startTime = Date();
-    var recent: Dictionary<AnyHashable, String>?
     var articleLink: String?
     let paragraphStyle = NSMutableParagraphStyle()
     let font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
@@ -54,11 +52,11 @@ import UIKit
                     self.text[0] = err.localizedDescription;
                 }
             }else{
-                self.text[0] = "problem connecting to server";
+                print("server disconnect, gotta do somethin here")
+                //self.text[0] = "problem connecting to server";
             }
             DispatchQueue.main.async{
                 spinner.stopAnimating()
-                self.throttle = false
                 table.isHidden = false
                 table.reloadData()
             }
@@ -69,10 +67,6 @@ import UIKit
         table.cellLayoutMarginsFollowReadableWidth = false
         table.estimatedRowHeight = 68.0
         table.rowHeight = UITableViewAutomaticDimension
-        
-        
-        let timer = Timer.init(timeInterval: 0.2, target: self, selector: #selector(self.timerFireMethod(timer:)), userInfo: nil, repeats: true)
-        RunLoop.main.add(timer, forMode: RunLoopMode.commonModes)
     }
 
     override func didReceiveMemoryWarning() {
@@ -100,14 +94,39 @@ import UIKit
     }
     
     func sendTextToServer(tableView:UITableView) -> Void {
-        let text = tableView.visibleCells.flatMap({cell in (cell as! TextCell).textSection.text})
-        print("scrolled")
-        print(text.first ?? "empty first")
-        print(text.last ?? "empty last")
-    }
-    
-    func timerFireMethod(timer:Timer) {
-        self.throttle = false;
+        let texttemp = tableView.visibleCells.flatMap({cell in (cell as! TextCell).textSection.text})
+        var text = [String]()
+        var s = [String]()
+        
+        for t in texttemp{
+            if(t == ""){
+                text.append(s.joined(separator: " "))
+                s = []
+            }else{
+                s.append(t)
+            }
+        } //this for loop combines the sections together so it comes in split the same way as server
+        
+        
+        let UDID = UIDevice.current.identifierForVendor!.uuidString
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        let type = machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8 , value != 0 else { return identifier }
+            return identifier + String(UnicodeScalar(UInt8(value)))
+        }
+        
+        let formatter = DateFormatter()
+        formatter.setLocalizedDateFormatFromTemplate("dd-MM-yyyy HH:mm:ss.SSS")
+        let cur = Date()
+        let currentString = formatter.string(from: cur)
+        let startString = formatter.string(from: self.startTime)
+
+        let data: [String: Any] = ["UDID":UDID, "type":type, "startTime":startString, "time": currentString, "article":self.articleLink ?? "", "text":text]
+        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
+            if let e = error {print(e)}
+        })
     }
     
     func cellFit(string:String, attributes:[String: Any]) -> Bool {
