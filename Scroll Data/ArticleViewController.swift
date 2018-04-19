@@ -94,16 +94,16 @@ import UIKit
     }
     
     func sendTextToServer(tableView:UITableView) -> Void {
-        let texttemp = tableView.visibleCells.flatMap({cell in (cell as! TextCell).textSection.text})
+        let textsource = tableView.visibleCells.flatMap({cell in (cell as! TextCell).textSection.text})
         var text = [String]()
-        var s = [String]()
+        var section = [String]()
         
-        for t in texttemp{
-            if(t == ""){
-                text.append(s.joined(separator: " "))
-                s = []
+        for line in textsource{
+            if(line == ""){
+                text.append(section.joined(separator: " "))
+                section = []
             }else{
-                s.append(t)
+                section.append(line)
             }
         } //this for loop combines the sections together so it comes in split the same way as server
         
