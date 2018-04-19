@@ -15,6 +15,7 @@ import UIKit
     var cells: Array<String> = []
     var startTime = Date();
     var articleLink: String?
+    var recent = [String]()
     let paragraphStyle = NSMutableParagraphStyle()
     let font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
     
@@ -95,38 +96,43 @@ import UIKit
     
     func sendTextToServer(tableView:UITableView) -> Void {
         let textsource = tableView.visibleCells.flatMap({cell in (cell as! TextCell).textSection.text})
-        var text = [String]()
-        var section = [String]()
-        
-        for line in textsource{
-            if(line == ""){
-                text.append(section.joined(separator: " "))
-                section = []
-            }else{
-                section.append(line)
+        if(textsource != self.recent){ //if statement is for repeats that happen at head of csv file (right when screen loads)
+            //but this if statement doesnt fix the problem
+            self.recent = textsource
+            var text = [String]()
+            var section = [String]()
+            
+            for line in textsource{
+                if(line == ""){
+                    text.append(section.joined(separator: " "))
+                    section = []
+                }else{
+                    section.append(line)
+                }
+            } //this for loop combines the sections together so it comes in split the same way as server
+            
+            
+            let UDID = UIDevice.current.identifierForVendor!.uuidString
+            var systemInfo = utsname()
+            uname(&systemInfo)
+            let machineMirror = Mirror(reflecting: systemInfo.machine)
+            let type = machineMirror.children.reduce("") { identifier, element in
+                guard let value = element.value as? Int8 , value != 0 else { return identifier }
+                return identifier + String(UnicodeScalar(UInt8(value)))
             }
-        } //this for loop combines the sections together so it comes in split the same way as server
-        
-        
-        let UDID = UIDevice.current.identifierForVendor!.uuidString
-        var systemInfo = utsname()
-        uname(&systemInfo)
-        let machineMirror = Mirror(reflecting: systemInfo.machine)
-        let type = machineMirror.children.reduce("") { identifier, element in
-            guard let value = element.value as? Int8 , value != 0 else { return identifier }
-            return identifier + String(UnicodeScalar(UInt8(value)))
+            
+            let formatter = DateFormatter()
+            formatter.setLocalizedDateFormatFromTemplate("dd-MM-yyyy HH:mm:ss.SSS")
+            let cur = Date()
+            let currentString = formatter.string(from: cur)
+            let startString = formatter.string(from: self.startTime)
+            
+            let data: [String: Any] = ["UDID":UDID, "type":type, "startTime":startString, "time": currentString, "article":self.articleLink ?? "", "text":text]
+            Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
+                if let e = error {print(e)}
+            })
         }
         
-        let formatter = DateFormatter()
-        formatter.setLocalizedDateFormatFromTemplate("dd-MM-yyyy HH:mm:ss.SSS")
-        let cur = Date()
-        let currentString = formatter.string(from: cur)
-        let startString = formatter.string(from: self.startTime)
-
-        let data: [String: Any] = ["UDID":UDID, "type":type, "startTime":startString, "time": currentString, "article":self.articleLink ?? "", "text":text]
-        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
-            if let e = error {print(e)}
-        })
     }
     
     func cellFit(string:String, attributes:[String: Any]) -> Bool {
