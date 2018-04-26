@@ -39,8 +39,6 @@ public class Networking:NSObject {
         if let body = body, method != "GET" {
             request.httpBody = try! JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
         }
-        
-        print(request.url!)
         defaultSession.dataTask(with: request, completionHandler: completion).resume()
     }
 

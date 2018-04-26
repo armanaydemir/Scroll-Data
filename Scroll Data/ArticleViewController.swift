@@ -18,6 +18,7 @@ import UIKit
     var recent = [String]()
     let paragraphStyle = NSMutableParagraphStyle()
     let font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
+    var content_offset:CGFloat?
     
     @IBOutlet weak var table: UITableView?
     @IBOutlet weak var spinner: UIActivityIndicatorView?
@@ -58,8 +59,15 @@ import UIKit
             }
             DispatchQueue.main.async{
                 spinner.stopAnimating()
-                table.isHidden = false
                 table.reloadData()
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(200)) {
+                    let timer = Timer.init(timeInterval: 0.1, repeats: true, block: { _ in
+                            self.sendTextToServer(tableView: table)
+                    })
+                    RunLoop.main.add(timer, forMode: RunLoopMode.commonModes)
+                    table.isHidden = false
+                    self.sendTextToServer(tableView: table)
+                }
             }
         })
         table.dataSource = self
@@ -90,14 +98,19 @@ import UIKit
         return cell
     }
     
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        self.sendTextToServer(tableView: tableView)
-    }
-    
     func sendTextToServer(tableView:UITableView) -> Void {
-        let textsource = tableView.visibleCells.flatMap({cell in (cell as! TextCell).textSection.text})
+        let current_offset = tableView.contentOffset.y
+        if tableView.isHidden || current_offset == self.content_offset { return }
+        self.content_offset = current_offset
+        let textsource = tableView.visibleCells.filter({ (cell) -> Bool in
+            let parent = cell.superview!
+            return parent.bounds.intersects(cell.frame)
+        }).flatMap({cell in (cell as! TextCell).textSection.text})
+       
         if(textsource != self.recent){ //if statement is for repeats that happen at head of csv file (right when screen loads)
             //but this if statement doesnt fix the problem
+            print(textsource.first)
+            print(textsource.last)
             self.recent = textsource
             var text = [String]()
             var section = [String]()
@@ -110,7 +123,7 @@ import UIKit
                     section.append(line)
                 }
             } //this for loop combines the sections together so it comes in split the same way as server
-            
+            text.append(section.joined(separator: " "))
             
             let UDID = UIDevice.current.identifierForVendor!.uuidString
             var systemInfo = utsname()
