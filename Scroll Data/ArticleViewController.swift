@@ -26,7 +26,7 @@ import UIKit
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         guard let table = self.table, let spinner = self.spinner else {
             print("couldn't connect outlets! bad things coming.....")
             return
@@ -96,6 +96,12 @@ import UIKit
             cell.isSelected = false
         }
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if(indexPath.item == self.cells.count-1){
+            print("ayaosdfya;sdoifu") //send thing to server here so server moves file from temp to complete data
+        }
     }
     
     func sendTextToServer(tableView:UITableView) -> Void {
@@ -175,6 +181,7 @@ import UIKit
             }
             cells.append("")
         }
+        cells.append("Tap here to submit data")
         return cells
     }
 }
