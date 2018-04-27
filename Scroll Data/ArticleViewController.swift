@@ -101,6 +101,7 @@ import UIKit
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if(indexPath.item == self.cells.count-1){
             print("ayaosdfya;sdoifu") //send thing to server here so server moves file from temp to complete data
+            _ = navigationController?.popViewController(animated: true)
         }
     }
     
