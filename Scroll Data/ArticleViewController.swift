@@ -14,11 +14,15 @@ import UIKit
     var text: Array<String> = []
     var cells: Array<String> = []
     var startTime = Date();
+    var startString: String?
     var articleLink: String?
     var recent = [String]()
     let paragraphStyle = NSMutableParagraphStyle()
     let font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
     var content_offset:CGFloat?
+    let UDID = UIDevice.current.identifierForVendor!.uuidString
+    var type: String?
+    let formatter = DateFormatter()
     
     @IBOutlet weak var table: UITableView?
     @IBOutlet weak var spinner: UIActivityIndicatorView?
@@ -32,6 +36,16 @@ import UIKit
             return
         }
         
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        self.type = machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8 , value != 0 else { return identifier }
+            return identifier! + String(UnicodeScalar(UInt8(value)))
+        }
+    
+        self.formatter.setLocalizedDateFormatFromTemplate("dd-MM-yyyy HH:mm:ss.SSS")
+        self.startString = formatter.string(from: self.startTime)
         
         self.paragraphStyle.minimumLineHeight = 25
         self.paragraphStyle.maximumLineHeight = 25
@@ -100,9 +114,17 @@ import UIKit
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if(indexPath.item == self.cells.count-1){
-            print("ayaosdfya;sdoifu") //send thing to server here so server moves file from temp to complete data
+            self.closeArticleWithServer()
             _ = navigationController?.popViewController(animated: true)
         }
+    }
+    
+    func closeArticleWithServer() -> Void {
+        print("sending end of data signal to server for this reading session")
+        let data: [String: Any] = ["UDID":self.UDID, "type":self.type ?? "", "startTime":self.startString ?? "", "article":self.articleLink ?? ""]
+        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/close_article", body: data, completion:  { data, response, error in
+            if let e = error {print(e)}
+        })
     }
     
     func sendTextToServer(tableView:UITableView) -> Void {
@@ -132,22 +154,10 @@ import UIKit
             } //this for loop combines the sections together so it comes in split the same way as server
             text.append(section.joined(separator: " "))
             
-            let UDID = UIDevice.current.identifierForVendor!.uuidString
-            var systemInfo = utsname()
-            uname(&systemInfo)
-            let machineMirror = Mirror(reflecting: systemInfo.machine)
-            let type = machineMirror.children.reduce("") { identifier, element in
-                guard let value = element.value as? Int8 , value != 0 else { return identifier }
-                return identifier + String(UnicodeScalar(UInt8(value)))
-            }
-            
-            let formatter = DateFormatter()
-            formatter.setLocalizedDateFormatFromTemplate("dd-MM-yyyy HH:mm:ss.SSS")
             let cur = Date()
-            let currentString = formatter.string(from: cur)
-            let startString = formatter.string(from: self.startTime)
+            let currentString = self.formatter.string(from: cur)
             
-            let data: [String: Any] = ["UDID":UDID, "type":type, "startTime":startString, "time": currentString, "article":self.articleLink ?? "", "text":text]
+            let data: [String: Any] = ["UDID":self.UDID, "type":self.type ?? "", "startTime":self.startString ?? "", "time": currentString, "article":self.articleLink ?? "", "text":text]
             Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
                 if let e = error {print(e)}
             })
