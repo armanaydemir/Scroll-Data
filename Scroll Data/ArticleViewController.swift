@@ -47,9 +47,18 @@ import UIKit
         self.formatter.setLocalizedDateFormatFromTemplate("dd-MM-yyyy HH:mm:ss.SSS")
         self.startString = formatter.string(from: self.startTime)
         
-        self.paragraphStyle.minimumLineHeight = 25
-        self.paragraphStyle.maximumLineHeight = 25
         let attributes = [NSFontAttributeName: font] as [String : Any]
+        let model = UIDevice.current.model
+        
+        if(model == "iPad"){
+            NSLayoutConstraint.activate([
+                table.leadingAnchor.constraint(equalTo: view.readableContentGuide.leadingAnchor),
+                table.trailingAnchor.constraint(equalTo: view.readableContentGuide.trailingAnchor),
+                table.bottomAnchor.constraint(equalTo: view.readableContentGuide.bottomAnchor),
+                table.topAnchor.constraint(equalTo: view.readableContentGuide.topAnchor)
+            ])
+        }
+        
         
         table.separatorStyle = UITableViewCellSeparatorStyle.none
         table.isHidden = true;
@@ -154,6 +163,7 @@ import UIKit
             } //this for loop combines the sections together so it comes in split the same way as server
             text.append(section.joined(separator: " "))
             
+            
             let cur = Date()
             let currentString = self.formatter.string(from: cur)
             
@@ -166,7 +176,13 @@ import UIKit
     }
     
     func cellFit(string:String, attributes:[String: Any]) -> Bool {
-        return (string as NSString).size(attributes: attributes).width < min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) - 32
+        guard let table = self.table else {
+            print("not table exists, this should never happen")
+            return false
+        }
+        
+        let checker = min(table.frame.size.width, table.frame.size.height)
+        return (string as NSString).size(attributes: attributes).width < checker - 32
     }
     
     //where we process the individual line cells
