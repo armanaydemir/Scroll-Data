@@ -14,11 +14,15 @@ import UIKit
     var text: Array<String> = []
     var cells: Array<String> = []
     var startTime = Date();
+    var startString: String?
     var articleLink: String?
     var recent = [String]()
     let paragraphStyle = NSMutableParagraphStyle()
     let font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
     var content_offset:CGFloat?
+    let UDID = UIDevice.current.identifierForVendor!.uuidString
+    var type: String?
+    let formatter = DateFormatter()
     
     @IBOutlet weak var table: UITableView?
     @IBOutlet weak var spinner: UIActivityIndicatorView?
@@ -26,16 +30,35 @@ import UIKit
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         guard let table = self.table, let spinner = self.spinner else {
             print("couldn't connect outlets! bad things coming.....")
             return
         }
         
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        self.type = machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8 , value != 0 else { return identifier }
+            return identifier! + String(UnicodeScalar(UInt8(value)))
+        }
+    
+        self.formatter.setLocalizedDateFormatFromTemplate("dd-MM-yyyy HH:mm:ss.SSS")
+        self.startString = formatter.string(from: self.startTime)
         
-        self.paragraphStyle.minimumLineHeight = 25
-        self.paragraphStyle.maximumLineHeight = 25
         let attributes = [NSFontAttributeName: font] as [String : Any]
+        let model = UIDevice.current.model
+        
+        if(model == "iPad"){
+            NSLayoutConstraint.activate([
+                table.leadingAnchor.constraint(equalTo: view.readableContentGuide.leadingAnchor),
+                table.trailingAnchor.constraint(equalTo: view.readableContentGuide.trailingAnchor),
+                table.bottomAnchor.constraint(equalTo: view.readableContentGuide.bottomAnchor),
+                table.topAnchor.constraint(equalTo: view.readableContentGuide.topAnchor)
+            ])
+        }
+        
         
         table.separatorStyle = UITableViewCellSeparatorStyle.none
         table.isHidden = true;
@@ -97,6 +120,21 @@ import UIKit
         }
         return cell
     }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if(indexPath.item == self.cells.count-1){
+            self.closeArticleWithServer()
+            _ = navigationController?.popViewController(animated: true)
+        }
+    }
+    
+    func closeArticleWithServer() -> Void {
+        print("sending end of data signal to server for this reading session")
+        let data: [String: Any] = ["UDID":self.UDID, "type":self.type ?? "", "startTime":self.startString ?? "", "article":self.articleLink ?? ""]
+        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/close_article", body: data, completion:  { data, response, error in
+            if let e = error {print(e)}
+        })
+    }
     
     func sendTextToServer(tableView:UITableView) -> Void {
         let current_offset = tableView.contentOffset.y
@@ -125,22 +163,11 @@ import UIKit
             } //this for loop combines the sections together so it comes in split the same way as server
             text.append(section.joined(separator: " "))
             
-            let UDID = UIDevice.current.identifierForVendor!.uuidString
-            var systemInfo = utsname()
-            uname(&systemInfo)
-            let machineMirror = Mirror(reflecting: systemInfo.machine)
-            let type = machineMirror.children.reduce("") { identifier, element in
-                guard let value = element.value as? Int8 , value != 0 else { return identifier }
-                return identifier + String(UnicodeScalar(UInt8(value)))
-            }
             
-            let formatter = DateFormatter()
-            formatter.setLocalizedDateFormatFromTemplate("dd-MM-yyyy HH:mm:ss.SSS")
             let cur = Date()
-            let currentString = formatter.string(from: cur)
-            let startString = formatter.string(from: self.startTime)
+            let currentString = self.formatter.string(from: cur)
             
-            let data: [String: Any] = ["UDID":UDID, "type":type, "startTime":startString, "time": currentString, "article":self.articleLink ?? "", "text":text]
+            let data: [String: Any] = ["UDID":self.UDID, "type":self.type ?? "", "startTime":self.startString ?? "", "time": currentString, "article":self.articleLink ?? "", "text":text]
             Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
                 if let e = error {print(e)}
             })
@@ -149,7 +176,13 @@ import UIKit
     }
     
     func cellFit(string:String, attributes:[String: Any]) -> Bool {
-        return (string as NSString).size(attributes: attributes).width < min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) - 32
+        guard let table = self.table else {
+            print("not table exists, this should never happen")
+            return false
+        }
+        
+        let checker = min(table.frame.size.width, table.frame.size.height)
+        return (string as NSString).size(attributes: attributes).width < checker - 32
     }
     
     //where we process the individual line cells
@@ -175,6 +208,7 @@ import UIKit
             }
             cells.append("")
         }
+        cells.append("Tap here to submit data")
         return cells
     }
 }
