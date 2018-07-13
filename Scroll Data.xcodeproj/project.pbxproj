@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		999834A020DB2AA70034D4E7 /* TitleCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9998349E20DB2AA70034D4E7 /* TitleCellTableViewCell.swift */; };
+		999834A120DB2AA70034D4E7 /* TitleCellTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9998349F20DB2AA70034D4E7 /* TitleCellTableViewCell.xib */; };
 		F15A41971FCA7CA00040F11D /* request.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15A41961FCA7CA00040F11D /* request.swift */; };
 		F15A535C2070748200C2F7B6 /* ArticleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15A535B2070748200C2F7B6 /* ArticleViewController.swift */; };
 		F169BDD81EA696CB00C528C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F169BDD71EA696CB00C528C7 /* main.m */; };
@@ -39,6 +41,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9998349E20DB2AA70034D4E7 /* TitleCellTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleCellTableViewCell.swift; sourceTree = "<group>"; };
+		9998349F20DB2AA70034D4E7 /* TitleCellTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TitleCellTableViewCell.xib; sourceTree = "<group>"; };
 		F15A41951FCA7C9F0040F11D /* Scroll Data-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Scroll Data-Bridging-Header.h"; sourceTree = "<group>"; };
 		F15A41961FCA7CA00040F11D /* request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = request.swift; sourceTree = "<group>"; };
 		F15A535B2070748200C2F7B6 /* ArticleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleViewController.swift; sourceTree = "<group>"; };
@@ -120,6 +124,8 @@
 				F169BE0A1EA69B4E00C528C7 /* TextCell.m */,
 				F169BE0B1EA69B4E00C528C7 /* TextCell.xib */,
 				F169BDDF1EA696CB00C528C7 /* Main.storyboard */,
+				9998349E20DB2AA70034D4E7 /* TitleCellTableViewCell.swift */,
+				9998349F20DB2AA70034D4E7 /* TitleCellTableViewCell.xib */,
 				F1DA033E1FFD85D40051B6C7 /* StartingViewController.h */,
 				F1DA033F1FFD85D40051B6C7 /* StartingViewController.m */,
 				F169BDE21EA696CB00C528C7 /* Assets.xcassets */,
@@ -269,6 +275,7 @@
 				F169BDE61EA696CB00C528C7 /* LaunchScreen.storyboard in Resources */,
 				F169BDE31EA696CB00C528C7 /* Assets.xcassets in Resources */,
 				F169BE0D1EA69B4E00C528C7 /* TextCell.xib in Resources */,
+				999834A120DB2AA70034D4E7 /* TitleCellTableViewCell.xib in Resources */,
 				F169BDE11EA696CB00C528C7 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -294,6 +301,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				999834A020DB2AA70034D4E7 /* TitleCellTableViewCell.swift in Sources */,
 				F169BDDB1EA696CB00C528C7 /* AppDelegate.m in Sources */,
 				F15A535C2070748200C2F7B6 /* ArticleViewController.swift in Sources */,
 				F169BE0C1EA69B4E00C528C7 /* TextCell.m in Sources */,
