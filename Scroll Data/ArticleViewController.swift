@@ -108,6 +108,15 @@ import UIKit
         // Dispose of any resources that can be recreated.
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        switch indexPath.row {
+        case 0:
+            return UIScreen.main.bounds.size.height - (self.navigationController?.navigationBar.frame.size.height ?? 0)
+        default:
+            return UITableViewAutomaticDimension
+        }
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.cells.count
     }

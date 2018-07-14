@@ -12,7 +12,8 @@ class TitleCellTableViewCell: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        
+        self.backgroundColor = UIColor.yellow
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
