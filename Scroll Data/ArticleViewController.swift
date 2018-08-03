@@ -113,7 +113,7 @@ import UIKit
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.row {
         case 0:
-            return UIScreen.main.bounds.size.height - (self.navigationController?.navigationBar.frame.size.height ?? 0)
+            return UIScreen.main.bounds.size.height - (self.navigationController?.navigationBar.frame.size.height ?? 0) - 1
         default:
             return UITableViewAutomaticDimension
         }
@@ -124,12 +124,13 @@ import UIKit
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let aString = self.cells[indexPath.item + 1] // +1 should be temp fix
+        let aString = self.cells[indexPath.item]
         if(indexPath.item == 0){
             let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "title", for: indexPath)
             if let cell: TitleCellTableViewCell = cell as? TitleCellTableViewCell {
                 let attributes = [NSFontAttributeName: font] as [String : Any]
                 cell.titleText.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
+                cell.selectionStyle = .none
                 cell.isSelected = false
             }
             return cell
@@ -163,11 +164,16 @@ import UIKit
         let current_offset = tableView.contentOffset.y
         if tableView.isHidden || current_offset == self.content_offset { return }
         self.content_offset = current_offset
-        let textsource = tableView.visibleCells[1..<tableView.visibleCells.endIndex].filter({ (cell) -> Bool in
+        let textsource = tableView.visibleCells[0..<tableView.visibleCells.endIndex].filter({ (cell) -> Bool in
             let parent = cell.superview!
             return parent.bounds.intersects(cell.frame)
-        }).flatMap({cell in (cell as! TextCell).textSection.text})
-        if textsource.first == self.recent.first { return } //if statement is for repeats that happen at head of csv file (right when screen loads)
+        }).flatMap({cell in if let cell: TextCell = cell as? TextCell{
+                return cell.textSection.text
+            }else{
+                return "Title Card"
+            }
+        })
+        if textsource.first != "Title Card" && textsource.first == self.recent.first { return } //if statement is for repeats that happen at head of csv file (right when screen loads)
             //but this if statement doesnt fix the problem
         self.recent = textsource
         var text = [String]()
@@ -187,7 +193,7 @@ import UIKit
         let cur = Date()
         let currentString = self.formatter.string(from: cur)
         let last_sent_string = self.formatter.string(from: self.last_sent)
-        let data: [String: Any] = ["UDID":self.UDID, "type":self.type ?? "", "appeared":last_sent_string, "time": currentString, "article":self.articleLink ?? "", "first_line":textsource.first ?? "", "last_line":textsource.last ?? ""]
+        let data: [String: Any] = ["UDID":self.UDID, "type":self.type ?? "", "appeared":last_sent_string, "time": currentString, "article":self.articleLink ?? "", "first_line":textsource.first ?? "", "last_line":textsource.last ?? "", "content_offset":content_offset]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })
@@ -208,7 +214,7 @@ import UIKit
     
     //where we process the individual line cells
     func createCells(text:[String], attributes:[String:Any]) -> [String] {
-        var cells = [""]
+        var cells = [String].init()
         for section in text{
             var words = section.split(separator: " ").map({substring in
                 return String.init(substring)

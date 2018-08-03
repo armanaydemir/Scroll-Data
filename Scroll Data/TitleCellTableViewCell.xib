@@ -20,14 +20,17 @@
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FZc-YK-QkO">
                         <rect key="frame" x="50" y="12" width="42" height="21"/>
+                        <accessibility key="accessibilityConfiguration">
+                            <accessibilityTraits key="traits" none="YES"/>
+                        </accessibility>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="FZc-YK-QkO" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="3rR-W9-isP"/>
-                    <constraint firstItem="FZc-YK-QkO" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="eze-7j-r1g"/>
+                    <constraint firstItem="FZc-YK-QkO" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="cgP-bV-cSC"/>
+                    <constraint firstItem="FZc-YK-QkO" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="wc8-1I-FWI"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
