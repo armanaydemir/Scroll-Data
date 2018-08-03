@@ -17,6 +17,7 @@ import UIKit
     var startString: String?
     var articleLink: String?
     var recent = [String]()
+    var last_sent = Date();
     let paragraphStyle = NSMutableParagraphStyle()
     let font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
     var content_offset:CGFloat?
@@ -80,11 +81,13 @@ import UIKit
                 print("server disconnect, gotta do somethin here")
                 //self.text[0] = "problem connecting to server";
             }
+            
             DispatchQueue.main.async{
                 spinner.stopAnimating()
                 table.reloadData()
-                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(200)) {
-                    let timer = Timer.init(timeInterval: 0.1, repeats: true, block: { _ in
+                //this could definitely be better
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(2000)) {
+                    let timer = Timer.init(timeInterval: 0.01, repeats: true, block: { _ in
                             self.sendTextToServer(tableView: table)
                     })
                     RunLoop.main.add(timer, forMode: RunLoopMode.commonModes)
@@ -95,6 +98,7 @@ import UIKit
         })
         table.dataSource = self
         table.register(UINib.init(nibName: "TextCell", bundle: nil), forCellReuseIdentifier: "default")
+        table.register(UINib.init(nibName: "TitleCellTableViewCell", bundle: nil), forCellReuseIdentifier: "title")
         table.delegate = self
         table.cellLayoutMarginsFollowReadableWidth = false
         table.estimatedRowHeight = 68.0
@@ -106,19 +110,38 @@ import UIKit
         // Dispose of any resources that can be recreated.
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        switch indexPath.row {
+        case 0:
+            return UIScreen.main.bounds.size.height - (self.navigationController?.navigationBar.frame.size.height ?? 0)
+        default:
+            return UITableViewAutomaticDimension
+        }
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.cells.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
-        if let cell: TextCell = cell as? TextCell {
-            let aString = self.cells[indexPath.item]
-            let attributes = [NSFontAttributeName: font] as [String : Any]
-            cell.textSection.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
-            cell.isSelected = false
+        let aString = self.cells[indexPath.item + 1] // +1 should be temp fix
+        if(indexPath.item == 0){
+            let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "title", for: indexPath)
+            if let cell: TitleCellTableViewCell = cell as? TitleCellTableViewCell {
+                let attributes = [NSFontAttributeName: font] as [String : Any]
+                cell.titleText.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
+                cell.isSelected = false
+            }
+            return cell
+        }else{
+            let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
+            if let cell: TextCell = cell as? TextCell {
+                let attributes = [NSFontAttributeName: font] as [String : Any]
+                cell.textSection.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
+                cell.isSelected = false
+            }
+            return cell
         }
-        return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -140,38 +163,36 @@ import UIKit
         let current_offset = tableView.contentOffset.y
         if tableView.isHidden || current_offset == self.content_offset { return }
         self.content_offset = current_offset
-        let textsource = tableView.visibleCells.filter({ (cell) -> Bool in
+        let textsource = tableView.visibleCells[1..<tableView.visibleCells.endIndex].filter({ (cell) -> Bool in
             let parent = cell.superview!
             return parent.bounds.intersects(cell.frame)
         }).flatMap({cell in (cell as! TextCell).textSection.text})
-       
-        if(textsource != self.recent){ //if statement is for repeats that happen at head of csv file (right when screen loads)
+        if textsource.first == self.recent.first { return } //if statement is for repeats that happen at head of csv file (right when screen loads)
             //but this if statement doesnt fix the problem
-            print(textsource.first)
-            print(textsource.last)
-            self.recent = textsource
-            var text = [String]()
-            var section = [String]()
-            
-            for line in textsource{
-                if(line == ""){
-                    text.append(section.joined(separator: " "))
-                    section = []
-                }else{
-                    section.append(line)
-                }
-            } //this for loop combines the sections together so it comes in split the same way as server
-            text.append(section.joined(separator: " "))
-            
-            
-            let cur = Date()
-            let currentString = self.formatter.string(from: cur)
-            
-            let data: [String: Any] = ["UDID":self.UDID, "type":self.type ?? "", "startTime":self.startString ?? "", "time": currentString, "article":self.articleLink ?? "", "text":text]
-            Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
-                if let e = error {print(e)}
-            })
-        }
+        self.recent = textsource
+        var text = [String]()
+        var section = [String]()
+        
+        for line in textsource{
+            if(line == ""){
+                text.append(section.joined(separator: " "))
+                section = []
+            }else{
+                section.append(line)
+            }
+        } //this for loop combines the sections together so it comes in split the same way as server
+        text.append(section.joined(separator: " "))
+        
+        
+        let cur = Date()
+        let currentString = self.formatter.string(from: cur)
+        let last_sent_string = self.formatter.string(from: self.last_sent)
+        let data: [String: Any] = ["UDID":self.UDID, "type":self.type ?? "", "appeared":last_sent_string, "time": currentString, "article":self.articleLink ?? "", "first_line":textsource.first ?? "", "last_line":textsource.last ?? ""]
+        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
+            if let e = error {print(e)}
+        })
+        self.last_sent = Date()
+        
         
     }
     
