@@ -173,8 +173,7 @@ import UIKit
                 return "Title Card"
             }
         })
-        if textsource.first != "Title Card" && textsource.first == self.recent.first { return } //if statement is for repeats that happen at head of csv file (right when screen loads)
-            //but this if statement doesnt fix the problem
+        if textsource.last == self.recent.last { return }
         self.recent = textsource
         var text = [String]()
         var section = [String]()
@@ -193,7 +192,7 @@ import UIKit
         let cur = Date()
         let currentString = self.formatter.string(from: cur)
         let last_sent_string = self.formatter.string(from: self.last_sent)
-        let data: [String: Any] = ["UDID":self.UDID, "type":self.type ?? "", "appeared":last_sent_string, "time": currentString, "article":self.articleLink ?? "", "first_line":textsource.first ?? "", "last_line":textsource.last ?? "", "content_offset":content_offset]
+        let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startString, "appeared":last_sent_string, "time": currentString, "first_line":textsource.first ?? "", "last_line":textsource.last ?? "", "content_offset":content_offset ]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })

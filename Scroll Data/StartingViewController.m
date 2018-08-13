@@ -19,10 +19,12 @@
 // https://www.nytimes.com/2017/02/01/magazine/the-misunderstood-genius-of-russell-westbrook.html
 // https://www.nytimes.com/2017/11/22/us/politics/alliance-defending-freedom-gay-rights.html
 // https://www.nytimes.com/2017/11/21/technology/bitcoin-bitfinex-tether.html
+// https://www.nytimes.com/2018/08/12/movies/the-meg-surprise-box-office-monster.html
+// https://www.nytimes.com/2018/08/10/arts/design/tulsa-park-gathering-place.html
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.articleLink.text = @"https://www.nytimes.com/2017/11/21/technology/bitcoin-bitfinex-tether.html";
+    self.articleLink.text = @"https://www.nytimes.com/2018/08/12/movies/the-meg-surprise-box-office-monster.html";
     [self.startButton setTitle:@"Tap to Start Reading" forState:UIControlStateNormal];
 }
 
