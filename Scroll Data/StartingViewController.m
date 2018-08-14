@@ -21,10 +21,11 @@
 // https://www.nytimes.com/2017/11/21/technology/bitcoin-bitfinex-tether.html
 // https://www.nytimes.com/2018/08/12/movies/the-meg-surprise-box-office-monster.html
 // https://www.nytimes.com/2018/08/10/arts/design/tulsa-park-gathering-place.html
+// https://www.nytimes.com/2018/08/13/world/europe/erdogan-turkey-lira-crisis.html
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.articleLink.text = @"https://www.nytimes.com/2018/08/12/movies/the-meg-surprise-box-office-monster.html";
+    self.articleLink.text = @"https://www.nytimes.com/2018/08/13/world/europe/erdogan-turkey-lira-crisis.html";
     [self.startButton setTitle:@"Tap to Start Reading" forState:UIControlStateNormal];
 }
 

@@ -189,7 +189,7 @@ import UIKit
         text.append(section.joined(separator: " "))
         
         
-        let cur = Date()
+        let cur = Date() // need to update date so it is more specific (time from 1970 or absolute time)
         let currentString = self.formatter.string(from: cur)
         let last_sent_string = self.formatter.string(from: self.last_sent)
         let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startString, "appeared":last_sent_string, "time": currentString, "first_line":textsource.first ?? "", "last_line":textsource.last ?? "", "content_offset":content_offset ]
@@ -214,7 +214,8 @@ import UIKit
     //where we process the individual line cells
     func createCells(text:[String], attributes:[String:Any]) -> [String] {
         var cells = [String].init()
-        for section in text{
+        cells.append(text[0])
+        for section in text.dropFirst(){
             var words = section.split(separator: " ").map({substring in
                 return String.init(substring)
             })

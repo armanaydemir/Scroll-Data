@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="67l-c2-P28">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="67l-c2-P28">
     <device id="ipad12_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -21,27 +21,38 @@
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2aw-Lr-itO">
+                                <rect key="frame" x="10" y="114" width="921.5" height="109"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3kY-ON-KaG">
-                                <rect key="frame" x="489" y="668" width="46" height="30"/>
+                                <rect key="frame" x="941.5" y="153.5" width="72.5" height="30"/>
                                 <state key="normal" title="Button"/>
                                 <connections>
                                     <action selector="startReading:" destination="mbO-Jk-rj2" eventType="touchUpInside" id="LdJ-hH-8XP"/>
                                 </connections>
                             </button>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2aw-Lr-itO">
-                                <rect key="frame" x="16" y="574" width="992" height="30"/>
-                                <nil key="textColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ZxO-p4-z4r">
+                                <rect key="frame" x="-20" y="273" width="1024" height="1093"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="3kY-ON-KaG" firstAttribute="centerX" secondItem="xSG-2C-ts7" secondAttribute="centerX" id="2cy-C3-vaU"/>
-                            <constraint firstItem="3kY-ON-KaG" firstAttribute="top" secondItem="2aw-Lr-itO" secondAttribute="bottom" constant="64" id="5HW-3d-ldF"/>
-                            <constraint firstItem="2aw-Lr-itO" firstAttribute="centerX" secondItem="xSG-2C-ts7" secondAttribute="centerX" id="M2d-OH-gFh"/>
-                            <constraint firstItem="3kY-ON-KaG" firstAttribute="centerY" secondItem="xSG-2C-ts7" secondAttribute="centerY" id="dZo-Hy-wui"/>
-                            <constraint firstItem="2aw-Lr-itO" firstAttribute="leading" secondItem="xSG-2C-ts7" secondAttribute="leading" constant="16" id="nZI-E4-mMe"/>
+                            <constraint firstItem="2aw-Lr-itO" firstAttribute="width" secondItem="xSG-2C-ts7" secondAttribute="width" multiplier="0.9" id="2Qn-ee-gc6"/>
+                            <constraint firstItem="3kY-ON-KaG" firstAttribute="leading" secondItem="2aw-Lr-itO" secondAttribute="trailing" constant="10" id="Fw3-ia-d2L"/>
+                            <constraint firstItem="ZxO-p4-z4r" firstAttribute="width" secondItem="xSG-2C-ts7" secondAttribute="width" id="LkQ-Xl-Rad"/>
+                            <constraint firstAttribute="trailing" secondItem="ZxO-p4-z4r" secondAttribute="trailing" constant="20" id="TVb-rf-bCA"/>
+                            <constraint firstItem="ZxO-p4-z4r" firstAttribute="leading" secondItem="xSG-2C-ts7" secondAttribute="leading" constant="-20" id="VO2-xd-6jD"/>
+                            <constraint firstItem="ZxO-p4-z4r" firstAttribute="height" secondItem="xSG-2C-ts7" secondAttribute="height" multiplier="0.8" id="clm-0B-u4H"/>
+                            <constraint firstItem="2aw-Lr-itO" firstAttribute="centerY" secondItem="3kY-ON-KaG" secondAttribute="centerY" id="duD-5Y-Q2d"/>
+                            <constraint firstAttribute="trailing" secondItem="3kY-ON-KaG" secondAttribute="trailing" constant="10" id="duM-Mu-Ux5"/>
+                            <constraint firstItem="22z-Ve-phJ" firstAttribute="top" secondItem="ZxO-p4-z4r" secondAttribute="bottom" id="j1S-Me-kPe"/>
+                            <constraint firstItem="2aw-Lr-itO" firstAttribute="top" secondItem="aRf-OE-Oox" secondAttribute="bottom" priority="750" constant="50" id="sAA-zA-TfW"/>
+                            <constraint firstItem="2aw-Lr-itO" firstAttribute="leading" secondItem="xSG-2C-ts7" secondAttribute="leading" constant="10" id="xBu-AF-gOH"/>
+                            <constraint firstItem="2aw-Lr-itO" firstAttribute="bottom" secondItem="ZxO-p4-z4r" secondAttribute="top" priority="250" constant="-50" id="yUR-PC-iyr"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="hTg-FQ-wxj"/>
@@ -53,7 +64,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QdG-nT-2Hg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-835" y="102"/>
+            <point key="canvasLocation" x="-799" y="84"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="2Ub-qL-TS5">
