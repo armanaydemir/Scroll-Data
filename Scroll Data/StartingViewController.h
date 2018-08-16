@@ -13,4 +13,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *startButton;
 
 @property (weak, nonatomic) IBOutlet UITextField *articleLink;
+
+@property (weak, nonatomic) IBOutlet UITableView *articles;
 @end

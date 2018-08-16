@@ -44,9 +44,6 @@ import UIKit
             guard let value = element.value as? Int8 , value != 0 else { return identifier }
             return identifier! + String(UnicodeScalar(UInt8(value)))
         }
-    
-        self.formatter.setLocalizedDateFormatFromTemplate("dd-MM-yyyy HH:mm:ss.SSS")
-        self.startString = formatter.string(from: self.startTime)
         
         let attributes = [NSFontAttributeName: font] as [String : Any]
         let model = UIDevice.current.model
@@ -188,11 +185,10 @@ import UIKit
         } //this for loop combines the sections together so it comes in split the same way as server
         text.append(section.joined(separator: " "))
         
-        
-        let cur = Date() // need to update date so it is more specific (time from 1970 or absolute time)
-        let currentString = self.formatter.string(from: cur)
+        let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent() // need to update date so it is more specific (time from 1970 or absolute time)
+        print(cur)
         let last_sent_string = self.formatter.string(from: self.last_sent)
-        let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startString, "appeared":last_sent_string, "time": currentString, "first_line":textsource.first ?? "", "last_line":textsource.last ?? "", "content_offset":content_offset ]
+        let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startString, "appeared":last_sent_string, "time": cur*100000, "first_line":textsource.first ?? "", "last_line":textsource.last ?? "", "content_offset":content_offset ]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })

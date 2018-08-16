@@ -58,6 +58,7 @@
                     <navigationItem key="navigationItem" id="hTg-FQ-wxj"/>
                     <connections>
                         <outlet property="articleLink" destination="2aw-Lr-itO" id="ha0-0X-cOp"/>
+                        <outlet property="articles" destination="ZxO-p4-z4r" id="rOs-CU-dvs"/>
                         <outlet property="startButton" destination="3kY-ON-KaG" id="cGz-MN-Xy1"/>
                         <segue destination="BYZ-38-t0r" kind="show" identifier="startReading" id="Yfa-VD-xhn"/>
                     </connections>

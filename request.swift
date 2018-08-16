@@ -22,7 +22,7 @@ func + <K,V>(left: Dictionary<K,V>, right: Dictionary<K,V>) -> Dictionary<K,V> {
 public class Networking:NSObject {
 
     public class func request(headers: [String : String]?, method: String, fullEndpoint: String, body: [String : Any]?, completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
-        print(fullEndpoint)
+        //print(fullEndpoint)
         let defaultSession = URLSession(configuration: URLSessionConfiguration.default)
         defaultSession.configuration.httpCookieAcceptPolicy = .always
         
