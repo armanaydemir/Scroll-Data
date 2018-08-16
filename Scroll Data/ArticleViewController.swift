@@ -22,6 +22,7 @@ import UIKit
     var content_offset:CGFloat?
     let UDID = UIDevice.current.identifierForVendor!.uuidString
     var type: String?
+    let timeOffset:Double = 10000000
     
     @IBOutlet weak var table: UITableView?
     @IBOutlet weak var spinner: UIActivityIndicatorView?
@@ -149,7 +150,7 @@ import UIKit
     
     func closeArticleWithServer() -> Void {
         print("sending end of data signal to server for this reading session")
-        let data: [String: Any] = ["UDID":self.UDID, "type":self.type ?? "", "startTime":self.startTime*100000, "article":self.articleLink ?? "", "text": self.text.description, "title":self.text[0]]
+        let data: [String: Any] = ["UDID":self.UDID, "type":self.type ?? "", "startTime":self.startTime*timeOffset, "article":self.articleLink ?? "", "text": self.text.description, "title":self.text[0], "time":CFAbsoluteTimeGetCurrent()*timeOffset]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/close_article", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })
@@ -185,7 +186,7 @@ import UIKit
         
         let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent() // need to update date so it is more specific (time from 1970 or absolute time)
         print(cur)
-        let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startTime*100000, "appeared":self.last_sent*100000, "time": cur*100000, "first_line":textsource.first ?? "", "last_line":textsource.last ?? "", "content_offset":content_offset ?? "error null" ]
+        let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startTime*timeOffset, "appeared":self.last_sent*timeOffset, "time": cur*timeOffset, "first_line":textsource.first ?? "", "last_line":textsource.last ?? "", "content_offset":content_offset ?? "error null" ]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })
