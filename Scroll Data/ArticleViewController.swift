@@ -13,11 +13,10 @@ import UIKit
     
     var text: Array<String> = []
     var cells: Array<String> = []
-    var startTime = Date();
-    var startString: String?
+    var startTime = CFAbsoluteTimeGetCurrent()
     var articleLink: String?
     var recent = [String]()
-    var last_sent = Date();
+    var last_sent = CFAbsoluteTimeGetCurrent()
     let paragraphStyle = NSMutableParagraphStyle()
     let font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
     var content_offset:CGFloat?
@@ -151,7 +150,7 @@ import UIKit
     
     func closeArticleWithServer() -> Void {
         print("sending end of data signal to server for this reading session")
-        let data: [String: Any] = ["UDID":self.UDID, "type":self.type ?? "", "startTime":self.startString ?? "", "article":self.articleLink ?? ""]
+        let data: [String: Any] = ["UDID":self.UDID, "type":self.type ?? "", "startTime":self.startTime*100000 ?? "", "article":self.articleLink ?? ""]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/close_article", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })
@@ -187,12 +186,11 @@ import UIKit
         
         let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent() // need to update date so it is more specific (time from 1970 or absolute time)
         print(cur)
-        let last_sent_string = self.formatter.string(from: self.last_sent)
-        let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startString, "appeared":last_sent_string, "time": cur*100000, "first_line":textsource.first ?? "", "last_line":textsource.last ?? "", "content_offset":content_offset ]
+        let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startTime*100000, "appeared":self.last_sent*100000, "time": cur*100000, "first_line":textsource.first ?? "", "last_line":textsource.last ?? "", "content_offset":content_offset ]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })
-        self.last_sent = Date()
+        self.last_sent = cur
         
         
     }
