@@ -149,7 +149,7 @@ import UIKit
     
     func closeArticleWithServer() -> Void {
         print("sending end of data signal to server for this reading session")
-        let data: [String: Any] = ["UDID":self.UDID, "type":self.type ?? "", "startTime":self.startTime*100000, "article":self.articleLink ?? "", "text":self.text, "title":self.text[0]]
+        let data: [String: Any] = ["UDID":self.UDID, "type":self.type ?? "", "startTime":self.startTime*100000, "article":self.articleLink ?? "", "text": self.text.description, "title":self.text[0]]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/close_article", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })
