@@ -15,4 +15,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *articleLink;
 
 @property (weak, nonatomic) IBOutlet UITableView *articles;
+
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadIndicator;
+
 @end

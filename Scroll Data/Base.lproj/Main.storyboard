@@ -34,6 +34,10 @@
                                     <action selector="startReading:" destination="mbO-Jk-rj2" eventType="touchUpInside" id="LdJ-hH-8XP"/>
                                 </connections>
                             </button>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="GD0-jN-B0g">
+                                <rect key="frame" x="502" y="673" width="20" height="20"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </activityIndicatorView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ZxO-p4-z4r">
                                 <rect key="frame" x="-20" y="273" width="1024" height="1093"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -59,6 +63,7 @@
                     <connections>
                         <outlet property="articleLink" destination="2aw-Lr-itO" id="ha0-0X-cOp"/>
                         <outlet property="articles" destination="ZxO-p4-z4r" id="rOs-CU-dvs"/>
+                        <outlet property="loadIndicator" destination="GD0-jN-B0g" id="U7K-5G-Gwu"/>
                         <outlet property="startButton" destination="3kY-ON-KaG" id="cGz-MN-Xy1"/>
                         <segue destination="BYZ-38-t0r" kind="show" identifier="startReading" id="Yfa-VD-xhn"/>
                     </connections>
