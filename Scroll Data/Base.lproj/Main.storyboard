@@ -31,7 +31,7 @@
                                 <rect key="frame" x="941.5" y="153.5" width="72.5" height="30"/>
                                 <state key="normal" title="Button"/>
                                 <connections>
-                                    <action selector="startReading:" destination="mbO-Jk-rj2" eventType="touchUpInside" id="LdJ-hH-8XP"/>
+                                    <action selector="startReading:" destination="mbO-Jk-rj2" eventType="touchUpInside" id="7gf-fg-wk5"/>
                                 </connections>
                             </button>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="GD0-jN-B0g">
@@ -61,10 +61,10 @@
                     </view>
                     <navigationItem key="navigationItem" id="hTg-FQ-wxj"/>
                     <connections>
-                        <outlet property="articleLink" destination="2aw-Lr-itO" id="ha0-0X-cOp"/>
-                        <outlet property="articles" destination="ZxO-p4-z4r" id="rOs-CU-dvs"/>
-                        <outlet property="loadIndicator" destination="GD0-jN-B0g" id="U7K-5G-Gwu"/>
-                        <outlet property="startButton" destination="3kY-ON-KaG" id="cGz-MN-Xy1"/>
+                        <outlet property="articleLink" destination="2aw-Lr-itO" id="WJL-QD-phY"/>
+                        <outlet property="articles" destination="ZxO-p4-z4r" id="YrP-uW-6uz"/>
+                        <outlet property="loadIndicator" destination="GD0-jN-B0g" id="Qe5-vR-DdF"/>
+                        <outlet property="startButton" destination="3kY-ON-KaG" id="uZR-CX-0sx"/>
                         <segue destination="BYZ-38-t0r" kind="show" identifier="startReading" id="Yfa-VD-xhn"/>
                     </connections>
                 </viewController>
