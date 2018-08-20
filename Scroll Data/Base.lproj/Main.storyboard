@@ -12,7 +12,7 @@
         <!--Starting View Controller-->
         <scene sceneID="QCc-eC-Dzc">
             <objects>
-                <viewController id="mbO-Jk-rj2" customClass="StartingViewController" sceneMemberID="viewController">
+                <viewController id="mbO-Jk-rj2" customClass="StartingViewController" customModule="Scroll_Data" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="aRf-OE-Oox"/>
                         <viewControllerLayoutGuide type="bottom" id="22z-Ve-phJ"/>
