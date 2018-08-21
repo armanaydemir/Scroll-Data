@@ -8,9 +8,10 @@
 
 import UIKit
 
-class StartingViewController: UIViewController {
-    var articles: Array<Any> = []
+class StartingViewController: UIViewController,UITableViewDataSource, UITableViewDelegate {
+    var articles: Array<[String : String]> = []
     var titles: Array<String> = []
+    let font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
     @IBOutlet weak var articleLink: UITextField!
     @IBOutlet weak var loadIndicator: UIActivityIndicatorView!
     
@@ -34,9 +35,12 @@ class StartingViewController: UIViewController {
         Networking.request(headers:nil, method: "GET", fullEndpoint: "http://159.203.207.54:22364/articles", body: nil, completion: { data, response, error in
             if let dataExists = data, error == nil {
                 do {
-                    if let articles = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<Any> {
-                        print(articles)
-                    
+                    if let articles = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<[String : String]> {
+                        self.articles = articles
+                        self.titles = articles.map {$0["title"]!}
+                        print(self.articles)
+                        print(self.titles)
+                        
                     } else {
                         throw NSError(domain: "invalid json", code: 1, userInfo: nil)
                     }
@@ -51,11 +55,35 @@ class StartingViewController: UIViewController {
             DispatchQueue.main.async{
                 loadIndicator.stopAnimating()
                 table.reloadData()
-                
+                table.isHidden = false
                 
             }
         })
+        table.dataSource = self
+        table.delegate = self
+        table.register(UINib.init(nibName: "TextCell", bundle: nil), forCellReuseIdentifier: "default")
+        table.rowHeight = UITableViewAutomaticDimension
     }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.articles.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let aString = self.titles[indexPath.item]
+        let attributes = [NSFontAttributeName: font] as [String : Any]
+        let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
+        if let cell: TextCell = cell as? TextCell {
+            cell.textSection.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
+        }
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.articleLink.text = self.articles[indexPath.item]["article_link"]
+        self.performSegue(withIdentifier: "startReading", sender: self)
+    }
+
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
