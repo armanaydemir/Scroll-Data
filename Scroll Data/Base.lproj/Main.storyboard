@@ -12,7 +12,7 @@
         <!--Starting View Controller-->
         <scene sceneID="QCc-eC-Dzc">
             <objects>
-                <viewController id="mbO-Jk-rj2" customClass="StartingViewController" customModule="Scroll_Data" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="mbO-Jk-rj2" customClass="StartingViewController" customModule="Scroll_Data" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="aRf-OE-Oox"/>
                         <viewControllerLayoutGuide type="bottom" id="22z-Ve-phJ"/>
@@ -62,9 +62,9 @@
                     <navigationItem key="navigationItem" id="hTg-FQ-wxj"/>
                     <connections>
                         <outlet property="articleLink" destination="2aw-Lr-itO" id="WJL-QD-phY"/>
-                        <outlet property="articles" destination="ZxO-p4-z4r" id="YrP-uW-6uz"/>
                         <outlet property="loadIndicator" destination="GD0-jN-B0g" id="Qe5-vR-DdF"/>
                         <outlet property="startButton" destination="3kY-ON-KaG" id="uZR-CX-0sx"/>
+                        <outlet property="table" destination="ZxO-p4-z4r" id="ufa-8X-OgO"/>
                         <segue destination="BYZ-38-t0r" kind="show" identifier="startReading" id="Yfa-VD-xhn"/>
                     </connections>
                 </viewController>
