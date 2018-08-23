@@ -23,6 +23,7 @@ import UIKit
     let UDID = UIDevice.current.identifierForVendor!.uuidString
     var type: String?
     let timeOffset:Double = 10000000
+    var checker:CGFloat?
     
     @IBOutlet weak var table: UITableView?
     @IBOutlet weak var spinner: UIActivityIndicatorView?
@@ -61,11 +62,13 @@ import UIKit
         table.isHidden = true;
         spinner.hidesWhenStopped = true
         spinner.startAnimating()
+        
         Networking.request(headers:nil, method: "GET", fullEndpoint: "http://159.203.207.54:22364", body: ["articleLink":self.articleLink ?? "", "UDID":self.UDID], completion: { data, response, error in
             if let dataExists = data, error == nil {
                 do {
                     if let text = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<String> {
                         self.text = text
+                        
                         self.cells = self.createCells(text: text, attributes: attributes)
                     } else {
                         throw NSError(domain: "invalid json", code: 1, userInfo: nil)
@@ -184,7 +187,7 @@ import UIKit
         } //this for loop combines the sections together so it comes in split the same way as server
         text.append(section.joined(separator: " "))
         
-        let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent() // need to update date so it is more specific (time from 1970 or absolute time)
+        let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
         print(cur)
         let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startTime*timeOffset, "appeared":self.last_sent*timeOffset, "time": cur*timeOffset, "first_line":textsource.first ?? "", "last_line":textsource.last ?? "", "content_offset":content_offset ?? "error null" ]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
@@ -196,17 +199,22 @@ import UIKit
     }
     
     func cellFit(string:String, attributes:[String: Any]) -> Bool {
-        guard let table = self.table else {
-            print("not table exists, this should never happen")
+        guard let checker = self.checker else {
+            //print("not table exists, this should never happen")
+            print("error in cellFit")
             return false
         }
         
-        let checker = min(table.frame.size.width, table.frame.size.height)
         return (string as NSString).size(attributes: attributes).width < checker - 32
     }
     
     //where we process the individual line cells
     func createCells(text:[String], attributes:[String:Any]) -> [String] {
+        guard let table = self.table else {
+            print("no table in createCells")
+            return []
+        }
+        self.checker = min(table.frame.size.width, table.frame.size.height)
         var cells = [String].init()
         cells.append(text[0])
         for section in text.dropFirst(){

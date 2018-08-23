@@ -13,8 +13,6 @@ class TitleCellTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
-        self.backgroundColor = UIColor.yellow
     }
     
     
