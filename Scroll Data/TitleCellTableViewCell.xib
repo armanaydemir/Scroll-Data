@@ -18,7 +18,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FZc-YK-QkO">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FZc-YK-QkO">
                         <rect key="frame" x="50" y="12" width="42" height="21"/>
                         <accessibility key="accessibilityConfiguration">
                             <accessibilityTraits key="traits" none="YES"/>
@@ -30,6 +30,7 @@
                 </subviews>
                 <constraints>
                     <constraint firstItem="FZc-YK-QkO" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="cgP-bV-cSC"/>
+                    <constraint firstItem="FZc-YK-QkO" firstAttribute="width" secondItem="H2p-sc-9uM" secondAttribute="width" id="iDs-PX-Sq1"/>
                     <constraint firstItem="FZc-YK-QkO" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="wc8-1I-FWI"/>
                 </constraints>
             </tableViewCellContentView>
