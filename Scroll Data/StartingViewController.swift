@@ -9,9 +9,10 @@
 import UIKit
 
 class StartingViewController: UIViewController,UITableViewDataSource, UITableViewDelegate {
-    var articles: Array<[String : String]> = []
+    var articles: Array<[String : Any]> = []
     var titles: Array<String> = []
     let font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
+    var link = ""
     @IBOutlet weak var articleLink: UITextField!
     @IBOutlet weak var loadIndicator: UIActivityIndicatorView!
     
@@ -20,6 +21,7 @@ class StartingViewController: UIViewController,UITableViewDataSource, UITableVie
     @IBOutlet weak var startButton: UIButton!
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         self.articleLink.text = "https://www.nytimes.com/2018/08/13/world/europe/erdogan-turkey-lira-crisis.html"
         self.startButton.setTitle("Tap tp Start Reading", for: UIControlState.normal)
@@ -35,16 +37,17 @@ class StartingViewController: UIViewController,UITableViewDataSource, UITableVie
         Networking.request(headers:nil, method: "GET", fullEndpoint: "http://159.203.207.54:22364/articles", body: nil, completion: { data, response, error in
             if let dataExists = data, error == nil {
                 do {
-                    if let articles = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<[String : String]> {
+                    if let articles = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<[String : Any]> {
                         self.articles = articles
-                        self.titles = articles.map {$0["title"]!}
+                        self.titles = articles.map {$0["title"]!} as! Array<String> //be careful, title must be string
                         print(self.articles)
                         print(self.titles)
-                        
+                        self.titles.insert("go to your pasteboard", at: 0)
                     } else {
                         throw NSError(domain: "invalid json", code: 1, userInfo: nil)
                     }
                 }catch let err{
+                    print(data)
                     print("invalidddd")
                 }
             }else{
@@ -80,7 +83,12 @@ class StartingViewController: UIViewController,UITableViewDataSource, UITableVie
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.articleLink.text = self.articles[indexPath.item]["article_link"]
+        if(indexPath.item != 0){
+            self.link = self.articles[indexPath.item]["article_link"] as! String
+        }else{
+            print(UIPasteboard.general.string)
+            self.link = UIPasteboard.general.string ?? "uhoh"
+        }
         self.performSegue(withIdentifier: "startReading", sender: self)
     }
 

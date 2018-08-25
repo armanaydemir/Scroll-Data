@@ -68,7 +68,6 @@ import UIKit
                 do {
                     if let text = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<String> {
                         self.text = text
-                        
                         self.cells = self.createCells(text: text, attributes: attributes)
                     } else {
                         throw NSError(domain: "invalid json", code: 1, userInfo: nil)
