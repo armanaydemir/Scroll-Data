@@ -5,7 +5,6 @@
     </device>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -21,49 +20,26 @@
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2aw-Lr-itO">
-                                <rect key="frame" x="10" y="114" width="921.5" height="109"/>
-                                <nil key="textColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3kY-ON-KaG">
-                                <rect key="frame" x="941.5" y="153.5" width="72.5" height="30"/>
-                                <state key="normal" title="Button"/>
-                                <connections>
-                                    <action selector="startReading:" destination="mbO-Jk-rj2" eventType="touchUpInside" id="7gf-fg-wk5"/>
-                                </connections>
-                            </button>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="GD0-jN-B0g">
                                 <rect key="frame" x="502" y="673" width="20" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </activityIndicatorView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ZxO-p4-z4r">
-                                <rect key="frame" x="-20" y="273" width="1024" height="1093"/>
+                                <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="2aw-Lr-itO" firstAttribute="width" secondItem="xSG-2C-ts7" secondAttribute="width" multiplier="0.9" id="2Qn-ee-gc6"/>
-                            <constraint firstItem="3kY-ON-KaG" firstAttribute="leading" secondItem="2aw-Lr-itO" secondAttribute="trailing" constant="10" id="Fw3-ia-d2L"/>
+                            <constraint firstItem="ZxO-p4-z4r" firstAttribute="height" secondItem="xSG-2C-ts7" secondAttribute="height" id="5CO-YF-6nq"/>
                             <constraint firstItem="ZxO-p4-z4r" firstAttribute="width" secondItem="xSG-2C-ts7" secondAttribute="width" id="LkQ-Xl-Rad"/>
-                            <constraint firstAttribute="trailing" secondItem="ZxO-p4-z4r" secondAttribute="trailing" constant="20" id="TVb-rf-bCA"/>
-                            <constraint firstItem="ZxO-p4-z4r" firstAttribute="leading" secondItem="xSG-2C-ts7" secondAttribute="leading" constant="-20" id="VO2-xd-6jD"/>
-                            <constraint firstItem="ZxO-p4-z4r" firstAttribute="height" secondItem="xSG-2C-ts7" secondAttribute="height" multiplier="0.8" id="clm-0B-u4H"/>
-                            <constraint firstItem="2aw-Lr-itO" firstAttribute="centerY" secondItem="3kY-ON-KaG" secondAttribute="centerY" id="duD-5Y-Q2d"/>
-                            <constraint firstAttribute="trailing" secondItem="3kY-ON-KaG" secondAttribute="trailing" constant="10" id="duM-Mu-Ux5"/>
-                            <constraint firstItem="22z-Ve-phJ" firstAttribute="top" secondItem="ZxO-p4-z4r" secondAttribute="bottom" id="j1S-Me-kPe"/>
-                            <constraint firstItem="2aw-Lr-itO" firstAttribute="top" secondItem="aRf-OE-Oox" secondAttribute="bottom" priority="750" constant="50" id="sAA-zA-TfW"/>
-                            <constraint firstItem="2aw-Lr-itO" firstAttribute="leading" secondItem="xSG-2C-ts7" secondAttribute="leading" constant="10" id="xBu-AF-gOH"/>
-                            <constraint firstItem="2aw-Lr-itO" firstAttribute="bottom" secondItem="ZxO-p4-z4r" secondAttribute="top" priority="250" constant="-50" id="yUR-PC-iyr"/>
+                            <constraint firstItem="ZxO-p4-z4r" firstAttribute="centerY" secondItem="xSG-2C-ts7" secondAttribute="centerY" id="NAx-8B-Fpr"/>
+                            <constraint firstItem="ZxO-p4-z4r" firstAttribute="centerX" secondItem="xSG-2C-ts7" secondAttribute="centerX" id="Q8g-TL-7ah"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="hTg-FQ-wxj"/>
                     <connections>
-                        <outlet property="articleLink" destination="2aw-Lr-itO" id="WJL-QD-phY"/>
                         <outlet property="loadIndicator" destination="GD0-jN-B0g" id="Qe5-vR-DdF"/>
-                        <outlet property="startButton" destination="3kY-ON-KaG" id="uZR-CX-0sx"/>
                         <outlet property="table" destination="ZxO-p4-z4r" id="ufa-8X-OgO"/>
                         <segue destination="BYZ-38-t0r" kind="show" identifier="startReading" id="Yfa-VD-xhn"/>
                     </connections>

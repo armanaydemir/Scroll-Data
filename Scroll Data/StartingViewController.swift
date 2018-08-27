@@ -13,20 +13,15 @@ class StartingViewController: UIViewController,UITableViewDataSource, UITableVie
     var titles: Array<String> = []
     let font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
     var link = ""
-    @IBOutlet weak var articleLink: UITextField!
     @IBOutlet weak var loadIndicator: UIActivityIndicatorView!
     
-
     @IBOutlet weak var table: UITableView!
-    @IBOutlet weak var startButton: UIButton!
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        self.articleLink.text = "https://www.nytimes.com/2018/08/13/world/europe/erdogan-turkey-lira-crisis.html"
-        self.startButton.setTitle("Tap tp Start Reading", for: UIControlState.normal)
         // Do any additional setup after loading the view.
-        guard let table = self.table, let loadIndicator = self.loadIndicator, let startButton = self.startButton, let articleLink = self.articleLink else {
+        guard let table = self.table, let loadIndicator = self.loadIndicator else {
             print("couldn't connect starting vc outlets! bad things coming.....")
             return
         }
@@ -41,8 +36,9 @@ class StartingViewController: UIViewController,UITableViewDataSource, UITableVie
                         self.articles = articles
                         self.titles = articles.map {$0["title"]!} as! Array<String> //be careful, title must be string
                         print(self.articles)
-                        print(self.titles)
+                        
                         self.titles.insert("go to your pasteboard", at: 0)
+                        print(self.titles)
                     } else {
                         throw NSError(domain: "invalid json", code: 1, userInfo: nil)
                     }
@@ -51,6 +47,7 @@ class StartingViewController: UIViewController,UITableViewDataSource, UITableVie
                     print("invalidddd")
                 }
             }else{
+                self.titles = ["go to your pasteboard"]
                 print("server disconnect, gotta do somethin here")
                 //self.text[0] = "problem connecting to server";
             }
@@ -69,7 +66,7 @@ class StartingViewController: UIViewController,UITableViewDataSource, UITableVie
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.articles.count
+        return self.titles.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -84,7 +81,7 @@ class StartingViewController: UIViewController,UITableViewDataSource, UITableVie
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if(indexPath.item != 0){
-            self.link = self.articles[indexPath.item]["article_link"] as! String
+            self.link = self.articles[indexPath.item - 1]["article_link"] as! String
         }else{
             print(UIPasteboard.general.string)
             self.link = UIPasteboard.general.string ?? "uhoh"
@@ -109,7 +106,7 @@ class StartingViewController: UIViewController,UITableViewDataSource, UITableVie
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let vc = segue.destination
         if let destination:ArticleViewController = vc as? ArticleViewController {
-            destination.articleLink = self.articleLink.text;
+            destination.articleLink = self.link;
         }
     }
     

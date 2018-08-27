@@ -14,6 +14,7 @@ import UIKit
     var text: Array<String> = []
     var cells: Array<String> = []
     var startTime = CFAbsoluteTimeGetCurrent()
+    var recent_last: String?
     var articleLink: String?
     var recent = [String]()
     var last_sent = CFAbsoluteTimeGetCurrent()
@@ -73,9 +74,16 @@ import UIKit
                         throw NSError(domain: "invalid json", code: 1, userInfo: nil)
                     }
                 }catch let err{
-                    self.text[0] = err.localizedDescription;
+                    //this created an error where u hit back before it loads and it makes it go back twice creating a nothingness page
+                    self.text = [err.localizedDescription]
+                    self.cells = self.createCells(text: self.text, attributes: attributes)
+                    print("invalid url!!")
+                    //self.text[0] = err.localizedDescription;
                 }
             }else{
+                self.text = ["server disconnect"]
+                self.cells = self.createCells(text: self.text, attributes: attributes)
+                // _ = self.navigationController?.popViewController(animated: true)
                 print("server disconnect, gotta do somethin here")
                 //self.text[0] = "problem connecting to server";
             }
@@ -188,11 +196,12 @@ import UIKit
         
         let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
         print(cur)
-        let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startTime*timeOffset, "appeared":self.last_sent*timeOffset, "time": cur*timeOffset, "first_line":textsource.first ?? "", "last_line":textsource.last ?? "", "content_offset":content_offset ?? "error null" ]
+        let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startTime*timeOffset, "appeared":self.last_sent*timeOffset, "time": cur*timeOffset, "first_line":textsource.first ?? "", "last_line":textsource.last ?? "", "previous_last_line":self.recent_last ?? "", "content_offset":content_offset ?? "error null" ]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })
         self.last_sent = cur
+        self.recent_last = textsource.last
         
         
     }
