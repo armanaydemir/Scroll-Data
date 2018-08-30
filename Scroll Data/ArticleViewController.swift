@@ -13,6 +13,7 @@ import UIKit
     
     var text: Array<String> = []
     var cells: Array<String> = []
+    var index_list: Array<String> = []
     var startTime = CFAbsoluteTimeGetCurrent()
     var recent_last: String?
     var articleLink: String?
@@ -170,10 +171,12 @@ import UIKit
         let current_offset = tableView.contentOffset.y
         if tableView.isHidden || current_offset == self.content_offset { return }
         self.content_offset = current_offset
-        let textsource = tableView.visibleCells[0..<tableView.visibleCells.endIndex].filter({ (cell) -> Bool in
+        
+        let cellsource = tableView.visibleCells[0..<tableView.visibleCells.endIndex].filter({ (cell) -> Bool in
             let parent = cell.superview!
             return parent.bounds.intersects(cell.frame)
-        }).flatMap({cell in if let cell: TextCell = cell as? TextCell{
+        })
+        let textsource = cellsource.flatMap({cell in if let cell: TextCell = cell as? TextCell{
                 return cell.textSection.text
             }else{
                 return "Title Card"
@@ -183,7 +186,6 @@ import UIKit
         self.recent = textsource
         var text = [String]()
         var section = [String]()
-        
         for line in textsource{
             if(line == ""){
                 text.append(section.joined(separator: " "))
@@ -193,15 +195,20 @@ import UIKit
             }
         } //this for loop combines the sections together so it comes in split the same way as server
         text.append(section.joined(separator: " "))
-        
+        var first_index = tableView.indexPath(for: tableView.visibleCells.first!)?.item
+        var second_index = tableView.indexPath(for: tableView.visibleCells.last!)?.item
+        //print(index_list)
+        print(index_list[second_index!])
+        //print(self.table?.indexPath(for: tableView.visibleCells[tableView.visibleCells.startIndex]))
+        //print(self.table?.indexPath(for: tableView.visibleCells[tableView.visibleCells.endIndex]))
         let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
         print(cur)
-        let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startTime*timeOffset, "appeared":self.last_sent*timeOffset, "time": cur*timeOffset, "first_line":textsource.first ?? "", "last_line":textsource.last ?? "", "previous_last_line":self.recent_last ?? "", "content_offset":content_offset ?? "error null" ]
+        let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startTime*timeOffset, "appeared":self.last_sent*timeOffset, "time": cur*timeOffset, "first_line":index_list[first_index!] ?? "", "last_line":index_list[second_index!] ?? "", "previous_last_line":self.recent_last ?? "", "content_offset":content_offset ?? "error null" ]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })
         self.last_sent = cur
-        self.recent_last = textsource.last
+        self.recent_last = index_list[second_index!]
         
         
     }
@@ -218,6 +225,7 @@ import UIKit
     
     //where we process the individual line cells
     func createCells(text:[String], attributes:[String:Any]) -> [String] {
+        
         guard let table = self.table else {
             print("no table in createCells")
             return []
@@ -225,6 +233,8 @@ import UIKit
         self.checker = min(table.frame.size.width, table.frame.size.height)
         var cells = [String].init()
         cells.append(text[0])
+        var word_count = text[0].split(separator: " ").count
+        index_list.append(word_count.description)
         for section in text.dropFirst(){
             var words = section.split(separator: " ").map({substring in
                 return String.init(substring)
@@ -240,9 +250,11 @@ import UIKit
                         temp.append(w)
                     }
                 }
-                
+                word_count += cell.count
+                index_list.append(word_count.description)
                 cells.append(cell.joined(separator: " "))
             }
+            index_list.append(word_count.description)
             cells.append("")
         }
         cells.append("Tap here to submit data")
