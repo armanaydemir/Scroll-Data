@@ -80,13 +80,18 @@ class StartingViewController: UIViewController,UITableViewDataSource, UITableVie
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if(indexPath.item != 0){
-            self.link = self.articles[indexPath.item - 1]["article_link"] as! String
+        
+        if(indexPath.item == 0){
+            if let link = UIPasteboard.general.string {
+                print(link)
+                self.link = link
+                self.performSegue(withIdentifier: "startReading", sender: self)
+            }
         }else{
-            print(UIPasteboard.general.string)
-            self.link = UIPasteboard.general.string ?? "uhoh"
+            self.link = self.articles[indexPath.item - 1]["article_link"] as! String
+            self.performSegue(withIdentifier: "startReading", sender: self)
         }
-        self.performSegue(withIdentifier: "startReading", sender: self)
+        
     }
 
 

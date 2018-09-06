@@ -13,7 +13,7 @@ import UIKit
     
     var text: Array<String> = []
     var cells: Array<String> = []
-    var index_list: Array<String> = []
+    var index_list: Array<String> = ["0"]
     var startTime = CFAbsoluteTimeGetCurrent()
     var recent_last: String?
     var articleLink: String?
@@ -33,7 +33,7 @@ import UIKit
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: .UIApplicationWillResignActive, object: nil)
         guard let table = self.table, let spinner = self.spinner else {
             print("couldn't connect outlets! bad things coming.....")
             return
@@ -76,7 +76,7 @@ import UIKit
                     }
                 }catch let err{
                     //this created an error where u hit back before it loads and it makes it go back twice creating a nothingness page
-                    self.text = [err.localizedDescription]
+                    self.text = [err.localizedDescription, "Your copyboard had: " + self.articleLink! ?? ""]
                     self.cells = self.createCells(text: self.text, attributes: attributes)
                     print("invalid url!!")
                     //self.text[0] = err.localizedDescription;
@@ -195,10 +195,11 @@ import UIKit
             }
         } //this for loop combines the sections together so it comes in split the same way as server
         text.append(section.joined(separator: " "))
-        var first_index = tableView.indexPath(for: tableView.visibleCells.first!)?.item
-        var second_index = tableView.indexPath(for: tableView.visibleCells.last!)?.item
+        //need to fix this stuff for at the end
+        let first_index = tableView.indexPath(for: tableView.visibleCells.first!)?.item
+        let second_index = tableView.indexPath(for: tableView.visibleCells.last!)?.item
         //print(index_list)
-        print(index_list[second_index!])
+        //print(index_list[second_index!])
         //print(self.table?.indexPath(for: tableView.visibleCells[tableView.visibleCells.startIndex]))
         //print(self.table?.indexPath(for: tableView.visibleCells[tableView.visibleCells.endIndex]))
         let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
@@ -259,5 +260,9 @@ import UIKit
         }
         cells.append("Tap here to submit data")
         return cells
+    }
+    
+    @objc func willResignActive(_ notification: Notification) {
+        print("WOAH")
     }
 }
