@@ -264,5 +264,6 @@ import UIKit
     
     @objc func willResignActive(_ notification: Notification) {
         print("WOAH")
+        _ = navigationController?.popViewController(animated: true)
     }
 }
