@@ -10,7 +10,7 @@ import UIKit
 
 
 @objc class ArticleViewController: UIViewController,UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
-    
+    let version = "v0.1.1"
     var text: Array<String> = []
     var cells: Array<String> = []
     var index_list: Array<String> = ["0"]
@@ -161,7 +161,7 @@ import UIKit
     
     func closeArticleWithServer() -> Void {
         print("sending end of data signal to server for this reading session")
-        let data: [String: Any] = ["UDID":self.UDID, "type":self.type ?? "", "startTime":self.startTime*timeOffset, "article":self.articleLink ?? "", "text": self.text.description, "title":self.text[0], "time":CFAbsoluteTimeGetCurrent()*timeOffset]
+        let data: [String: Any] = ["UDID":self.UDID, "type":self.type ?? "", "startTime":self.startTime*timeOffset, "article":self.articleLink ?? "", "text": self.text.description, "title":self.text[0], "version":self.version, "time":CFAbsoluteTimeGetCurrent()*timeOffset]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/close_article", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })
