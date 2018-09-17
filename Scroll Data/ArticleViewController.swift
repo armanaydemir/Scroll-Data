@@ -10,7 +10,7 @@ import UIKit
 
 
 @objc class ArticleViewController: UIViewController,UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
-    let version = "v0.1.1"
+    let version = "v0.1.2"
     var text: Array<String> = []
     var cells: Array<String> = []
     var index_list: Array<String> = ["0"]
@@ -65,7 +65,7 @@ import UIKit
         spinner.hidesWhenStopped = true
         spinner.startAnimating()
         
-        Networking.request(headers:nil, method: "GET", fullEndpoint: "http://159.203.207.54:22364", body: ["articleLink":self.articleLink ?? "", "UDID":self.UDID], completion: { data, response, error in
+        Networking.request(headers:nil, method: "GET", fullEndpoint: "http://159.203.207.54:22364", body: ["article_link":self.articleLink ?? "", "UDID":self.UDID], completion: { data, response, error in
             if let dataExists = data, error == nil {
                 do {
                     if let text = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<String> {
