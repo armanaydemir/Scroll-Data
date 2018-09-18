@@ -10,10 +10,11 @@ import UIKit
 
 
 @objc class ArticleViewController: UIViewController,UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
-    let version = "v0.1.2"
+    let version = "v0.2.0"
     var text: Array<String> = []
     var cells: Array<String> = []
     var index_list: Array<String> = ["0"]
+    let timeOffset:Double = 10000000
     var startTime = CFAbsoluteTimeGetCurrent()
     var recent_last: String?
     var articleLink: String?
@@ -24,7 +25,7 @@ import UIKit
     var content_offset:CGFloat?
     let UDID = UIDevice.current.identifierForVendor!.uuidString
     var type: String?
-    let timeOffset:Double = 10000000
+    
     var checker:CGFloat?
     
     @IBOutlet weak var table: UITableView?
@@ -65,7 +66,7 @@ import UIKit
         spinner.hidesWhenStopped = true
         spinner.startAnimating()
         
-        Networking.request(headers:nil, method: "GET", fullEndpoint: "http://159.203.207.54:22364", body: ["article_link":self.articleLink ?? "", "UDID":self.UDID], completion: { data, response, error in
+        Networking.request(headers:nil, method: "GET", fullEndpoint: "http://159.203.207.54:22364/open_article", body: ["article_link":self.articleLink ?? "", "UDID":self.UDID, "startTime":self.startTime*timeOffset, "type":self.type ?? "", "version":self.version], completion: { data, response, error in
             if let dataExists = data, error == nil {
                 do {
                     if let text = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<String> {
