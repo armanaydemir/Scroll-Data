@@ -35,10 +35,10 @@ class StartingViewController: UIViewController,UITableViewDataSource, UITableVie
                     if let articles = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<[String : Any]> {
                         self.articles = articles
                         self.titles = articles.map {$0["title"]!} as! Array<String> //be careful, title must be string
-                        print(self.articles)
+                        //print(self.articles)
                         
                         self.titles.insert("go to your pasteboard", at: 0)
-                        print(self.titles)
+                        //print(self.titles)
                     } else {
                         throw NSError(domain: "invalid json", code: 1, userInfo: nil)
                     }
