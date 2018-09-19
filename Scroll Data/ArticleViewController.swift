@@ -11,6 +11,7 @@ import UIKit
 
 @objc class ArticleViewController: UIViewController,UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
     let version = "v0.2.0"
+    var session_id: String?
     var text: Array<String> = []
     var cells: Array<String> = []
     var index_list: Array<String> = ["0"]
@@ -70,6 +71,8 @@ import UIKit
             if let dataExists = data, error == nil {
                 do {
                     if let text = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<String> {
+                        self.session_id = text[0]
+                        text.remove(at: 0)
                         self.text = text
                         self.cells = self.createCells(text: text, attributes: attributes)
                     } else {
@@ -77,7 +80,7 @@ import UIKit
                     }
                 }catch let err{
                     //this created an error where u hit back before it loads and it makes it go back twice creating a nothingness page
-                    self.text = [err.localizedDescription, "Your copyboard had: " + self.articleLink! ?? ""]
+                    self.text = [err.localizedDescription, "Your copyboard had: " + self.articleLink! ]
                     self.cells = self.createCells(text: self.text, attributes: attributes)
                     print("invalid url!!")
                     //self.text[0] = err.localizedDescription;
@@ -205,7 +208,7 @@ import UIKit
         //print(self.table?.indexPath(for: tableView.visibleCells[tableView.visibleCells.endIndex]))
         let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
         print(cur)
-        let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startTime*timeOffset, "appeared":self.last_sent*timeOffset, "time": cur*timeOffset, "first_line":index_list[first_index!] ?? "", "last_line":index_list[second_index!] ?? "", "previous_last_line":self.recent_last ?? "", "content_offset":content_offset ?? "error null" ]
+        let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startTime*timeOffset, "appeared":self.last_sent*timeOffset, "time": cur*timeOffset, "first_line":index_list[first_index!] , "last_line":index_list[second_index!] , "previous_last_line":self.recent_last ?? "", "content_offset":content_offset ?? "error null" ]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })
