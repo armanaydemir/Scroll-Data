@@ -15,7 +15,7 @@ import UIKit
     var text: Array<String> = []
     var cells: Array<String> = []
     var index_list: Array<String> = ["0"]
-    let timeOffset:Double = 10000000
+    let timeOffset:Double = 1000000
     var startTime = CFAbsoluteTimeGetCurrent()
     var recent_last: String?
     var articleLink: String?
@@ -66,11 +66,11 @@ import UIKit
         table.isHidden = true;
         spinner.hidesWhenStopped = true
         spinner.startAnimating()
-        
-        Networking.request(headers:nil, method: "GET", fullEndpoint: "http://159.203.207.54:22364/open_article", body: ["article_link":self.articleLink ?? "", "UDID":self.UDID, "startTime":self.startTime*timeOffset, "type":self.type ?? "", "version":self.version], completion: { data, response, error in
+        let data: [String:Any] = ["article_link":self.articleLink ?? "", "UDID":self.UDID, "startTime":self.startTime*timeOffset, "type":self.type ?? "", "version":self.version]
+        Networking.request(headers:nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/open_article", body: data, completion: { data, response, error in
             if let dataExists = data, error == nil {
                 do {
-                    if let text = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<String> {
+                    if var text = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<String> {
                         self.session_id = text[0]
                         text.remove(at: 0)
                         self.text = text
@@ -164,8 +164,9 @@ import UIKit
     }
     
     func closeArticleWithServer() -> Void {
+        print(self.session_id ?? "")
         print("sending end of data signal to server for this reading session")
-        let data: [String: Any] = ["UDID":self.UDID, "type":self.type ?? "", "startTime":self.startTime*timeOffset, "article":self.articleLink ?? "", "text": self.text.description, "title":self.text[0], "version":self.version, "time":CFAbsoluteTimeGetCurrent()*timeOffset]
+        let data: [String: Any] = ["UDID":self.UDID, "startTime":self.startTime*timeOffset, "article":self.articleLink ?? "", "time":CFAbsoluteTimeGetCurrent()*timeOffset, "session_id":self.session_id ?? "", "complete":true]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/close_article", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })
@@ -207,7 +208,8 @@ import UIKit
         //print(self.table?.indexPath(for: tableView.visibleCells[tableView.visibleCells.startIndex]))
         //print(self.table?.indexPath(for: tableView.visibleCells[tableView.visibleCells.endIndex]))
         let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
-        print(cur)
+        //print(cur)
+        //print(self.last_sent*timeOffset)
         let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startTime*timeOffset, "appeared":self.last_sent*timeOffset, "time": cur*timeOffset, "first_line":index_list[first_index!] , "last_line":index_list[second_index!] , "previous_last_line":self.recent_last ?? "", "content_offset":content_offset ?? "error null" ]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
@@ -267,7 +269,10 @@ import UIKit
     }
     
     @objc func willResignActive(_ notification: Notification) {
-        print("WOAH")
+        let data: [String: Any] = ["UDID":self.UDID, "startTime":self.startTime*timeOffset, "article":self.articleLink ?? "", "time":CFAbsoluteTimeGetCurrent()*timeOffset, "session_id":self.session_id ?? "", "complete":false]
+        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/close_article", body: data, completion:  { data, response, error in
+            if let e = error {print(e)}
+        })
         _ = navigationController?.popViewController(animated: true)
     }
 }
