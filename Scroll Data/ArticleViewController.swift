@@ -15,7 +15,8 @@ import UIKit
     var text: Array<String> = []
     var cells: Array<String> = []
     var index_list: Array<String> = ["0"]
-    let timeOffset:Double = 1000000
+    let timeOffset:Double = 100000000
+    var complete = false
     var startTime = CFAbsoluteTimeGetCurrent()
     var recent_last: String?
     var articleLink: String?
@@ -166,10 +167,7 @@ import UIKit
     func closeArticleWithServer() -> Void {
         print(self.session_id ?? "")
         print("sending end of data signal to server for this reading session")
-        let data: [String: Any] = ["UDID":self.UDID, "startTime":self.startTime*timeOffset, "article":self.articleLink ?? "", "time":CFAbsoluteTimeGetCurrent()*timeOffset, "session_id":self.session_id ?? "", "complete":true]
-        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/close_article", body: data, completion:  { data, response, error in
-            if let e = error {print(e)}
-        })
+        self.complete = true
     }
     
     func sendTextToServer(tableView:UITableView) -> Void {
@@ -269,10 +267,14 @@ import UIKit
     }
     
     @objc func willResignActive(_ notification: Notification) {
-        let data: [String: Any] = ["UDID":self.UDID, "startTime":self.startTime*timeOffset, "article":self.articleLink ?? "", "time":CFAbsoluteTimeGetCurrent()*timeOffset, "session_id":self.session_id ?? "", "complete":false]
+        _ = navigationController?.popViewController(animated: true)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        let data: [String: Any] = ["UDID":self.UDID, "startTime":self.startTime*timeOffset, "article":self.articleLink ?? "", "time":CFAbsoluteTimeGetCurrent()*timeOffset, "session_id":self.session_id ?? "", "complete":self.complete]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/close_article", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })
-        _ = navigationController?.popViewController(animated: true)
     }
 }
