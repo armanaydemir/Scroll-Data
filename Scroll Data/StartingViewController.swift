@@ -66,6 +66,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         table.delegate = self
         table.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
+        
         table.register(UINib.init(nibName: "TextCell", bundle: nil), forCellReuseIdentifier: "default")
         table.rowHeight = UITableViewAutomaticDimension
     }
@@ -99,6 +100,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             }
             
             DispatchQueue.main.async{
+                let attributes = [NSFontAttributeName: self.font] as [String : Any]
+                self.refreshControl.attributedTitle = NSAttributedString(string: Date().description, attributes: attributes)
                 loadIndicator.stopAnimating()
                 table.reloadData()
                 table.isHidden = false
