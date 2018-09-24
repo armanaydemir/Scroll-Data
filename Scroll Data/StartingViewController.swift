@@ -27,46 +27,13 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             print("couldn't connect starting vc outlets! bad things coming.....")
             return
         }
-        table.isHidden = true;
-        loadIndicator.hidesWhenStopped = true
-        loadIndicator.startAnimating()
         
-        Networking.request(headers:nil, method: "GET", fullEndpoint: "http://159.203.207.54:22364/articles", body: nil, completion: { data, response, error in
-            if let dataExists = data, error == nil {
-                do {
-                    if let articles = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<[String : Any]> {
-                        self.articles = articles
-                        self.titles = articles.map {$0["title"]!} as! Array<String> //be careful, title must be string
-                        //print(self.articles)
-                        
-                        self.titles.insert("go to your pasteboard", at: 0)
-                        //print(self.titles)
-                    } else {
-                        throw NSError(domain: "invalid json", code: 1, userInfo: nil)
-                    }
-                }catch let err{
-                    print(data)
-                    print("invalidddd")
-                }
-            }else{
-                self.titles = ["go to your pasteboard"]
-                print("server disconnect, gotta do somethin here")
-                //self.text[0] = "problem connecting to server";
-            }
-            
-            DispatchQueue.main.async{
-                self.last_refresh = Date()
-                loadIndicator.stopAnimating()
-                table.reloadData()
-                table.isHidden = false
-                
-            }
-        })
+    
         table.dataSource = self
         table.delegate = self
         table.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
-        
+        self.fetchData()
         table.register(UINib.init(nibName: "TextCell", bundle: nil), forCellReuseIdentifier: "default")
         table.rowHeight = UITableViewAutomaticDimension
     }
@@ -81,7 +48,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
                 do {
                     if let articles = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<[String : Any]> {
                         self.articles = articles
-                        self.titles = articles.map {$0["title"]!} as! Array<String> //be careful, title must be string
+                        print(self.articles)
+                        self.titles = articles.map {$0["title"]} as! Array<String> //be careful, title must be string
                         //print(self.articles)
                         
                         self.titles.insert("go to your pasteboard", at: 0)
@@ -101,7 +69,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             
             DispatchQueue.main.async{
                 let attributes = [NSFontAttributeName: self.font] as [String : Any]
-                self.refreshControl.attributedTitle = NSAttributedString(string: Date().description, attributes: attributes)
+                self.refreshControl.attributedTitle = NSAttributedString(string: (Date().description), attributes: attributes)
                 loadIndicator.stopAnimating()
                 table.reloadData()
                 table.isHidden = false

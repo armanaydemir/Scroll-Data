@@ -41,6 +41,9 @@ import UIKit
             print("couldn't connect outlets! bad things coming.....")
             return
         }
+        table.isHidden = true;
+        spinner.hidesWhenStopped = true
+        spinner.startAnimating()
         
         var systemInfo = utsname()
         uname(&systemInfo)
@@ -64,9 +67,7 @@ import UIKit
         
         
         table.separatorStyle = UITableViewCellSeparatorStyle.none
-        table.isHidden = true;
-        spinner.hidesWhenStopped = true
-        spinner.startAnimating()
+        
         let data: [String:Any] = ["article_link":self.articleLink ?? "", "UDID":self.UDID, "startTime":self.startTime*timeOffset, "type":self.type ?? "", "version":self.version]
         Networking.request(headers:nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/open_article", body: data, completion: { data, response, error in
             if let dataExists = data, error == nil {
@@ -95,7 +96,7 @@ import UIKit
             }
             
             DispatchQueue.main.async{
-                spinner.stopAnimating()
+                
                 table.reloadData()
                 //this could definitely be better
                 DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(2000)) {
@@ -103,6 +104,7 @@ import UIKit
                             self.sendTextToServer(tableView: table)
                     })
                     RunLoop.main.add(timer, forMode: RunLoopMode.commonModes)
+                    spinner.stopAnimating()
                     table.isHidden = false
                     self.sendTextToServer(tableView: table)
                 }
