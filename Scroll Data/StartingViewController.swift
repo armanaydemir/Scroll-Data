@@ -8,9 +8,11 @@
 
 import UIKit
 
-class StartingViewController: UIViewController,UITableViewDataSource, UITableViewDelegate {
+class StartingViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+    private let refreshControl = UIRefreshControl()
     var articles: Array<[String : Any]> = []
     var titles: Array<String> = []
+    var last_refresh: Date?
     let font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
     var link = ""
     @IBOutlet weak var loadIndicator: UIActivityIndicatorView!
@@ -53,6 +55,7 @@ class StartingViewController: UIViewController,UITableViewDataSource, UITableVie
             }
             
             DispatchQueue.main.async{
+                self.last_refresh = Date()
                 loadIndicator.stopAnimating()
                 table.reloadData()
                 table.isHidden = false
@@ -61,8 +64,52 @@ class StartingViewController: UIViewController,UITableViewDataSource, UITableVie
         })
         table.dataSource = self
         table.delegate = self
+        table.refreshControl = refreshControl
+        refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
         table.register(UINib.init(nibName: "TextCell", bundle: nil), forCellReuseIdentifier: "default")
         table.rowHeight = UITableViewAutomaticDimension
+    }
+    private func fetchData() {
+        guard let table = self.table, let loadIndicator = self.loadIndicator else {
+            print("couldn't connect starting vc outlets! bad things coming.....")
+            return
+        }
+        loadIndicator.startAnimating()
+        Networking.request(headers:nil, method: "GET", fullEndpoint: "http://159.203.207.54:22364/articles", body: nil, completion: { data, response, error in
+            if let dataExists = data, error == nil {
+                do {
+                    if let articles = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<[String : Any]> {
+                        self.articles = articles
+                        self.titles = articles.map {$0["title"]!} as! Array<String> //be careful, title must be string
+                        //print(self.articles)
+                        
+                        self.titles.insert("go to your pasteboard", at: 0)
+                        //print(self.titles)
+                    } else {
+                        throw NSError(domain: "invalid json", code: 1, userInfo: nil)
+                    }
+                }catch let err{
+                    print(data)
+                    print("invalidddd")
+                }
+            }else{
+                self.titles = ["go to your pasteboard"]
+                print("server disconnect, gotta do somethin here")
+                //self.text[0] = "problem connecting to server";
+            }
+            
+            DispatchQueue.main.async{
+                loadIndicator.stopAnimating()
+                table.reloadData()
+                table.isHidden = false
+                self.refreshControl.endRefreshing()
+            }
+        })
+    }
+    
+    @objc private func refreshData(_ sender: Any) {
+        // Fetch Weather Data
+        fetchData()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

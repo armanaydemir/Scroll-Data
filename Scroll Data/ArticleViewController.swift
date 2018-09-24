@@ -10,7 +10,7 @@ import UIKit
 
 
 @objc class ArticleViewController: UIViewController,UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
-    let version = "v0.2.0"
+    let version = "v0.2.3"
     var session_id: String?
     var text: Array<String> = []
     var cells: Array<String> = []
