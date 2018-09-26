@@ -34,7 +34,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         table.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
         self.fetchData()
-        table.register(UINib.init(nibName: "TextCell", bundle: nil), forCellReuseIdentifier: "default")
+        table.register(UINib.init(nibName: "TitleSubtitleTableViewCell", bundle: nil), forCellReuseIdentifier: "default")
         table.rowHeight = UITableViewAutomaticDimension
     }
     private func fetchData() {
@@ -91,8 +91,9 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         let aString = self.titles[indexPath.item]
         let attributes = [NSFontAttributeName: font] as [String : Any]
         let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
-        if let cell: TextCell = cell as? TextCell {
-            cell.textSection.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
+        if let cell: TitleSubtitleTableViewCell = cell as? TitleSubtitleTableViewCell {
+            cell.title.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
+            cell.subtitle.text = "Sample article preview..."
         }
         return cell
     }
