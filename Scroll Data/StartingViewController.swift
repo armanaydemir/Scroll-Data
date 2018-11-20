@@ -84,12 +84,11 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let aString = self.titles[indexPath.item]
         let attributes = [NSFontAttributeName: font] as [String : Any]
         let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
         if let cell: TitleSubtitleTableViewCell = cell as? TitleSubtitleTableViewCell {
-            cell.title.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
-            cell.subtitle.text = self.subtitles[indexPath.item]
+            cell.title.attributedText = NSAttributedString.init(string:  self.titles[indexPath.item], attributes: attributes)
+            cell.subtitle.attributedText = NSAttributedString.init(string: self.subtitles[indexPath.item], attributes: attributes)
         }
         return cell
     }
@@ -119,6 +118,4 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             destination.articleLink = self.link;
         }
     }
-    
-
 }
