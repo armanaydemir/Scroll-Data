@@ -159,6 +159,8 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
         switch indexPath.row {
         case 0:
             return UIScreen.main.bounds.size.height - (self.navigationController?.navigationBar.frame.size.height ?? 0) - 1
+        case (self.cells.count-1):
+             return UIScreen.main.bounds.size.height - (self.navigationController?.navigationBar.frame.size.height ?? 0) - 1
         default:
             return UITableViewAutomaticDimension
         }
@@ -171,6 +173,15 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let aString = self.cells[indexPath.item]
         if(indexPath.item == 0){
+            let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "title", for: indexPath)
+            if let cell: TitleCellTableViewCell = cell as? TitleCellTableViewCell {
+                let attributes = [NSFontAttributeName: font] as [String : Any]
+                cell.titleText.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
+                cell.selectionStyle = .none
+                cell.isSelected = false
+            }
+            return cell
+        }else if(indexPath.item == self.cells.count-1){
             let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "title", for: indexPath)
             if let cell: TitleCellTableViewCell = cell as? TitleCellTableViewCell {
                 let attributes = [NSFontAttributeName: font] as [String : Any]

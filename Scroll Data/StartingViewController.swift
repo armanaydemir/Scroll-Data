@@ -56,7 +56,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
                         throw NSError(domain: "invalid json", code: 1, userInfo: nil)
                     }
                 }catch let err{
-                    print(data)
+                    print(data ?? "nil data")
+                    print(err)
                     print("invalidddd")
                 }
             }else{
