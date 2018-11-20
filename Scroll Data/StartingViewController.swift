@@ -79,7 +79,6 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     @objc private func refreshData(_ sender: Any) {
-        // Fetch Weather Data
         fetchData()
     }
     

@@ -23,7 +23,7 @@ import UIKit
     var recent = [String]()
     var last_sent = CFAbsoluteTimeGetCurrent()
     let paragraphStyle = NSMutableParagraphStyle()
-    let font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
+    var font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
     var content_offset:CGFloat?
     let UDID = UIDevice.current.identifierForVendor!.uuidString
     var type: String?
@@ -53,8 +53,11 @@ import UIKit
             return identifier! + String(UnicodeScalar(UInt8(value)))
         }
         
+        
+        self.font = UIFont.systemFont(ofSize: findFontSize(table:self.table!))
         let attributes = [NSFontAttributeName: font] as [String : Any]
         let model = UIDevice.current.model
+        print("hihello")
         
         if(model == "iPad"){
             NSLayoutConstraint.activate([
@@ -124,6 +127,26 @@ import UIKit
         // Dispose of any resources that can be recreated.
     }
     
+    func findFontSize(table:UITableView) -> CGFloat {
+        var font_size = UIFont.systemFontSize
+        var font = UIFont.systemFont(ofSize: font_size)
+        var attributes = [NSFontAttributeName: font] as [String : Any]
+        let string = """
+President Trump’s $1.5 trillion tax cut was supposed to be a big selling point for congressional Republicans in the midterm elections. Instead, it appears to have done more to hurt, than help, Republicans in high-tax districts across California, New Jersey, Virginia and other states.
+
+House Republicans suffered heavy Election Day losses in districts where large concentrations of taxpayers claim a popular tax break — the state and local tax deduction — which the law capped at $10,000 per household. The new limit resulted in an effective tax increase for high-earning residents of high-tax states who claim more than $10,000 per year in SALT.
+
+Democrats swept four Republican-held districts in Orange County, Calif., where at least 40 percent of taxpayers claim the SALT tax break, defeating a pair of Republican incumbents and winning seats vacated by Representatives Ed Royce and Darrell Issa. Those districts include longtime Republican strongholds, like Newport Beach, and rank among the country’s largest users of the state and local tax break.
+"""
+        while (string as NSString).size(attributes: attributes).height <= table.frame.size.height {
+            font_size += 1
+            font = UIFont.systemFont(ofSize: font_size)
+            attributes = [NSFontAttributeName: font] as [String : Any]
+            print(font_size)
+        }
+        return font_size
+    }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.row {
         case 0:
@@ -182,7 +205,7 @@ import UIKit
             return parent.bounds.intersects(cell.frame)
         })
         let textsource = cellsource.flatMap({cell in if let cell: TextCell = cell as? TextCell{
-                return cell.textSection.text
+                return cell.textSection.text 
             }else{
                 return "Title Card"
             }
@@ -237,7 +260,9 @@ import UIKit
             print("no table in createCells")
             return []
         }
-        self.checker = min(table.frame.size.width, table.frame.size.height)
+        DispatchQueue.main.async {
+             self.checker = min(table.frame.size.width, table.frame.size.height)
+        }
         var cells = [String].init()
         cells.append(text[0])
         var word_count = text[0].split(separator: " ").count
