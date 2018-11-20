@@ -36,6 +36,9 @@ import UIKit
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
         NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: .UIApplicationWillResignActive, object: nil)
         guard let table = self.table, let spinner = self.spinner else {
             print("couldn't connect outlets! bad things coming.....")
@@ -52,21 +55,20 @@ import UIKit
             guard let value = element.value as? Int8 , value != 0 else { return identifier }
             return identifier! + String(UnicodeScalar(UInt8(value)))
         }
-        
-        
-        self.font = UIFont.systemFont(ofSize: findFontSize(table:self.table!))
-        let attributes = [NSFontAttributeName: font] as [String : Any]
         let model = UIDevice.current.model
-        print("hihello")
-        
         if(model == "iPad"){
             NSLayoutConstraint.activate([
                 table.leadingAnchor.constraint(equalTo: view.readableContentGuide.leadingAnchor),
                 table.trailingAnchor.constraint(equalTo: view.readableContentGuide.trailingAnchor),
                 table.bottomAnchor.constraint(equalTo: view.readableContentGuide.bottomAnchor),
                 table.topAnchor.constraint(equalTo: view.readableContentGuide.topAnchor)
-            ])
+                ])
+             self.view.layoutIfNeeded()
         }
+       
+        
+        self.font = UIFont.init(name: "Times New Roman", size: findFontSize(table:self.table!))!
+        let attributes = [NSFontAttributeName: font] as [String : Any]
         
         
         table.separatorStyle = UITableViewCellSeparatorStyle.none
@@ -104,7 +106,7 @@ import UIKit
                 //this could definitely be better
                 DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(2000)) {
                     let timer = Timer.init(timeInterval: 0.01, repeats: true, block: { _ in
-                            self.sendTextToServer(tableView: table)
+                        self.sendTextToServer(tableView: table)
                     })
                     RunLoop.main.add(timer, forMode: RunLoopMode.commonModes)
                     spinner.stopAnimating()
@@ -129,7 +131,8 @@ import UIKit
     
     func findFontSize(table:UITableView) -> CGFloat {
         var font_size = UIFont.systemFontSize
-        var font = UIFont.systemFont(ofSize: font_size)
+        let constraintRect = CGSize(width: table.frame.width-32, height: .greatestFiniteMagnitude) //make 32 not a constant and in cellFit
+        var font = UIFont.init(name: "Times New Roman", size: font_size)
         var attributes = [NSFontAttributeName: font] as [String : Any]
         let string = """
 President Trump’s $1.5 trillion tax cut was supposed to be a big selling point for congressional Republicans in the midterm elections. Instead, it appears to have done more to hurt, than help, Republicans in high-tax districts across California, New Jersey, Virginia and other states.
@@ -138,12 +141,26 @@ House Republicans suffered heavy Election Day losses in districts where large co
 
 Democrats swept four Republican-held districts in Orange County, Calif., where at least 40 percent of taxpayers claim the SALT tax break, defeating a pair of Republican incumbents and winning seats vacated by Representatives Ed Royce and Darrell Issa. Those districts include longtime Republican strongholds, like Newport Beach, and rank among the country’s largest users of the state and local tax break.
 """
-        while (string as NSString).size(attributes: attributes).height <= table.frame.size.height {
-            font_size += 1
-            font = UIFont.systemFont(ofSize: font_size)
-            attributes = [NSFontAttributeName: font] as [String : Any]
-            print(font_size)
+        var aString = NSAttributedString.init(string: string, attributes: attributes)
+        var boundingBox = aString.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, context: nil)
+        print(UIScreen.main.bounds.width)
+        print(table.frame.width)
+        print(self.view.safeAreaInsets.top)
+        print(self.view.safeAreaInsets.bottom)
+        while ceil(boundingBox.height) <= (UIScreen.main.bounds.height-(self.view.safeAreaInsets.top + self.view.safeAreaInsets.bottom)) {
+            font_size += 0.1
+            
+            font = UIFont.init(name: "Times New Roman", size: font_size)
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineSpacing = 8.0 // get this from textcell layout
+//            paragraphStyle.paragraphSpacing = 8.0
+            attributes = [NSFontAttributeName: font, NSParagraphStyleAttributeName : paragraphStyle] as [String : Any]
+            aString = NSAttributedString.init(string: string, attributes: attributes)
+            boundingBox = aString.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, context: nil)
+            //print(ceil(boundingBox.height))
+            //print(font_size)
         }
+        print(floor(font_size))
         return font_size
     }
     
@@ -286,7 +303,7 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
                 index_list.append(word_count.description)
                 cells.append(cell.joined(separator: " "))
             }
-            index_list.append(word_count.description)
+            index_list.append("-")
             cells.append("")
         }
         cells.append("Tap here to submit data")
