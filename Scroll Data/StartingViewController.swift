@@ -12,6 +12,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     private let refreshControl = UIRefreshControl()
     var articles: Array<[String : Any]> = []
     var titles: Array<String> = []
+    var subtitles: Array<String> = []
     var last_refresh: Date?
     let font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
     var link = ""
@@ -23,7 +24,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        guard let table = self.table, let loadIndicator = self.loadIndicator else {
+        guard let table = self.table, let _ = self.loadIndicator else {
             print("couldn't connect starting vc outlets! bad things coming.....")
             return
         }
@@ -50,10 +51,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
                         self.articles = articles
                         print(self.articles)
                         self.titles = articles.map {$0["title"]} as! Array<String> //be careful, title must be string
-                        //print(self.articles)
-                        
-                        self.titles.insert("go to your pasteboard", at: 0)
-                        //print(self.titles)
+                        self.subtitles = articles.map {$0["abstract"]} as! Array<String>
                     } else {
                         throw NSError(domain: "invalid json", code: 1, userInfo: nil)
                     }
@@ -62,7 +60,6 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
                     print("invalidddd")
                 }
             }else{
-                self.titles = ["go to your pasteboard"]
                 print("server disconnect, gotta do somethin here")
                 //self.text[0] = "problem connecting to server";
             }
@@ -92,24 +89,14 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
         if let cell: TitleSubtitleTableViewCell = cell as? TitleSubtitleTableViewCell {
             cell.title.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
-            cell.subtitle.text = "Sample article preview..."
+            cell.subtitle.text = self.subtitles[indexPath.item]
         }
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        if(indexPath.item == 0){
-            if let link = UIPasteboard.general.string {
-                print(link)
-                self.link = link
-                self.performSegue(withIdentifier: "startReading", sender: self)
-            }
-        }else{
-            self.link = self.articles[indexPath.item - 1]["article_link"] as! String
+            self.link = self.articles[indexPath.item]["article_link"] as! String
             self.performSegue(withIdentifier: "startReading", sender: self)
-        }
-        
     }
 
 
