@@ -132,7 +132,7 @@ import UIKit
     func findFontSize(table:UITableView) -> CGFloat {
         var font_size = UIFont.systemFontSize
         let constraintRect = CGSize(width: table.frame.width-32, height: .greatestFiniteMagnitude) //make 32 not a constant and in cellFit
-        var font = UIFont.init(name: "Times New Roman", size: font_size)
+        var font = UIFont.init(name: "Times New Roman", size: font_size)!
         var attributes = [NSFontAttributeName: font] as [String : Any]
         let string = """
 President Trump’s $1.5 trillion tax cut was supposed to be a big selling point for congressional Republicans in the midterm elections. Instead, it appears to have done more to hurt, than help, Republicans in high-tax districts across California, New Jersey, Virginia and other states.
@@ -143,24 +143,15 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
 """
         var aString = NSAttributedString.init(string: string, attributes: attributes)
         var boundingBox = aString.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, context: nil)
-        print(UIScreen.main.bounds.width)
-        print(table.frame.width)
-        print(self.view.safeAreaInsets.top)
-        print(self.view.safeAreaInsets.bottom)
         while ceil(boundingBox.height) <= (UIScreen.main.bounds.height-(self.view.safeAreaInsets.top + self.view.safeAreaInsets.bottom)) {
             font_size += 0.1
-            
-            font = UIFont.init(name: "Times New Roman", size: font_size)
+            font = UIFont.init(name: "Times New Roman", size: font_size)!
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineSpacing = 8.0 // get this from textcell layout
-//            paragraphStyle.paragraphSpacing = 8.0
             attributes = [NSFontAttributeName: font, NSParagraphStyleAttributeName : paragraphStyle] as [String : Any]
             aString = NSAttributedString.init(string: string, attributes: attributes)
             boundingBox = aString.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, context: nil)
-            //print(ceil(boundingBox.height))
-            //print(font_size)
         }
-        print(floor(font_size))
         return font_size
     }
     
