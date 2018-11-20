@@ -10,7 +10,7 @@ import UIKit
 
 
 @objc class ArticleViewController: UIViewController,UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
-    let version = "v0.2.3"
+    let version = "v0.2.5"
     var session_id: String?
     var text: Array<String> = []
     var cells: Array<String> = []
@@ -18,7 +18,7 @@ import UIKit
     let timeOffset:Double = 100000000
     var complete = false
     var startTime = CFAbsoluteTimeGetCurrent()
-    var recent_last: String?
+    var recent_last: Int?
     var articleLink: String?
     var recent = [String]()
     var last_sent = CFAbsoluteTimeGetCurrent()
@@ -252,12 +252,13 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
         let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
         //print(cur)
         //print(self.last_sent*timeOffset)
-        let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startTime*timeOffset, "appeared":self.last_sent*timeOffset, "time": cur*timeOffset, "first_line":index_list[first_index!] , "last_line":index_list[second_index!] , "previous_last_line":self.recent_last ?? "", "content_offset":content_offset ?? "error null" ]
+        let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startTime*timeOffset, "appeared":self.last_sent*timeOffset, "time": cur*timeOffset, "first_cell":first_index! , "last_cell":second_index! , "previous_last_cell":self.recent_last ?? "", "content_offset":content_offset ?? "error null" ]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })
+        print(data)
         self.last_sent = cur
-        self.recent_last = index_list[second_index!]
+        self.recent_last = second_index!
         
         
     }
@@ -318,7 +319,7 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let data: [String: Any] = ["UDID":self.UDID, "startTime":self.startTime*timeOffset, "article":self.articleLink ?? "", "time":CFAbsoluteTimeGetCurrent()*timeOffset, "session_id":self.session_id ?? "", "complete":self.complete]
+        let data: [String: Any] = ["UDID":self.UDID, "startTime":self.startTime*timeOffset, "article":self.articleLink ?? "", "time":CFAbsoluteTimeGetCurrent()*timeOffset, "session_id":self.session_id ?? "", "complete":self.complete, "line_splits":index_list]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/close_article", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })
