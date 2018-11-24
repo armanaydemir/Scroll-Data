@@ -21,7 +21,6 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     @IBOutlet weak var table: UITableView!
     
     override func viewDidLoad() {
-        self.table.accessibilityIdentifier = "startingTable"
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         guard let table = self.table, let _ = self.loadIndicator else {
@@ -30,6 +29,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         }
         
         table.isHidden = true;
+        table.accessibilityIdentifier = "startingTable"
         table.dataSource = self
         table.delegate = self
         table.refreshControl = refreshControl

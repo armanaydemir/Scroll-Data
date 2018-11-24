@@ -27,6 +27,7 @@ import UIKit
     var content_offset:CGFloat?
     let UDID = UIDevice.current.identifierForVendor!.uuidString
     var type: String?
+    let timePerCheck = 0.001
     
     var checker:CGFloat?
     
@@ -45,6 +46,7 @@ import UIKit
             return
         }
         table.isHidden = true;
+        table.accessibilityIdentifier = "articleTable"
         spinner.hidesWhenStopped = true
         spinner.startAnimating()
         
@@ -105,7 +107,7 @@ import UIKit
                 table.reloadData()
                 //this could definitely be better
                 DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(2000)) {
-                    let timer = Timer.init(timeInterval: 0.01, repeats: true, block: { _ in
+                    let timer = Timer.init(timeInterval: self.timePerCheck, repeats: true, block: { _ in
                         self.sendTextToServer(tableView: table)
                     })
                     RunLoop.main.add(timer, forMode: RunLoopMode.commonModes)
@@ -179,6 +181,7 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
                 cell.titleText.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
                 cell.selectionStyle = .none
                 cell.isSelected = false
+                cell.accessibilityLabel = "titleCell"
             }
             return cell
         }else if(indexPath.item == self.cells.count-1){
@@ -188,6 +191,7 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
                 cell.titleText.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
                 cell.selectionStyle = .none
                 cell.isSelected = false
+                cell.accessibilityLabel = "submitCell"
             }
             return cell
         }else{
@@ -196,6 +200,7 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
                 let attributes = [NSFontAttributeName: font] as [String : Any]
                 cell.textSection.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
                 cell.isSelected = false
+                cell.accessibilityLabel = "textCell"
             }
             return cell
         }

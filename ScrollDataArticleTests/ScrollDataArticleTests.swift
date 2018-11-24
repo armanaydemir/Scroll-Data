@@ -24,11 +24,32 @@ class ScrollDataArticleTests: XCTestCase {
 
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
+        sleep(10)
     }
 
-    func testArticlesAppear() {
+    
+    func testReadArticle(){
+        //------------
         self.app.tables["startingTable"].waitForExistence(timeout: 5)
         XCTAssert(self.app.tables["startingTable"].cells.count > 1)
+        //waits for table view to load and makes sure it is not empty
+        
+        //-----------
+        self.app.tables["startingTable"].cells.element(boundBy: 7).tap()
+        self.app.tables["articleTable"].waitForExistence(timeout: 5)
+        //click on an article and waits for it to load, need to check for specific 'server not connected' msg
+       
+        //https://stackoverflow.com/questions/40923929/scroll-the-cells-using-ui-testing
+        let table = self.app.tables["articleTable"]
+        let tableCenter = table.coordinate(withNormalizedOffset:CGVector(dx: 0.5, dy: 0.5))
+        
+        // Scroll from tableBottom to new coordinate
+        let scrollVector = table.coordinate(withNormalizedOffset:CGVector(dx: 0.5, dy: 0.1)) // Use whatever vector you like
+        while(!table.cells["submitCell"].isHittable){
+            tableCenter.press(forDuration: 0.0, thenDragTo: scrollVector)
+        }
+        self.app.cells["submitCell"].tap()
+        
     }
 
 }
