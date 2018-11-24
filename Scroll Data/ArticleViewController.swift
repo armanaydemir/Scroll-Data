@@ -274,13 +274,13 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
         
         let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
 
-        print(second_index)
-        print(first_index)
+        //print(second_index)
+        //print(first_index)
         let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startTime*timeOffset, "appeared":self.last_sent*timeOffset, "time": cur*timeOffset, "first_cell":first_index, "last_cell":second_index ,"previous_first_cell":self.recent_first ?? "", "previous_last_cell":self.recent_last ?? "", "content_offset":content_offset ?? "error null" ]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })
-        print(data)
+        // print(data)
         
         self.last_sent = cur
         self.recent_last = second_index
