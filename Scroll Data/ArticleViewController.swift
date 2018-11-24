@@ -18,6 +18,7 @@ import UIKit
     let timeOffset:Double = 100000000
     var complete = false
     var startTime = CFAbsoluteTimeGetCurrent()
+    var recent_first: Int?
     var recent_last: Int?
     var articleLink: String?
     var recent = [String]()
@@ -257,13 +258,14 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
         let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
         //print(cur)
         //print(self.last_sent*timeOffset)
-        let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startTime*timeOffset, "appeared":self.last_sent*timeOffset, "time": cur*timeOffset, "first_cell":first_index! , "last_cell":second_index! , "previous_last_cell":self.recent_last ?? "", "content_offset":content_offset ?? "error null" ]
+        let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startTime*timeOffset, "appeared":self.last_sent*timeOffset, "time": cur*timeOffset, "first_cell":first_index! , "last_cell":second_index! ,"previous_first_cell":self.recent_first ?? "", "previous_last_cell":self.recent_last ?? "", "content_offset":content_offset ?? "error null" ]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })
         print(data)
         self.last_sent = cur
         self.recent_last = second_index!
+        self.recent_first = first_index!
         
         
     }

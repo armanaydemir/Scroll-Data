@@ -35,7 +35,7 @@ class ScrollDataArticleTests: XCTestCase {
         //waits for table view to load and makes sure it is not empty
         
         //-----------
-        self.app.tables["startingTable"].cells.element(boundBy: 7).tap()
+        self.app.tables["startingTable"].cells.element(boundBy: 0).tap()
         self.app.tables["articleTable"].waitForExistence(timeout: 5)
         //click on an article and waits for it to load, need to check for specific 'server not connected' msg
        
