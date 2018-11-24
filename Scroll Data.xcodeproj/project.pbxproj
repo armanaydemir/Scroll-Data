@@ -12,6 +12,7 @@
 		9930C4B221A4C0D3000C2420 /* TitleCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9930C4B021A4C0D3000C2420 /* TitleCellTableViewCell.swift */; };
 		9930C4B321A4C0D3000C2420 /* TitleCellTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9930C4B121A4C0D3000C2420 /* TitleCellTableViewCell.xib */; };
 		99931E132127EE31006CAC45 /* StartingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99931E122127EE31006CAC45 /* StartingViewController.swift */; };
+		99AE430121A6763600E42415 /* ScrollDataArticleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99AE430021A6763600E42415 /* ScrollDataArticleTests.swift */; };
 		F15A41971FCA7CA00040F11D /* request.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15A41961FCA7CA00040F11D /* request.swift */; };
 		F15A535C2070748200C2F7B6 /* ArticleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15A535B2070748200C2F7B6 /* ArticleViewController.swift */; };
 		F169BDD81EA696CB00C528C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F169BDD71EA696CB00C528C7 /* main.m */; };
@@ -20,20 +21,19 @@
 		F169BDE31EA696CB00C528C7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F169BDE21EA696CB00C528C7 /* Assets.xcassets */; };
 		F169BDE61EA696CB00C528C7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F169BDE41EA696CB00C528C7 /* LaunchScreen.storyboard */; };
 		F169BDF11EA696CB00C528C7 /* Scroll_DataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F169BDF01EA696CB00C528C7 /* Scroll_DataTests.m */; };
-		F169BDFC1EA696CB00C528C7 /* Scroll_DataUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F169BDFB1EA696CB00C528C7 /* Scroll_DataUITests.m */; };
 		F169BE0C1EA69B4E00C528C7 /* TextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F169BE0A1EA69B4E00C528C7 /* TextCell.m */; };
 		F169BE0D1EA69B4E00C528C7 /* TextCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F169BE0B1EA69B4E00C528C7 /* TextCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		F169BDED1EA696CB00C528C7 /* PBXContainerItemProxy */ = {
+		99AE430321A6763600E42415 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F169BDCB1EA696CB00C528C7 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F169BDD21EA696CB00C528C7;
 			remoteInfo = "Scroll Data";
 		};
-		F169BDF81EA696CB00C528C7 /* PBXContainerItemProxy */ = {
+		F169BDED1EA696CB00C528C7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F169BDCB1EA696CB00C528C7 /* Project object */;
 			proxyType = 1;
@@ -48,6 +48,9 @@
 		9930C4B021A4C0D3000C2420 /* TitleCellTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitleCellTableViewCell.swift; sourceTree = "<group>"; };
 		9930C4B121A4C0D3000C2420 /* TitleCellTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TitleCellTableViewCell.xib; sourceTree = "<group>"; };
 		99931E122127EE31006CAC45 /* StartingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartingViewController.swift; sourceTree = "<group>"; };
+		99AE42FE21A6763600E42415 /* ScrollDataArticleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScrollDataArticleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		99AE430021A6763600E42415 /* ScrollDataArticleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollDataArticleTests.swift; sourceTree = "<group>"; };
+		99AE430221A6763600E42415 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F15A41951FCA7C9F0040F11D /* Scroll Data-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Scroll Data-Bridging-Header.h"; sourceTree = "<group>"; };
 		F15A41961FCA7CA00040F11D /* request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = request.swift; sourceTree = "<group>"; };
 		F15A535B2070748200C2F7B6 /* ArticleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleViewController.swift; sourceTree = "<group>"; };
@@ -62,15 +65,19 @@
 		F169BDEC1EA696CB00C528C7 /* Scroll DataTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Scroll DataTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F169BDF01EA696CB00C528C7 /* Scroll_DataTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Scroll_DataTests.m; sourceTree = "<group>"; };
 		F169BDF21EA696CB00C528C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F169BDF71EA696CB00C528C7 /* Scroll DataUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Scroll DataUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		F169BDFB1EA696CB00C528C7 /* Scroll_DataUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Scroll_DataUITests.m; sourceTree = "<group>"; };
-		F169BDFD1EA696CB00C528C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F169BE091EA69B4E00C528C7 /* TextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCell.h; sourceTree = "<group>"; };
 		F169BE0A1EA69B4E00C528C7 /* TextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextCell.m; sourceTree = "<group>"; };
 		F169BE0B1EA69B4E00C528C7 /* TextCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TextCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		99AE42FB21A6763600E42415 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F169BDD01EA696CB00C528C7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -85,23 +92,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F169BDF41EA696CB00C528C7 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		99AE42FF21A6763600E42415 /* ScrollDataArticleTests */ = {
+			isa = PBXGroup;
+			children = (
+				99AE430021A6763600E42415 /* ScrollDataArticleTests.swift */,
+				99AE430221A6763600E42415 /* Info.plist */,
+			);
+			path = ScrollDataArticleTests;
+			sourceTree = "<group>";
+		};
 		F169BDCA1EA696CB00C528C7 = {
 			isa = PBXGroup;
 			children = (
 				F15A41961FCA7CA00040F11D /* request.swift */,
 				F169BDD51EA696CB00C528C7 /* Scroll Data */,
 				F169BDEF1EA696CB00C528C7 /* Scroll DataTests */,
-				F169BDFA1EA696CB00C528C7 /* Scroll DataUITests */,
+				99AE42FF21A6763600E42415 /* ScrollDataArticleTests */,
 				F169BDD41EA696CB00C528C7 /* Products */,
 				F15A41951FCA7C9F0040F11D /* Scroll Data-Bridging-Header.h */,
 			);
@@ -112,7 +121,7 @@
 			children = (
 				F169BDD31EA696CB00C528C7 /* Scroll Data.app */,
 				F169BDEC1EA696CB00C528C7 /* Scroll DataTests.xctest */,
-				F169BDF71EA696CB00C528C7 /* Scroll DataUITests.xctest */,
+				99AE42FE21A6763600E42415 /* ScrollDataArticleTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -157,18 +166,27 @@
 			path = "Scroll DataTests";
 			sourceTree = "<group>";
 		};
-		F169BDFA1EA696CB00C528C7 /* Scroll DataUITests */ = {
-			isa = PBXGroup;
-			children = (
-				F169BDFB1EA696CB00C528C7 /* Scroll_DataUITests.m */,
-				F169BDFD1EA696CB00C528C7 /* Info.plist */,
-			);
-			path = "Scroll DataUITests";
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		99AE42FD21A6763600E42415 /* ScrollDataArticleTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 99AE430721A6763600E42415 /* Build configuration list for PBXNativeTarget "ScrollDataArticleTests" */;
+			buildPhases = (
+				99AE42FA21A6763600E42415 /* Sources */,
+				99AE42FB21A6763600E42415 /* Frameworks */,
+				99AE42FC21A6763600E42415 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				99AE430421A6763600E42415 /* PBXTargetDependency */,
+			);
+			name = ScrollDataArticleTests;
+			productName = ScrollDataArticleTests;
+			productReference = 99AE42FE21A6763600E42415 /* ScrollDataArticleTests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		F169BDD21EA696CB00C528C7 /* Scroll Data */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F169BE001EA696CB00C528C7 /* Build configuration list for PBXNativeTarget "Scroll Data" */;
@@ -204,33 +222,22 @@
 			productReference = F169BDEC1EA696CB00C528C7 /* Scroll DataTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		F169BDF61EA696CB00C528C7 /* Scroll DataUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F169BE061EA696CB00C528C7 /* Build configuration list for PBXNativeTarget "Scroll DataUITests" */;
-			buildPhases = (
-				F169BDF31EA696CB00C528C7 /* Sources */,
-				F169BDF41EA696CB00C528C7 /* Frameworks */,
-				F169BDF51EA696CB00C528C7 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				F169BDF91EA696CB00C528C7 /* PBXTargetDependency */,
-			);
-			name = "Scroll DataUITests";
-			productName = "Scroll DataUITests";
-			productReference = F169BDF71EA696CB00C528C7 /* Scroll DataUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		F169BDCB1EA696CB00C528C7 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1010;
 				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Arman Aydemir";
 				TargetAttributes = {
+					99AE42FD21A6763600E42415 = {
+						CreatedOnToolsVersion = 10.1;
+						DevelopmentTeam = 82MGRMGP93;
+						ProvisioningStyle = Automatic;
+						TestTargetID = F169BDD21EA696CB00C528C7;
+					};
 					F169BDD21EA696CB00C528C7 = {
 						CreatedOnToolsVersion = 8.3.1;
 						DevelopmentTeam = R76ADJ3JV7;
@@ -238,12 +245,6 @@
 						ProvisioningStyle = Manual;
 					};
 					F169BDEB1EA696CB00C528C7 = {
-						CreatedOnToolsVersion = 8.3.1;
-						DevelopmentTeam = R76ADJ3JV7;
-						ProvisioningStyle = Automatic;
-						TestTargetID = F169BDD21EA696CB00C528C7;
-					};
-					F169BDF61EA696CB00C528C7 = {
 						CreatedOnToolsVersion = 8.3.1;
 						DevelopmentTeam = R76ADJ3JV7;
 						ProvisioningStyle = Automatic;
@@ -266,12 +267,19 @@
 			targets = (
 				F169BDD21EA696CB00C528C7 /* Scroll Data */,
 				F169BDEB1EA696CB00C528C7 /* Scroll DataTests */,
-				F169BDF61EA696CB00C528C7 /* Scroll DataUITests */,
+				99AE42FD21A6763600E42415 /* ScrollDataArticleTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		99AE42FC21A6763600E42415 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F169BDD11EA696CB00C528C7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -292,16 +300,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F169BDF51EA696CB00C528C7 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		99AE42FA21A6763600E42415 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				99AE430121A6763600E42415 /* ScrollDataArticleTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F169BDCF1EA696CB00C528C7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -325,26 +334,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F169BDF31EA696CB00C528C7 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F169BDFC1EA696CB00C528C7 /* Scroll_DataUITests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		99AE430421A6763600E42415 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F169BDD21EA696CB00C528C7 /* Scroll Data */;
+			targetProxy = 99AE430321A6763600E42415 /* PBXContainerItemProxy */;
+		};
 		F169BDEE1EA696CB00C528C7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F169BDD21EA696CB00C528C7 /* Scroll Data */;
 			targetProxy = F169BDED1EA696CB00C528C7 /* PBXContainerItemProxy */;
-		};
-		F169BDF91EA696CB00C528C7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F169BDD21EA696CB00C528C7 /* Scroll Data */;
-			targetProxy = F169BDF81EA696CB00C528C7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -368,6 +369,51 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		99AE430521A6763600E42415 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 82MGRMGP93;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = ScrollDataArticleTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = Aydemir.ScrollDataArticleTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Scroll Data";
+			};
+			name = Debug;
+		};
+		99AE430621A6763600E42415 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 82MGRMGP93;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = ScrollDataArticleTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = Aydemir.ScrollDataArticleTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Scroll Data";
+			};
+			name = Release;
+		};
 		F169BDFE1EA696CB00C528C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -551,33 +597,18 @@
 			};
 			name = Release;
 		};
-		F169BE071EA696CB00C528C7 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				INFOPLIST_FILE = "Scroll DataUITests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "Arman-Aydemir.Scroll-DataUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_TARGET_NAME = "Scroll Data";
-			};
-			name = Debug;
-		};
-		F169BE081EA696CB00C528C7 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				INFOPLIST_FILE = "Scroll DataUITests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "Arman-Aydemir.Scroll-DataUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_TARGET_NAME = "Scroll Data";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		99AE430721A6763600E42415 /* Build configuration list for PBXNativeTarget "ScrollDataArticleTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				99AE430521A6763600E42415 /* Debug */,
+				99AE430621A6763600E42415 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		F169BDCE1EA696CB00C528C7 /* Build configuration list for PBXProject "Scroll Data" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -601,15 +632,6 @@
 			buildConfigurations = (
 				F169BE041EA696CB00C528C7 /* Debug */,
 				F169BE051EA696CB00C528C7 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		F169BE061EA696CB00C528C7 /* Build configuration list for PBXNativeTarget "Scroll DataUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F169BE071EA696CB00C528C7 /* Debug */,
-				F169BE081EA696CB00C528C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
