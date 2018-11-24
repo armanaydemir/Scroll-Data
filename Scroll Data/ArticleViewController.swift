@@ -239,15 +239,25 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
     }
     
     func currentPosition(tableView:UITableView, textsource: Array<String>) -> Array<Int> {
-        if(self.recent.count-2 >= 0 && textsource[textsource.count-2] != self.recent.last){
-            print("text skip")
+        let current_offset = tableView.contentOffset.y
+        var first_index: Int?
+        var second_index: Int?
+        if(current_offset >= self.content_offset ?? 0){
+            first_index = self.cells[(self.recent_first ?? 0)..<self.cells.endIndex].firstIndex(of: textsource.first!)
+            second_index = self.cells[(self.recent_last ?? 0)..<self.cells.endIndex].firstIndex(of: textsource.last!)
+        }else{
+            first_index = self.cells[0..<(self.recent_first ?? 0)+1].lastIndex(of: textsource.first!)
+            second_index = self.cells[0..<(self.recent_last ?? 0)+1].lastIndex(of: textsource.last!)
         }
-        let first_index = self.cells.firstIndex(of: textsource.first!)
-        let second_index = self.cells[(self.recent_last ?? 0)..<self.cells.endIndex].firstIndex(of: textsource.last!)
         
-        if(second_index! - 1 != self.recent_last ?? 0){
-            print("index skip \(second_index)")
-        }
+//        if(self.recent.count-2 >= 0 && textsource[textsource.count-2] != self.recent.last){
+//            print("text skip")
+//        }
+//        if(second_index! - 1 != self.recent_last ?? 0){
+//            print("index skip \(second_index)")
+//        }
+        //35, 60, 155, 
+        self.content_offset = current_offset
         return [first_index!, second_index!]
     }
     
@@ -255,14 +265,12 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
         //print("send text - \(CFAbsoluteTimeGetCurrent())")
         let current_offset = tableView.contentOffset.y
         if tableView.isHidden || current_offset == self.content_offset { return }
-        self.content_offset = current_offset
         
         let textsource = getTextFromScreen(tableView: tableView)
         if textsource.last == self.recent.last { return }
        
         let temp = currentPosition(tableView: tableView, textsource: textsource)
         let first_index = temp[0], second_index = temp[1]
-
         
         let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
 
