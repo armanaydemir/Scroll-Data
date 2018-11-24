@@ -28,7 +28,7 @@ import UIKit
     var content_offset:CGFloat?
     let UDID = UIDevice.current.identifierForVendor!.uuidString
     var type: String?
-    let timePerCheck = 0.001
+    let timePerCheck = 0.00001
     
     var checker:CGFloat?
     
@@ -220,53 +220,64 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
         self.complete = true
     }
     
+    func getTextFromScreen(tableView:UITableView) -> Array<String> {
+        let visibleCells = tableView.visibleCells.filter({ (cell) -> Bool in
+            let parent = cell.superview!
+            return parent.bounds.intersects(cell.frame)
+        })
+        
+        let textsource = visibleCells.flatMap({cell in if let cell: TextCell = cell as? TextCell{
+            return cell.textSection.text
+        }else if let cell: TitleCellTableViewCell = cell as? TitleCellTableViewCell{
+            return cell.titleText.text
+        }else{
+            return "this shouldnt be possible?"
+            }
+        })
+        
+        return textsource;
+    }
+    
+    func currentPosition(tableView:UITableView, textsource: Array<String>) -> Array<Int> {
+        if(self.recent.count-2 >= 0 && textsource[textsource.count-2] != self.recent.last){
+            print("text skip")
+        }
+        let first_index = self.cells.firstIndex(of: textsource.first!)
+        let second_index = self.cells[(self.recent_last ?? 0)..<self.cells.endIndex].firstIndex(of: textsource.last!)
+        
+        if(second_index! - 1 != self.recent_last ?? 0){
+            print("index skip \(second_index)")
+        }
+        return [first_index!, second_index!]
+    }
+    
     func sendTextToServer(tableView:UITableView) -> Void {
+        //print("send text - \(CFAbsoluteTimeGetCurrent())")
         let current_offset = tableView.contentOffset.y
         if tableView.isHidden || current_offset == self.content_offset { return }
         self.content_offset = current_offset
         
-        let cellsource = tableView.visibleCells[0..<tableView.visibleCells.endIndex].filter({ (cell) -> Bool in
-            let parent = cell.superview!
-            return parent.bounds.intersects(cell.frame)
-        })
-        let textsource = cellsource.flatMap({cell in if let cell: TextCell = cell as? TextCell{
-                return cell.textSection.text 
-            }else{
-                return "Title Card"
-            }
-        })
+        let textsource = getTextFromScreen(tableView: tableView)
         if textsource.last == self.recent.last { return }
-        self.recent = textsource
-        var text = [String]()
-        var section = [String]()
-        for line in textsource{
-            if(line == ""){
-                text.append(section.joined(separator: " "))
-                section = []
-            }else{
-                section.append(line)
-            }
-        } //this for loop combines the sections together so it comes in split the same way as server
-        text.append(section.joined(separator: " "))
-        //need to fix this stuff for at the end
-        let first_index = tableView.indexPath(for: tableView.visibleCells.first!)?.item
-        let second_index = tableView.indexPath(for: tableView.visibleCells.last!)?.item
-        //print(index_list)
-        //print(index_list[second_index!])
-        //print(self.table?.indexPath(for: tableView.visibleCells[tableView.visibleCells.startIndex]))
-        //print(self.table?.indexPath(for: tableView.visibleCells[tableView.visibleCells.endIndex]))
+       
+        let temp = currentPosition(tableView: tableView, textsource: textsource)
+        let first_index = temp[0], second_index = temp[1]
+
+        
         let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
-        //print(cur)
-        //print(self.last_sent*timeOffset)
-        let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startTime*timeOffset, "appeared":self.last_sent*timeOffset, "time": cur*timeOffset, "first_cell":first_index! , "last_cell":second_index! ,"previous_first_cell":self.recent_first ?? "", "previous_last_cell":self.recent_last ?? "", "content_offset":content_offset ?? "error null" ]
+
+        print(second_index)
+        print(first_index)
+        let data: [String: Any] = ["UDID":self.UDID, "article":self.articleLink ?? "", "startTime":self.startTime*timeOffset, "appeared":self.last_sent*timeOffset, "time": cur*timeOffset, "first_cell":first_index, "last_cell":second_index ,"previous_first_cell":self.recent_first ?? "", "previous_last_cell":self.recent_last ?? "", "content_offset":content_offset ?? "error null" ]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })
         print(data)
-        self.last_sent = cur
-        self.recent_last = second_index!
-        self.recent_first = first_index!
         
+        self.last_sent = cur
+        self.recent_last = second_index
+        self.recent_first = first_index
+        self.recent = textsource
         
     }
     
