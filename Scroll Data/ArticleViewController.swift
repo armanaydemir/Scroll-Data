@@ -86,8 +86,17 @@ import UIKit
             }
             DispatchQueue.main.async {
                 self.font = self.findFontSize(table: table) ?? UIFont.preferredFont(forTextStyle: .body)
-                self.content = self.convert(paragraphs: p, font: self.font)
-            
+                let content = self.convert(paragraphs: p, font: self.font)
+                self.content = content
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
+                    table.scrollToRow(at: IndexPath.init(row: content.count, section: 0) , at: UITableViewScrollPosition.top, animated: true)
+                     DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
+                        _ = self.navigationController?.popViewController(animated: true)
+                    }
+                }
+                
+
                 table.reloadData()
                 
                 self.repeatingCheck(table: table)
