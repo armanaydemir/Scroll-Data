@@ -121,7 +121,7 @@ import UIKit
             }
         })
         table.dataSource = self
-        table.register(UINib.init(nibName: "TextCell", bundle: nil), forCellReuseIdentifier: "default")
+        table.register(UINib.init(nibName: "ArticleTextTableViewCell", bundle: nil), forCellReuseIdentifier: "default")
         table.register(UINib.init(nibName: "TitleCellTableViewCell", bundle: nil), forCellReuseIdentifier: "title")
         table.delegate = self
         table.cellLayoutMarginsFollowReadableWidth = false
@@ -186,7 +186,7 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
             return cell
         }else{
             let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
-            if let cell: TextCell = cell as? TextCell {
+            if let cell: ArticleTextTableViewCell = cell as? ArticleTextTableViewCell {
                 let attributes = [NSFontAttributeName: font] as [String : Any]
                 cell.textSection.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
                 cell.isSelected = false
@@ -215,7 +215,7 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
             return parent.bounds.intersects(cell.frame)
         })
         
-        let textsource = visibleCells.flatMap({cell in if let cell: TextCell = cell as? TextCell{
+        let textsource = visibleCells.flatMap({cell in if let cell: ArticleTextTableViewCell = cell as? ArticleTextTableViewCell{
             return cell.textSection.text
         }else if let cell: TitleCellTableViewCell = cell as? TitleCellTableViewCell{
             return cell.titleText.text

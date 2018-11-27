@@ -36,7 +36,7 @@ class SystemFont {
             font_size += 0.1
             font = UIFont.init(descriptor: self.basicFont.fontDescriptor, size: font_size)
             let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.lineSpacing = spacing// get this from textcell layout
+            paragraphStyle.lineSpacing = spacing
             attributes = [NSFontAttributeName: font, NSParagraphStyleAttributeName : paragraphStyle] as [String : Any]
             aString = NSAttributedString.init(string: text, attributes: attributes)
             boundingBox = aString.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, context: nil)
