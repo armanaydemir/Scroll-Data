@@ -14,8 +14,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     var titles: Array<String> = []
     var subtitles: Array<String> = []
     var last_refresh: Date?
-    var subFont = UIFont(name: "Times New Roman", size: 12)
-    var font = UIFont(name: "Times New Roman", size: 14)
+    let subFont = SystemFont.init(fontName: "Times New Roman")?.getFont(withTextStyle: .subheadline) ?? UIFont.preferredFont(forTextStyle: .subheadline)
+    let headFont = SystemFont.init(fontName: "Times New Roman")?.getFont(withTextStyle: .headline) ?? UIFont.preferredFont(forTextStyle: .headline)
     var link = ""
     @IBOutlet weak var loadIndicator: UIActivityIndicatorView!
     
@@ -38,13 +38,6 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         self.fetchData()
         table.register(UINib.init(nibName: "TitleSubtitleTableViewCell", bundle: nil), forCellReuseIdentifier: "default")
         table.rowHeight = UITableViewAutomaticDimension
-        
-        let systemSubFont = UIFont.preferredFont(forTextStyle: .subheadline)
-        let systemFont = UIFont.preferredFont(forTextStyle: .headline)
-        
-        subFont = UIFont.init(descriptor: subFont!.fontDescriptor.withSymbolicTraits(systemSubFont.fontDescriptor.symbolicTraits)!, size: systemSubFont.pointSize)
-        font = UIFont.init(descriptor: font!.fontDescriptor.withSymbolicTraits(systemFont.fontDescriptor.symbolicTraits)!, size: systemFont.pointSize)
-
     }
     private func fetchData() {
         guard let table = self.table, let loadIndicator = self.loadIndicator else {
@@ -93,7 +86,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let attributes = [NSFontAttributeName: self.font] as [String : Any]
+        let attributes = [NSFontAttributeName: self.headFont] as [String : Any]
         let sub_at = [NSFontAttributeName: self.subFont] as [String : Any]
         let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
         if let cell: TitleSubtitleTableViewCell = cell as? TitleSubtitleTableViewCell {

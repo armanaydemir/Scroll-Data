@@ -24,8 +24,9 @@ import UIKit
     var recent = [String]()
     var last_sent = CFAbsoluteTimeGetCurrent()
     let paragraphStyle = NSMutableParagraphStyle()
-    var font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
-    var titleFont: UIFont = UIFont.preferredFont(forTextStyle: UIFontTextStyle.title1)
+    
+    var font: UIFont = UIFont.init(name: "Times New Roman", size: UIFont.systemFontSize) ?? UIFont.systemFont(ofSize: UIFont.systemFontSize)
+    let titleFont = SystemFont.init(fontName: "Times New Roman")?.getFont(withTextStyle: .title1) ?? UIFont.preferredFont(forTextStyle: .title1)
     var content_offset:CGFloat?
     let UDID = UIDevice.current.identifierForVendor!.uuidString
     var type: String?
@@ -71,7 +72,7 @@ import UIKit
         }
        
         
-        self.font = UIFont.init(name: "Times New Roman", size: findFontSize(table:self.table!))!
+        self.font = findFontSize(table:self.table!) ?? UIFont.preferredFont(forTextStyle: .body)
         let attributes = [NSFontAttributeName: font] as [String : Any]
         
         
@@ -133,11 +134,7 @@ import UIKit
         // Dispose of any resources that can be recreated.
     }
     
-    func findFontSize(table:UITableView) -> CGFloat {
-        var font_size = UIFont.systemFontSize
-        let constraintRect = CGSize(width: table.frame.width-32, height: .greatestFiniteMagnitude) //make 32 not a constant and in cellFit
-        var font = UIFont.init(name: "Times New Roman", size: font_size)!
-        var attributes = [NSFontAttributeName: font] as [String : Any]
+    func findFontSize(table:UITableView) -> UIFont? {
         let string = """
 President Trump’s $1.5 trillion tax cut was supposed to be a big selling point for congressional Republicans in the midterm elections. Instead, it appears to have done more to hurt, than help, Republicans in high-tax districts across California, New Jersey, Virginia and other states.
 
@@ -145,18 +142,9 @@ House Republicans suffered heavy Election Day losses in districts where large co
 
 Democrats swept four Republican-held districts in Orange County, Calif., where at least 40 percent of taxpayers claim the SALT tax break, defeating a pair of Republican incumbents and winning seats vacated by Representatives Ed Royce and Darrell Issa. Those districts include longtime Republican strongholds, like Newport Beach, and rank among the country’s largest users of the state and local tax break.
 """
-        var aString = NSAttributedString.init(string: string, attributes: attributes)
-        var boundingBox = aString.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, context: nil)
-        while ceil(boundingBox.height) <= (UIScreen.main.bounds.height-(self.view.safeAreaInsets.top + self.view.safeAreaInsets.bottom)) {
-            font_size += 0.1
-            font = UIFont.init(name: "Times New Roman", size: font_size)!
-            let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.lineSpacing = 8.0 // get this from textcell layout
-            attributes = [NSFontAttributeName: font, NSParagraphStyleAttributeName : paragraphStyle] as [String : Any]
-            aString = NSAttributedString.init(string: string, attributes: attributes)
-            boundingBox = aString.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, context: nil)
-        }
-        return font_size
+        let height = (UIScreen.main.bounds.height-(self.view.safeAreaInsets.top + self.view.safeAreaInsets.bottom))
+        let size = CGSize.init(width: table.frame.width-32, height: height)
+        return SystemFont.init(fontName: "Times New Roman")?.fontToFit(text: string, inSize: size, spacing: 8.0)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
