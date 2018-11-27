@@ -14,7 +14,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     var titles: Array<String> = []
     var subtitles: Array<String> = []
     var last_refresh: Date?
-    let font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
+    let subFont: UIFont = UIFont.preferredFont(forTextStyle: UIFontTextStyle.subheadline)
+    let font: UIFont = UIFont.preferredFont(forTextStyle: UIFontTextStyle.headline)
     var link = ""
     @IBOutlet weak var loadIndicator: UIActivityIndicatorView!
     
@@ -27,7 +28,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             print("couldn't connect starting vc outlets! bad things coming.....")
             return
         }
-        
+        self.navigationItem.title = "Articles"
         table.isHidden = true;
         table.accessibilityIdentifier = "startingTable"
         table.dataSource = self
@@ -66,7 +67,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             }
             
             DispatchQueue.main.async{
-                let attributes = [NSFontAttributeName: self.font] as [String : Any]
+                let attributes = [NSFontAttributeName: self.subFont] as [String : Any]
                 self.refreshControl.attributedTitle = NSAttributedString(string: (Date().description), attributes: attributes)
                 loadIndicator.stopAnimating()
                 table.reloadData()
@@ -85,11 +86,12 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let attributes = [NSFontAttributeName: font] as [String : Any]
+        let attributes = [NSFontAttributeName: self.font] as [String : Any]
+        let sub_at = [NSFontAttributeName: self.subFont] as [String : Any]
         let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
         if let cell: TitleSubtitleTableViewCell = cell as? TitleSubtitleTableViewCell {
             cell.title.attributedText = NSAttributedString.init(string:  self.titles[indexPath.item], attributes: attributes)
-            cell.subtitle.attributedText = NSAttributedString.init(string: self.subtitles[indexPath.item], attributes: attributes)
+            cell.subtitle.attributedText = NSAttributedString.init(string: self.subtitles[indexPath.item], attributes: sub_at)
         }
         return cell
     }

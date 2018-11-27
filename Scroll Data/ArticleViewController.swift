@@ -25,6 +25,7 @@ import UIKit
     var last_sent = CFAbsoluteTimeGetCurrent()
     let paragraphStyle = NSMutableParagraphStyle()
     var font: UIFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
+    var titleFont: UIFont = UIFont.preferredFont(forTextStyle: UIFontTextStyle.title1)
     var content_offset:CGFloat?
     let UDID = UIDevice.current.identifierForVendor!.uuidString
     var type: String?
@@ -60,12 +61,12 @@ import UIKit
         }
         let model = UIDevice.current.model
         if(model == "iPad"){
-            NSLayoutConstraint.activate([
-                table.leadingAnchor.constraint(equalTo: view.readableContentGuide.leadingAnchor),
-                table.trailingAnchor.constraint(equalTo: view.readableContentGuide.trailingAnchor),
-                table.bottomAnchor.constraint(equalTo: view.readableContentGuide.bottomAnchor),
-                table.topAnchor.constraint(equalTo: view.readableContentGuide.topAnchor)
-                ])
+//            NSLayoutConstraint.activate([
+//                table.leadingAnchor.constraint(equalTo: view.readableContentGuide.leadingAnchor),
+//                table.trailingAnchor.constraint(equalTo: view.readableContentGuide.trailingAnchor),
+//                table.bottomAnchor.constraint(equalTo: view.readableContentGuide.bottomAnchor),
+//                table.topAnchor.constraint(equalTo: view.readableContentGuide.topAnchor)
+//                ])
              self.view.layoutIfNeeded()
         }
        
@@ -178,7 +179,7 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
         if(indexPath.item == 0){
             let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "title", for: indexPath)
             if let cell: TitleCellTableViewCell = cell as? TitleCellTableViewCell {
-                let attributes = [NSFontAttributeName: font] as [String : Any]
+                let attributes = [NSFontAttributeName: self.titleFont] as [String : Any]
                 cell.titleText.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
                 cell.selectionStyle = .none
                 cell.isSelected = false

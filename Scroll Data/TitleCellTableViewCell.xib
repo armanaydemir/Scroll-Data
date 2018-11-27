@@ -19,8 +19,8 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FZc-YK-QkO">
-                        <rect key="frame" x="50" y="12" width="42" height="21"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FZc-YK-QkO">
+                        <rect key="frame" x="53.5" y="11.5" width="213" height="20.5"/>
                         <accessibility key="accessibilityConfiguration">
                             <accessibilityTraits key="traits" none="YES"/>
                         </accessibility>
@@ -31,7 +31,7 @@
                 </subviews>
                 <constraints>
                     <constraint firstItem="FZc-YK-QkO" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="cgP-bV-cSC"/>
-                    <constraint firstItem="FZc-YK-QkO" firstAttribute="width" secondItem="H2p-sc-9uM" secondAttribute="width" id="iDs-PX-Sq1"/>
+                    <constraint firstItem="FZc-YK-QkO" firstAttribute="width" secondItem="H2p-sc-9uM" secondAttribute="width" multiplier="2/3" id="iDs-PX-Sq1"/>
                     <constraint firstItem="FZc-YK-QkO" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="wc8-1I-FWI"/>
                 </constraints>
             </tableViewCellContentView>
