@@ -9,7 +9,9 @@
 import UIKit
 
 
-@objc class ArticleViewController: UIViewController,UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
+@objc class ArticleViewController: UIViewController,UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, SubmitTableViewCellDelegate {
+   
+    
     let version = "v0.2.7"
     var session_id: String?
     var text: Array<String> = []
@@ -123,6 +125,7 @@ import UIKit
         table.dataSource = self
         table.register(UINib.init(nibName: "ArticleTextTableViewCell", bundle: nil), forCellReuseIdentifier: "default")
         table.register(UINib.init(nibName: "TitleCellTableViewCell", bundle: nil), forCellReuseIdentifier: "title")
+        table.register(UINib.init(nibName: "SubmitTableViewCell", bundle: nil), forCellReuseIdentifier: "submit")
         table.delegate = self
         table.cellLayoutMarginsFollowReadableWidth = false
         table.estimatedRowHeight = 68.0
@@ -176,10 +179,10 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
             }
             return cell
         }else if(indexPath.item == self.cells.count-1){
-            let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "title", for: indexPath)
-            if let cell: TitleCellTableViewCell = cell as? TitleCellTableViewCell {
+            let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "submit", for: indexPath)
+            if let cell: SubmitTableViewCell = cell as? SubmitTableViewCell {
                 let attributes = [NSFontAttributeName: font] as [String : Any]
-                cell.titleText.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
+                cell.submitButton.titleLabel!.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
                 cell.selectionStyle = .none
                 cell.isSelected = false
                 cell.accessibilityLabel = "submitCell"
@@ -197,12 +200,10 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
             return cell
         }
     }
-
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if(indexPath.item == self.cells.count-1){
-            self.closeArticleWithServer()
-            _ = navigationController?.popViewController(animated: true)
-        }
+    
+    func submitData() {
+        self.closeArticleWithServer()
+        _ = navigationController?.popViewController(animated: true)
     }
     
     func closeArticleWithServer() -> Void {
@@ -217,14 +218,13 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
             return parent.bounds.intersects(cell.frame)
         })
         
-        let textsource = visibleCells.flatMap({cell in if let cell: ArticleTextTableViewCell = cell as? ArticleTextTableViewCell{
-            return cell.textSection.text
-        }else if let cell: TitleCellTableViewCell = cell as? TitleCellTableViewCell{
-            return cell.titleText.text
-        }else{
-            return "this shouldnt be possible?"
+        let textsource = visibleCells.flatMap { cell in
+            if let cell: ArticleTextTableViewCell = cell as? ArticleTextTableViewCell {
+                return cell.textSection.text
+            } else {
+                return nil
             }
-        })
+        }
         
         return textsource;
     }

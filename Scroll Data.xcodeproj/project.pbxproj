@@ -17,6 +17,9 @@
 		99DF267F21ACD3DA007D6788 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF267E21ACD3DA007D6788 /* AppDelegate.swift */; };
 		99DF26A021ACDDCA007D6788 /* ArticleTextTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF269E21ACDDCA007D6788 /* ArticleTextTableViewCell.swift */; };
 		99DF26A121ACDDCA007D6788 /* ArticleTextTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 99DF269F21ACDDCA007D6788 /* ArticleTextTableViewCell.xib */; };
+		99DF26A421ACE3CF007D6788 /* SubmitTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF26A221ACE3CF007D6788 /* SubmitTableViewCell.swift */; };
+		99DF26A521ACE3CF007D6788 /* SubmitTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 99DF26A321ACE3CF007D6788 /* SubmitTableViewCell.xib */; };
+		99DF26A721ACEAF7007D6788 /* ArticleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF26A621ACEAF7007D6788 /* ArticleViewModel.swift */; };
 		F15A41971FCA7CA00040F11D /* request.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15A41961FCA7CA00040F11D /* request.swift */; };
 		F15A535C2070748200C2F7B6 /* ArticleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15A535B2070748200C2F7B6 /* ArticleViewController.swift */; };
 		F169BDE11EA696CB00C528C7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F169BDDF1EA696CB00C528C7 /* Main.storyboard */; };
@@ -55,6 +58,9 @@
 		99DF267E21ACD3DA007D6788 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		99DF269E21ACDDCA007D6788 /* ArticleTextTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleTextTableViewCell.swift; sourceTree = "<group>"; };
 		99DF269F21ACDDCA007D6788 /* ArticleTextTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleTextTableViewCell.xib; sourceTree = "<group>"; };
+		99DF26A221ACE3CF007D6788 /* SubmitTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitTableViewCell.swift; sourceTree = "<group>"; };
+		99DF26A321ACE3CF007D6788 /* SubmitTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SubmitTableViewCell.xib; sourceTree = "<group>"; };
+		99DF26A621ACEAF7007D6788 /* ArticleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleViewModel.swift; sourceTree = "<group>"; };
 		F15A41951FCA7C9F0040F11D /* Scroll Data-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Scroll Data-Bridging-Header.h"; sourceTree = "<group>"; };
 		F15A41961FCA7CA00040F11D /* request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = request.swift; sourceTree = "<group>"; };
 		F15A535B2070748200C2F7B6 /* ArticleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleViewController.swift; sourceTree = "<group>"; };
@@ -129,12 +135,15 @@
 			children = (
 				99DF267E21ACD3DA007D6788 /* AppDelegate.swift */,
 				F15A535B2070748200C2F7B6 /* ArticleViewController.swift */,
+				99DF26A621ACEAF7007D6788 /* ArticleViewModel.swift */,
 				99DF267C21ACD188007D6788 /* SystemFont.swift */,
 				99DF269E21ACDDCA007D6788 /* ArticleTextTableViewCell.swift */,
 				99DF269F21ACDDCA007D6788 /* ArticleTextTableViewCell.xib */,
 				F169BDDF1EA696CB00C528C7 /* Main.storyboard */,
 				9930C4B021A4C0D3000C2420 /* TitleCellTableViewCell.swift */,
 				9930C4B121A4C0D3000C2420 /* TitleCellTableViewCell.xib */,
+				99DF26A221ACE3CF007D6788 /* SubmitTableViewCell.swift */,
+				99DF26A321ACE3CF007D6788 /* SubmitTableViewCell.xib */,
 				99931E122127EE31006CAC45 /* StartingViewController.swift */,
 				F169BDE21EA696CB00C528C7 /* Assets.xcassets */,
 				F169BDE41EA696CB00C528C7 /* LaunchScreen.storyboard */,
@@ -284,6 +293,7 @@
 				F169BDE31EA696CB00C528C7 /* Assets.xcassets in Resources */,
 				226A57E0215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib in Resources */,
 				9930C4B321A4C0D3000C2420 /* TitleCellTableViewCell.xib in Resources */,
+				99DF26A521ACE3CF007D6788 /* SubmitTableViewCell.xib in Resources */,
 				99DF26A121ACDDCA007D6788 /* ArticleTextTableViewCell.xib in Resources */,
 				F169BDE11EA696CB00C528C7 /* Main.storyboard in Resources */,
 			);
@@ -314,9 +324,11 @@
 				226A57DF215B1E2E0029D798 /* TitleSubtitleTableViewCell.swift in Sources */,
 				99DF267D21ACD188007D6788 /* SystemFont.swift in Sources */,
 				99931E132127EE31006CAC45 /* StartingViewController.swift in Sources */,
+				99DF26A721ACEAF7007D6788 /* ArticleViewModel.swift in Sources */,
 				99DF26A021ACDDCA007D6788 /* ArticleTextTableViewCell.swift in Sources */,
 				F15A535C2070748200C2F7B6 /* ArticleViewController.swift in Sources */,
 				9930C4B221A4C0D3000C2420 /* TitleCellTableViewCell.swift in Sources */,
+				99DF26A421ACE3CF007D6788 /* SubmitTableViewCell.swift in Sources */,
 				F15A41971FCA7CA00040F11D /* request.swift in Sources */,
 				99DF267F21ACD3DA007D6788 /* AppDelegate.swift in Sources */,
 			);
