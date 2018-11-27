@@ -14,8 +14,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     var titles: Array<String> = []
     var subtitles: Array<String> = []
     var last_refresh: Date?
-    let subFont: UIFont = UIFont.preferredFont(forTextStyle: UIFontTextStyle.subheadline)
-    let font: UIFont = UIFont.preferredFont(forTextStyle: UIFontTextStyle.headline)
+    var subFont = UIFont(name: "Times New Roman", size: 12)
+    var font = UIFont(name: "Times New Roman", size: 14)
     var link = ""
     @IBOutlet weak var loadIndicator: UIActivityIndicatorView!
     
@@ -38,6 +38,13 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         self.fetchData()
         table.register(UINib.init(nibName: "TitleSubtitleTableViewCell", bundle: nil), forCellReuseIdentifier: "default")
         table.rowHeight = UITableViewAutomaticDimension
+        
+        let systemSubFont = UIFont.preferredFont(forTextStyle: .subheadline)
+        let systemFont = UIFont.preferredFont(forTextStyle: .headline)
+        
+        subFont = UIFont.init(descriptor: subFont!.fontDescriptor.withSymbolicTraits(systemSubFont.fontDescriptor.symbolicTraits)!, size: systemSubFont.pointSize)
+        font = UIFont.init(descriptor: font!.fontDescriptor.withSymbolicTraits(systemFont.fontDescriptor.symbolicTraits)!, size: systemFont.pointSize)
+
     }
     private func fetchData() {
         guard let table = self.table, let loadIndicator = self.loadIndicator else {
