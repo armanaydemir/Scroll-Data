@@ -143,8 +143,8 @@ House Republicans suffered heavy Election Day losses in districts where large co
 Democrats swept four Republican-held districts in Orange County, Calif., where at least 40 percent of taxpayers claim the SALT tax break, defeating a pair of Republican incumbents and winning seats vacated by Representatives Ed Royce and Darrell Issa. Those districts include longtime Republican strongholds, like Newport Beach, and rank among the country’s largest users of the state and local tax break.
 """
         let height = (UIScreen.main.bounds.height-(self.view.safeAreaInsets.top + self.view.safeAreaInsets.bottom))
-        let size = CGSize.init(width: table.frame.width-32, height: height)
-        return SystemFont.init(fontName: "Times New Roman")?.fontToFit(text: string, inSize: size, spacing: 8.0)
+        let size = CGSize.init(width: table.frame.width-ArticleTextTableViewCell.widthSpacingConstant*2, height: height)
+        return SystemFont.init(fontName: "Times New Roman")?.fontToFit(text: string, inSize: size, spacing: ArticleTextTableViewCell.topSpacingConstant*2)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -171,6 +171,7 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
                 cell.titleText.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
                 cell.selectionStyle = .none
                 cell.isSelected = false
+                cell.isUserInteractionEnabled = false
                 cell.accessibilityLabel = "titleCell"
             }
             return cell
@@ -190,6 +191,7 @@ Democrats swept four Republican-held districts in Orange County, Calif., where a
                 let attributes = [NSFontAttributeName: font] as [String : Any]
                 cell.textSection.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
                 cell.isSelected = false
+                cell.isUserInteractionEnabled = false
                 cell.accessibilityLabel = "textCell"
             }
             return cell

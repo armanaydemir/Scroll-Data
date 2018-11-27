@@ -10,16 +10,24 @@ import UIKit
 
 class ArticleTextTableViewCell: UITableViewCell {
 
+    @IBOutlet weak var widthSpacing: NSLayoutConstraint!
+    @IBOutlet weak var topSpacing: NSLayoutConstraint!
     @IBOutlet weak var textSection: UILabel!
+    
+    
+    public static let widthSpacingConstant: CGFloat = 16.0
+    public static let topSpacingConstant: CGFloat = 4.0
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        
+        widthSpacing.constant = ArticleTextTableViewCell.widthSpacingConstant
+        topSpacing.constant = ArticleTextTableViewCell.topSpacingConstant
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
+        super.setSelected(false, animated: animated)
+        
         // Configure the view for the selected state
     }
-    
 }

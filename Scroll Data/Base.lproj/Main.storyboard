@@ -21,9 +21,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="GD0-jN-B0g">
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="GD0-jN-B0g">
                                 <rect key="frame" x="502" y="673" width="20" height="20"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </activityIndicatorView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ZxO-p4-z4r">
                                 <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
@@ -36,6 +35,8 @@
                             <constraint firstItem="ZxO-p4-z4r" firstAttribute="width" secondItem="xSG-2C-ts7" secondAttribute="width" id="LkQ-Xl-Rad"/>
                             <constraint firstItem="ZxO-p4-z4r" firstAttribute="centerY" secondItem="xSG-2C-ts7" secondAttribute="centerY" id="NAx-8B-Fpr"/>
                             <constraint firstItem="ZxO-p4-z4r" firstAttribute="centerX" secondItem="xSG-2C-ts7" secondAttribute="centerX" id="Q8g-TL-7ah"/>
+                            <constraint firstItem="GD0-jN-B0g" firstAttribute="centerY" secondItem="xSG-2C-ts7" secondAttribute="centerY" id="QSs-c5-qfP"/>
+                            <constraint firstItem="GD0-jN-B0g" firstAttribute="centerX" secondItem="xSG-2C-ts7" secondAttribute="centerX" id="sRZ-vR-M9X"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="hTg-FQ-wxj"/>
@@ -54,6 +55,7 @@
             <objects>
                 <navigationController id="67l-c2-P28" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Wbg-hJ-fns">
+                        <rect key="frame" x="0.0" y="20" width="1024" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -77,18 +79,18 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="k8p-iG-GI0">
-                                <rect key="frame" x="0.0" y="64" width="1024" height="1258"/>
+                                <rect key="frame" x="0.0" y="70" width="1024" height="1296"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </tableView>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="y80-SR-T2z">
-                                <rect key="frame" x="494" y="665" width="37" height="37"/>
+                                <rect key="frame" x="493.5" y="664.5" width="37" height="37"/>
                                 <color key="color" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="k8p-iG-GI0" secondAttribute="bottom" id="KhQ-MG-4qE"/>
                             <constraint firstItem="y80-SR-T2z" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="QmK-zz-dmB"/>
+                            <constraint firstAttribute="bottom" secondItem="k8p-iG-GI0" secondAttribute="bottom" id="YKW-Po-Pnk"/>
                             <constraint firstItem="y80-SR-T2z" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="jNb-8U-rAY"/>
                             <constraint firstItem="k8p-iG-GI0" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" priority="750" id="os8-rr-UUL"/>
                             <constraint firstItem="k8p-iG-GI0" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="uxx-pJ-gr9"/>

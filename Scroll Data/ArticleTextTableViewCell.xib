@@ -29,13 +29,15 @@
                 <constraints>
                     <constraint firstItem="3Hl-bp-B7V" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="5dU-oH-zW5"/>
                     <constraint firstItem="3Hl-bp-B7V" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="HNX-to-n5k"/>
-                    <constraint firstAttribute="trailing" secondItem="3Hl-bp-B7V" secondAttribute="trailing" constant="16" id="IXh-t5-wAM"/>
                     <constraint firstItem="3Hl-bp-B7V" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="4" id="aE8-FF-MrM"/>
+                    <constraint firstItem="3Hl-bp-B7V" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="pdD-Q2-Y8c"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="textSection" destination="3Hl-bp-B7V" id="AL5-st-I5N"/>
+                <outlet property="topSpacing" destination="aE8-FF-MrM" id="bBt-Ub-Jvz"/>
+                <outlet property="widthSpacing" destination="HNX-to-n5k" id="lYd-6N-xml"/>
             </connections>
         </tableViewCell>
     </objects>
