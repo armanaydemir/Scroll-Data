@@ -209,38 +209,39 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let aString = self.content[indexPath.item].getText()
-        if(indexPath.item == 0){
-            let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "title", for: indexPath)
-            if let cell: TitleCellTableViewCell = cell as? TitleCellTableViewCell {
-                let attributes = [NSFontAttributeName: self.titleFont] as [String : Any]
-                cell.titleText.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
-                cell.selectionStyle = .none
-                cell.isSelected = false
-                cell.isUserInteractionEnabled = false
-                cell.accessibilityLabel = "titleCell"
-            }
-            return cell
-        }else if(indexPath.item == self.content.count){
+        if(indexPath.item == self.content.count){
             let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "submit", for: indexPath)
             if let cell: SubmitTableViewCell = cell as? SubmitTableViewCell {
-                let attributes = [NSFontAttributeName: font] as [String : Any]
-                cell.submitButton.titleLabel!.attributedText = NSAttributedString.init(string: "Tap to submit data", attributes: attributes)
+                cell.submitButton.setTitle("Tap to submit data", for: UIControlState.normal)
                 cell.selectionStyle = .none
                 cell.isSelected = false
                 cell.accessibilityLabel = "submitCell"
             }
             return cell
         }else{
-            let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
-            if let cell: ArticleTextTableViewCell = cell as? ArticleTextTableViewCell {
-                let attributes = [NSFontAttributeName: font] as [String : Any]
-                cell.textSection.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
-                cell.isSelected = false
-                cell.isUserInteractionEnabled = false
-                cell.accessibilityLabel = "textCell"
+            let aString = self.content[indexPath.item].getText()
+            if(indexPath.item == 0){
+                let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "title", for: indexPath)
+                if let cell: TitleCellTableViewCell = cell as? TitleCellTableViewCell {
+                    let attributes = [NSFontAttributeName: self.titleFont] as [String : Any]
+                    cell.titleText.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
+                    cell.selectionStyle = .none
+                    cell.isSelected = false
+                    cell.isUserInteractionEnabled = false
+                    cell.accessibilityLabel = "titleCell"
+                }
+                return cell
+            }else{
+                let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
+                if let cell: ArticleTextTableViewCell = cell as? ArticleTextTableViewCell {
+                    let attributes = [NSFontAttributeName: font] as [String : Any]
+                    cell.textSection.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
+                    cell.isSelected = false
+                    cell.isUserInteractionEnabled = false
+                    cell.accessibilityLabel = "textCell"
+                }
+                return cell
             }
-            return cell
         }
     }
     
@@ -248,7 +249,7 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
         switch indexPath.row {
         case 0:
             return UIScreen.main.bounds.size.height - (self.navigationController?.navigationBar.frame.size.height ?? 0) - 1
-        case (self.content.count-1):
+        case (self.content.count):
             return UIScreen.main.bounds.size.height - (self.navigationController?.navigationBar.frame.size.height ?? 0) - 1
         default:
             return UITableViewAutomaticDimension
