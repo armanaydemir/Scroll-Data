@@ -130,7 +130,7 @@ import UIKit
     
     func findFontSize(table:UITableView) -> UIFont? {
         let string = sizingString
-        let height = (UIScreen.main.bounds.height-(self.view.safeAreaInsets.top + self.view.safeAreaInsets.bottom))
+        let height = viewableAreaHeight(showOnBottom: false)
         let size = CGSize.init(width: table.frame.width-ArticleTextTableViewCell.widthSpacingConstant*2, height: height)
         return SystemFont.init(fontName: "Times New Roman")?.fontToFit(text: string, inSize: size, spacing: ArticleTextTableViewCell.topSpacingConstant*2)
     }
@@ -205,6 +205,12 @@ import UIKit
         }
         return cells
     }
+    
+    func viewableAreaHeight(showOnBottom: Bool) -> CGFloat {
+        var viewableHeight = UIScreen.main.bounds.height - self.view.safeAreaInsets.top
+        if !showOnBottom { viewableHeight = viewableHeight - self.view.safeAreaInsets.bottom }
+        return viewableHeight
+    }
 }
 
 extension ArticleViewController: SubmitTableViewCellDelegate {
@@ -261,9 +267,9 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.row {
         case 0:
-            return UIScreen.main.bounds.size.height - (self.navigationController?.navigationBar.frame.size.height ?? 0) - 1
-        case (self.content.count):
-            return UIScreen.main.bounds.size.height - (self.navigationController?.navigationBar.frame.size.height ?? 0) - 1
+            return viewableAreaHeight(showOnBottom: true)
+        case self.content.count:
+            return viewableAreaHeight(showOnBottom: false)
         default:
             return UITableViewAutomaticDimension
         }
