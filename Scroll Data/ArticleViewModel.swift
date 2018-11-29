@@ -98,10 +98,12 @@ class ArticleViewModel: NSObject {
     
     func closeArticle(content: Array<Content>, wordIndicies: Array<Int>, characterIndicies: Array<Int>, complete:Bool){
         //trying json encoding here
-        
+        let c = content.map {cell in
+            return String(data: try! JSONEncoder().encode(cell), encoding: .utf8)!
+        }
         
         print(self.session_id ?? "")
-        let data: [String: Any] = ["UDID":self.UDID, "startTime":self.startTime*timeOffset, "article":self.articleLink ?? "", "time":CFAbsoluteTimeGetCurrent()*timeOffset, "session_id":self.session_id ?? "", "complete":complete, "word_splits":wordIndicies, "character_splits":characterIndicies]
+        let data: [String: Any] = ["UDID":self.UDID, "startTime":self.startTime*timeOffset, "article":self.articleLink ?? "", "time":CFAbsoluteTimeGetCurrent()*timeOffset, "session_id":self.session_id ?? "", "complete":complete, "word_splits":wordIndicies, "character_splits":characterIndicies, "content": c]
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/close_article", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })

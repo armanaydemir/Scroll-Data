@@ -276,20 +276,12 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-class Content: Codable {
+struct Content: Codable {
     let text: String
     let paragraph: Int
     let firstWordIndex: Int
     let firstCharacterIndex: Int
     let spacer: Bool
-    
-    init(text: String, paragraph: Int, firstWordIndex: Int, firstCharacterIndex: Int, spacer: Bool) {
-        self.text = text
-        self.paragraph = paragraph
-        self.firstWordIndex = firstWordIndex
-        self.firstCharacterIndex = firstCharacterIndex
-        self.spacer = spacer
-    }
 }
 
 let sizingString = """
