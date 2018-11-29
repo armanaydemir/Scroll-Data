@@ -10,7 +10,6 @@ import UIKit
 
 
 @objc class ArticleViewController: UIViewController {
-    
     var content: Array<Content> = []
     var articleLink: String?
     var vm: ArticleViewModel! = nil
@@ -88,13 +87,17 @@ import UIKit
                 self.font = self.findFontSize(table: table) ?? UIFont.preferredFont(forTextStyle: .body)
                 let content = self.convert(paragraphs: p, font: self.font)
                 self.content = content
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
-                    table.scrollToRow(at: IndexPath.init(row: content.count, section: 0) , at: UITableViewScrollPosition.top, animated: true)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
-                        _ = self.navigationController?.popViewController(animated: true)
-                    }
-                }
+                
+//                DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
+//                    table.scrollToRow(at: IndexPath.init(row: 15, section: 0) , at: UITableViewScrollPosition.top, animated: true)
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
+//                         table.scrollToRow(at: IndexPath.init(row: content.count, section: 0) , at: UITableViewScrollPosition.top, animated: true)
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
+//                            _ = self.navigationController?.popViewController(animated: true)
+//                        }
+//
+//                    }
+//                }
                 
                 table.reloadData()
                 
@@ -104,7 +107,7 @@ import UIKit
     }
     
     func repeatingCheck(table: UITableView) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(2000)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
             let timer = Timer.init(timeInterval: self.timePerCheck, repeats: true, block: { _ in
                 self.sendTextToServer(tableView: table)
             })
@@ -131,13 +134,13 @@ import UIKit
     }
     
     func sendTextToServer(tableView:UITableView) -> Void {
-        //print("send text - \(CFAbsoluteTimeGetCurrent())")
+       
         let current_offset = tableView.contentOffset.y
         if tableView.isHidden || current_offset == self.content_offset { return }
         
         let temp = currentPosition(tableView: tableView)
         let first_index = temp[0], last_index = temp[1]
-            
+        
         vm.submitData(content_offset: current_offset, first_index: first_index, last_index: last_index)
         
     }

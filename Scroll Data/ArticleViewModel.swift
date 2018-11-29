@@ -67,10 +67,7 @@ class ArticleViewModel: NSObject {
     
     
     func submitData(content_offset:CGFloat, first_index:Int, last_index:Int){
-        
-        guard first_index == recent_first && last_index == recent_last else{
-            return
-        }
+        if(self.recent_first == nil || first_index != recent_first || last_index != recent_last){
         let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
         
         let data: [String: Any] = [
@@ -91,10 +88,11 @@ class ArticleViewModel: NSObject {
             if let e = error {print(e)}
         })
         
-        
+        print("send text - \(CFAbsoluteTimeGetCurrent())")
         self.last_sent = cur
         self.recent_last = last_index
         self.recent_first = first_index
+        }
     }
     
     
