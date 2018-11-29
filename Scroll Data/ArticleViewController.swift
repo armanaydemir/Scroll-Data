@@ -113,7 +113,8 @@ import UIKit
         let characterIndices = lines.map { $0.firstCharacterIndex }
         
         self.timer?.invalidate()
-        self.vm.closeArticle(content: self.content, wordIndicies: wordIndices, characterIndicies: characterIndices, complete: self.complete)
+        
+        self.vm.closeArticle(content: self.content.map { $0.toDictionary() }, wordIndicies: wordIndices, characterIndicies: characterIndices, complete: self.complete)
     }
     
     func repeatingCheck(table: UITableView) {
@@ -289,6 +290,16 @@ class Content: Codable {
         self.firstWordIndex = firstWordIndex
         self.firstCharacterIndex = firstCharacterIndex
         self.spacer = spacer
+    }
+    
+    func toDictionary() -> [String : Any] {
+        return [
+            "text" : text,
+            "paragraph" : paragraph,
+            "first_word_index" : firstWordIndex,
+            "first_character_index" : firstCharacterIndex,
+            "spacer" : spacer
+        ]
     }
 }
 
