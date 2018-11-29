@@ -56,16 +56,16 @@ import UIKit
         spinner.hidesWhenStopped = true
         spinner.startAnimating()
         
-//        let model = UIDevice.current.model
-//        if(model == "iPad"){
-//            //            NSLayoutConstraint.activate([
-//            //                table.leadingAnchor.constraint(equalTo: view.readableContentGuide.leadingAnchor),
-//            //                table.trailingAnchor.constraint(equalTo: view.readableContentGuide.trailingAnchor),
-//            //                table.bottomAnchor.constraint(equalTo: view.readableContentGuide.bottomAnchor),
-//            //                table.topAnchor.constraint(equalTo: view.readableContentGuide.topAnchor)
-//            //                ])
-//            self.view.layoutIfNeeded()
-//        }
+        let model = UIDevice.current.model
+        if(model == "iPad"){
+                        NSLayoutConstraint.activate([
+                            table.leadingAnchor.constraint(equalTo: view.readableContentGuide.leadingAnchor),
+                            table.trailingAnchor.constraint(equalTo: view.readableContentGuide.trailingAnchor),
+                            table.bottomAnchor.constraint(equalTo: view.readableContentGuide.bottomAnchor),
+                            table.topAnchor.constraint(equalTo: view.readableContentGuide.topAnchor)
+                            ])
+            self.view.layoutIfNeeded()
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
