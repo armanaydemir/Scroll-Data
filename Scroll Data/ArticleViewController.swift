@@ -218,6 +218,7 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
                 cell.selectionStyle = .none
                 cell.isSelected = false
                 cell.accessibilityLabel = "submitCell"
+                cell.delegate = self
             }
             return cell
         }else{
