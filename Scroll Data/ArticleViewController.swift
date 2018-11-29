@@ -106,6 +106,14 @@ import UIKit
         })
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        let lines = self.content.flatMap { $0 as? Line }
+        let wordIndices = lines.map { $0.firstWordIndex }
+        let characterIndices = lines.map { $0.firstCharacterIndex }
+        
+        self.vm.closeArticle(wordIndicies: wordIndices, characterIndicies: characterIndices, complete: self.complete)
+    }
+    
     func repeatingCheck(table: UITableView) {
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
             let timer = Timer.init(timeInterval: self.timePerCheck, repeats: true, block: { _ in
