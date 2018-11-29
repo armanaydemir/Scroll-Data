@@ -22,6 +22,7 @@ import UIKit
     var content_offset:CGFloat?
    
     let timePerCheck = 0.00001
+    var timer: Timer? = nil
     
     var minTableDim:CGFloat?
     
@@ -111,15 +112,16 @@ import UIKit
         let wordIndices = lines.map { $0.firstWordIndex }
         let characterIndices = lines.map { $0.firstCharacterIndex }
         
+        self.timer?.invalidate()
         self.vm.closeArticle(wordIndicies: wordIndices, characterIndicies: characterIndices, complete: self.complete)
     }
     
     func repeatingCheck(table: UITableView) {
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
-            let timer = Timer.init(timeInterval: self.timePerCheck, repeats: true, block: { _ in
+            self.timer = Timer.init(timeInterval: self.timePerCheck, repeats: true, block: { _ in
                 self.sendTextToServer(tableView: table)
             })
-            RunLoop.main.add(timer, forMode: RunLoopMode.commonModes)
+            RunLoop.main.add(self.timer!, forMode: RunLoopMode.commonModes)
             self.spinner?.stopAnimating()
             table.isHidden = false
             self.sendTextToServer(tableView: table)
