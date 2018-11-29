@@ -113,7 +113,7 @@ import UIKit
         let characterIndices = lines.map { $0.firstCharacterIndex }
         
         self.timer?.invalidate()
-        self.vm.closeArticle(wordIndicies: wordIndices, characterIndicies: characterIndices, complete: self.complete)
+        self.vm.closeArticle(content: self.content, wordIndicies: wordIndices, characterIndicies: characterIndices, complete: self.complete)
     }
     
     func repeatingCheck(table: UITableView) {
