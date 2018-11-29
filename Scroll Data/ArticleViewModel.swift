@@ -67,31 +67,31 @@ class ArticleViewModel: NSObject {
     
     
     func submitData(content_offset:CGFloat, first_index:Int, last_index:Int){
-        if(self.recent_first == nil || first_index != recent_first || last_index != recent_last){
-        let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
-        
-        let data: [String: Any] = [
-            "UDID":self.UDID,
-            "article":self.articleLink ?? "",
-            "startTime":self.startTime*timeOffset,
-            "appeared":self.last_sent*timeOffset,
-            "time": cur*timeOffset,
-            "first_cell":first_index,
-            "last_cell":last_index,
-            "previous_first_cell":self.recent_first ?? "",
-            "previous_last_cell":self.recent_last ?? "",
-            "content_offset":content_offset ]
-        
-        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  {
-            data, response, error in
+        if (self.recent_first == nil || first_index != recent_first || last_index != recent_last) {
+            let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
             
-            if let e = error {print(e)}
-        })
-        
-        print("send text - \(CFAbsoluteTimeGetCurrent())")
-        self.last_sent = cur
-        self.recent_last = last_index
-        self.recent_first = first_index
+            let data: [String: Any] = [
+                "UDID":self.UDID,
+                "article":self.articleLink ?? "",
+                "startTime":self.startTime*timeOffset,
+                "appeared":self.last_sent*timeOffset,
+                "time": cur*timeOffset,
+                "first_cell":first_index,
+                "last_cell":last_index,
+                "previous_first_cell":self.recent_first ?? "",
+                "previous_last_cell":self.recent_last ?? "",
+                "content_offset":content_offset ]
+            
+            Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  {
+                data, response, error in
+                
+                if let e = error {print(e)}
+            })
+            
+            print("send text - \(CFAbsoluteTimeGetCurrent())")
+            self.last_sent = cur
+            self.recent_last = last_index
+            self.recent_first = first_index
         }
     }
     
