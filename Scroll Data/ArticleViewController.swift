@@ -108,7 +108,7 @@ import UIKit
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        let lines = self.content.flatMap { $0 as? Line }
+        let lines = self.content.filter { return !$0.spacer }
         let wordIndices = lines.map { $0.firstWordIndex }
         let characterIndices = lines.map { $0.firstCharacterIndex }
         
@@ -177,7 +177,7 @@ import UIKit
         var word_count = 0
         var char_count = 0
         let attributes = [NSFontAttributeName: font] as [String : Any]
-        cells.append(Line.init(text: paragraphs[0], paragraph: p, firstWordIndex: word_count, firstCharacterIndex: char_count))
+        cells.append(Content.init(text: paragraphs[0], paragraph: p, firstWordIndex: word_count, firstCharacterIndex: char_count, spacer: false))
         p+=1
         for section in paragraphs.dropFirst(){
             var words = section.split(separator: " ").map({substring in
@@ -197,11 +197,11 @@ import UIKit
                 word_count += cell.count
                 let current_text = cell.joined(separator: " ")
                 char_count += current_text.count
-                cells.append(Line.init(text: current_text, paragraph: p, firstWordIndex: word_count, firstCharacterIndex: char_count))
+                cells.append(Content.init(text: current_text, paragraph: p, firstWordIndex: word_count, firstCharacterIndex: char_count, spacer: false))
 
             }
             p += 1
-            cells.append(Spacer())
+            cells.append(Content.init(text: "", paragraph: p, firstWordIndex: word_count, firstCharacterIndex: char_count, spacer: true))
         }
         return cells
     }
@@ -238,7 +238,7 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
             }
             return cell
         }else{
-            let aString = self.content[indexPath.item].getText()
+            let aString = self.content[indexPath.item].text
             if(indexPath.item == 0){
                 let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "title", for: indexPath)
                 if let cell: TitleCellTableViewCell = cell as? TitleCellTableViewCell {
@@ -276,34 +276,19 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-protocol Content {
-    func isSpacer() -> Bool
-    func getText() -> String
-}
-
-struct Line: Content  {
-    
+class Content: Codable {
     let text: String
     let paragraph: Int
     let firstWordIndex: Int
     let firstCharacterIndex: Int
+    let spacer: Bool
     
-    func isSpacer() -> Bool {
-        return false
-    }
-    
-    func getText() -> String {
-        return text
-    }
-}
-
-struct Spacer: Content {
-    func isSpacer() -> Bool {
-        return true
-    }
-    
-    func getText() -> String{
-        return ""
+    init(text: String, paragraph: Int, firstWordIndex: Int, firstCharacterIndex: Int, spacer: Bool) {
+        self.text = text
+        self.paragraph = paragraph
+        self.firstWordIndex = firstWordIndex
+        self.firstCharacterIndex = firstCharacterIndex
+        self.spacer = spacer
     }
 }
 
