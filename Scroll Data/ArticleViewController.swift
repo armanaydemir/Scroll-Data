@@ -89,16 +89,16 @@ import UIKit
                 let content = self.convert(paragraphs: p, font: self.font)
                 self.content = content
                 
-//                DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
-//                    table.scrollToRow(at: IndexPath.init(row: 15, section: 0) , at: UITableViewScrollPosition.top, animated: true)
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
-//                         table.scrollToRow(at: IndexPath.init(row: content.count, section: 0) , at: UITableViewScrollPosition.top, animated: true)
-//                        DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
-//                            _ = self.navigationController?.popViewController(animated: true)
-//                        }
-//
-//                    }
-//                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
+                    table.scrollToRow(at: IndexPath.init(row: 15, section: 0) , at: UITableViewScrollPosition.top, animated: true)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
+                         table.scrollToRow(at: IndexPath.init(row: content.count, section: 0) , at: UITableViewScrollPosition.top, animated: true)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
+                            _ = self.navigationController?.popViewController(animated: true)
+                        }
+
+                    }
+                }
                 
                 table.reloadData()
                 
@@ -109,11 +109,14 @@ import UIKit
     
     override func viewWillDisappear(_ animated: Bool) {
         let lines = self.content.filter { return !$0.spacer }
+        let c = self.content.map {cell in
+            return String(data: try! JSONEncoder().encode(cell), encoding: .utf8)!
+        }
         let wordIndices = lines.map { $0.firstWordIndex }
         let characterIndices = lines.map { $0.firstCharacterIndex }
         
         self.timer?.invalidate()
-        self.vm.closeArticle(content: self.content, wordIndicies: wordIndices, characterIndicies: characterIndices, complete: self.complete)
+        self.vm.closeArticle(content: c, wordIndicies: wordIndices, characterIndicies: characterIndices, complete: self.complete)
     }
     
     func repeatingCheck(table: UITableView) {
