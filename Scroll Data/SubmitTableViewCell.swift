@@ -14,6 +14,7 @@ class SubmitTableViewCell: UITableViewCell {
     weak var delegate: SubmitTableViewCellDelegate?
     override func awakeFromNib() {
         super.awakeFromNib()
+        submitButton.layer.cornerRadius = 4.0
         // Initialization code
     }
 

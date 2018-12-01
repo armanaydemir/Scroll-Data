@@ -28,7 +28,7 @@ import UIKit
     
     @IBOutlet weak var table: UITableView?
     @IBOutlet weak var spinner: UIActivityIndicatorView?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -56,8 +56,8 @@ import UIKit
         spinner.hidesWhenStopped = true
         spinner.startAnimating()
         
-        let model = UIDevice.current.model
-        if(model == "iPad"){
+        let model = UIDevice.current.model.lowercased()
+        if(model.contains("ipad")){
             NSLayoutConstraint.activate([
                 table.leadingAnchor.constraint(equalTo: view.readableContentGuide.leadingAnchor),
                 table.trailingAnchor.constraint(equalTo: view.readableContentGuide.trailingAnchor),
@@ -89,16 +89,16 @@ import UIKit
                 let content = self.convert(paragraphs: p, font: self.font)
                 self.content = content
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
-                    table.scrollToRow(at: IndexPath.init(row: 15, section: 0) , at: UITableViewScrollPosition.top, animated: true)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
-                         table.scrollToRow(at: IndexPath.init(row: content.count, section: 0) , at: UITableViewScrollPosition.top, animated: true)
-                        DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
-                            _ = self.navigationController?.popViewController(animated: true)
-                        }
-
-                    }
-                }
+//                DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
+//                    table.scrollToRow(at: IndexPath.init(row: 15, section: 0) , at: UITableViewScrollPosition.top, animated: true)
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
+//                         table.scrollToRow(at: IndexPath.init(row: content.count, section: 0) , at: UITableViewScrollPosition.top, animated: true)
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
+//                            _ = self.navigationController?.popViewController(animated: true)
+//                        }
+//
+//                    }
+//                }
                 
                 table.reloadData()
                 
@@ -109,18 +109,19 @@ import UIKit
     
     override func viewWillDisappear(_ animated: Bool) {
         let lines = self.content.filter { return !$0.spacer }
-        let c = self.content.map {cell in
-            return String(data: try! JSONEncoder().encode(cell), encoding: .utf8)!
-        }
         let wordIndices = lines.map { $0.firstWordIndex }
         let characterIndices = lines.map { $0.firstCharacterIndex }
         
         self.timer?.invalidate()
-        self.vm.closeArticle(content: c, wordIndicies: wordIndices, characterIndicies: characterIndices, complete: self.complete)
+
+        self.vm.closeArticle(content: self.content.map { $0.toDictionary() }, wordIndicies: wordIndices, characterIndicies: characterIndices, complete: self.complete)
+        
+        guard let a = UIApplication.shared.delegate as? AppDelegate else {return}
+        a.autoRotate = true
     }
     
     func repeatingCheck(table: UITableView) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
+        DispatchQueue.main.asyncAfter(deadline: .now()) {
             self.timer = Timer.init(timeInterval: self.timePerCheck, repeats: true, block: { _ in
                 self.sendTextToServer(tableView: table)
             })
@@ -285,6 +286,16 @@ struct Content: Codable {
     let firstWordIndex: Int
     let firstCharacterIndex: Int
     let spacer: Bool
+    
+    func toDictionary() -> [String : Any] {
+        return [
+            "text" : text,
+            "paragraph" : paragraph,
+            "first_word_index" : firstWordIndex,
+            "first_character_index" : firstCharacterIndex,
+            "spacer" : spacer
+        ]
+    }
 }
 
 let sizingString = """

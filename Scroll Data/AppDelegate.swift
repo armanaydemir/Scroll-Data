@@ -12,4 +12,25 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
+    var autoRotate: Bool = true
+    var orientation: UIDeviceOrientation = UIDeviceOrientation.portrait
+    
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        
+        
+        
+        if(!UIDevice.current.model.lowercased().contains("ipad")){
+            return UIInterfaceOrientationMask.portrait
+        }
+        if(self.autoRotate){
+            return UIInterfaceOrientationMask.all
+        }else {
+            if(self.orientation.isPortrait){
+                return .portrait
+            }else{
+                return .landscape
+            }
+        }
+    }
+        
 }

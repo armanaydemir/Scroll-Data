@@ -10,7 +10,7 @@ import UIKit
 
 class ArticleViewModel: NSObject {
     
-    let version = "v0.2.7"
+    let version = "v0.3.1"
     let UDID = UIDevice.current.identifierForVendor!.uuidString
     let timeOffset:Double = 100000000
     var startTime = CFAbsoluteTimeGetCurrent()
@@ -88,21 +88,29 @@ class ArticleViewModel: NSObject {
                 if let e = error {print(e)}
             })
             
-            print("send text - \(CFAbsoluteTimeGetCurrent())")
             self.last_sent = cur
             self.recent_last = last_index
             self.recent_first = first_index
         }
     }
     
-    
-    func closeArticle(content: Array<String>, wordIndicies: Array<Int>, characterIndicies: Array<Int>, complete:Bool){
-        print(self.session_id ?? "")
-        let data: [String: Any] = ["UDID":self.UDID, "startTime":self.startTime*timeOffset, "article":self.articleLink ?? "", "time":CFAbsoluteTimeGetCurrent()*timeOffset, "session_id":self.session_id ?? "", "complete":complete, "word_splits":wordIndicies, "character_splits":characterIndicies, "content": content]
+    func closeArticle(content: Array<Dictionary<String, Any>>, wordIndicies: Array<Int>, characterIndicies: Array<Int>, complete:Bool){
+        guard let a = UIApplication.shared.delegate as? AppDelegate else {return}
+        let data: [String: Any] = [
+            "UDID": self.UDID,
+            "startTime": self.startTime*timeOffset,
+            "article": self.articleLink ?? "",
+            "time": CFAbsoluteTimeGetCurrent()*timeOffset,
+            "session_id": self.session_id ?? "",
+            "complete": complete,
+            "word_splits": wordIndicies,
+            "character_splits": characterIndicies,
+            "content": content,
+            "portrait": a.orientation.isPortrait
+        ]
+        
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/close_article", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })
     }
-    
-    
 }

@@ -15,7 +15,6 @@ class SystemFont {
     init?(fontName: String){
         guard let font = UIFont(name: fontName, size: UIFont.systemFontSize)
             else { return nil }
-        
         self.basicFont = font
     }
     
