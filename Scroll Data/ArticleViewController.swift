@@ -37,13 +37,13 @@ import UIKit
             return
         }
         
-        NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: .UIApplicationWillResignActive, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
         
         vm = ArticleViewModel.init(articleLink: self.articleLink!)
         
         table.isHidden = true;
         table.accessibilityIdentifier = "articleTable"
-        table.separatorStyle = UITableViewCellSeparatorStyle.none
+        table.separatorStyle = UITableViewCell.SeparatorStyle.none
         table.dataSource = self
         table.register(UINib.init(nibName: "ArticleTextTableViewCell", bundle: nil), forCellReuseIdentifier: "default")
         table.register(UINib.init(nibName: "TitleCellTableViewCell", bundle: nil), forCellReuseIdentifier: "title")
@@ -51,7 +51,7 @@ import UIKit
         table.delegate = self
         table.cellLayoutMarginsFollowReadableWidth = false
         table.estimatedRowHeight = 68.0
-        table.rowHeight = UITableViewAutomaticDimension
+        table.rowHeight = UITableView.automaticDimension
 
         spinner.hidesWhenStopped = true
         spinner.startAnimating()
@@ -80,7 +80,7 @@ import UIKit
         
         vm.fetchText(completion: { paragraphs, error in
             guard let p = paragraphs else {
-                let alert = UIAlertController.init(title: "error fetching text", message: error, preferredStyle: UIAlertControllerStyle.alert)
+                let alert = UIAlertController.init(title: "error fetching text", message: error, preferredStyle: UIAlertController.Style.alert)
                 self.present(alert, animated: true, completion: nil)
                 return
             }
@@ -125,7 +125,7 @@ import UIKit
             self.timer = Timer.init(timeInterval: self.timePerCheck, repeats: true, block: { _ in
                 self.sendTextToServer(tableView: table)
             })
-            RunLoop.main.add(self.timer!, forMode: RunLoopMode.commonModes)
+            RunLoop.main.add(self.timer!, forMode: RunLoop.Mode.common)
             self.spinner?.stopAnimating()
             table.isHidden = false
             self.sendTextToServer(tableView: table)
@@ -159,14 +159,14 @@ import UIKit
         
     }
     
-    func cellFit(string:String, attributes:[String: Any]) -> Bool {
+    func cellFit(string:String, attributes: [NSAttributedString.Key: Any]) -> Bool {
         guard let checker = self.minTableDim else {
             //print("not table exists, this should never happen")
             print("error in cellFit")
             return false
         }
         
-        return (string as NSString).size(attributes: attributes).width < checker - ArticleTextTableViewCell.widthSpacingConstant*2
+        return (string as NSString).size(withAttributes: attributes).width < checker - ArticleTextTableViewCell.widthSpacingConstant*2
     }
     
 
@@ -180,7 +180,7 @@ import UIKit
         var p = 0
         var word_count = 0
         var char_count = 0
-        let attributes = [NSFontAttributeName: font] as [String : Any]
+        let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: font]
         cells.append(Content.init(text: paragraphs[0], paragraph: p, firstWordIndex: word_count, firstCharacterIndex: char_count, spacer: false))
         p+=1
         for section in paragraphs.dropFirst(){
@@ -234,7 +234,7 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
         if(indexPath.item == self.content.count){
             let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "submit", for: indexPath)
             if let cell: SubmitTableViewCell = cell as? SubmitTableViewCell {
-                cell.submitButton.setTitle("Tap to submit data", for: UIControlState.normal)
+                cell.submitButton.setTitle("Tap to submit data", for: UIControl.State.normal)
                 cell.selectionStyle = .none
                 cell.isSelected = false
                 cell.accessibilityLabel = "submitCell"
@@ -246,7 +246,7 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
             if(indexPath.item == 0){
                 let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "title", for: indexPath)
                 if let cell: TitleCellTableViewCell = cell as? TitleCellTableViewCell {
-                    let attributes = [NSFontAttributeName: self.titleFont] as [String : Any]
+                    let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: self.titleFont]
                     cell.titleText.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
                     cell.selectionStyle = .none
                     cell.isSelected = false
@@ -257,7 +257,7 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
             }else{
                 let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
                 if let cell: ArticleTextTableViewCell = cell as? ArticleTextTableViewCell {
-                    let attributes = [NSFontAttributeName: font] as [String : Any]
+                    let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: font]
                     cell.textSection.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
                     cell.isSelected = false
                     cell.isUserInteractionEnabled = false
@@ -275,7 +275,7 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
         case self.content.count:
             return viewableAreaHeight(showOnBottom: false)
         default:
-            return UITableViewAutomaticDimension
+            return UITableView.automaticDimension
         }
     }
 }

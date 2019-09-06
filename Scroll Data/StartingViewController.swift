@@ -37,7 +37,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
         self.fetchData()
         table.register(UINib.init(nibName: "TitleSubtitleTableViewCell", bundle: nil), forCellReuseIdentifier: "default")
-        table.rowHeight = UITableViewAutomaticDimension
+        table.rowHeight = UITableView.automaticDimension
     }
     private func fetchData() {
         guard let table = self.table, let loadIndicator = self.loadIndicator else {
@@ -66,7 +66,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             }
             
             DispatchQueue.main.async{
-                let attributes = [NSFontAttributeName: self.subFont] as [String : Any]
+                let attributes = [NSAttributedString.Key.font: self.subFont]
                 self.refreshControl.attributedTitle = NSAttributedString(string: (Date().description), attributes: attributes)
                 loadIndicator.stopAnimating()
                 table.reloadData()
@@ -85,8 +85,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let attributes = [NSFontAttributeName: self.headFont] as [String : Any]
-        let sub_at = [NSFontAttributeName: self.subFont] as [String : Any]
+        let attributes = [NSAttributedString.Key.font: self.headFont]
+        let sub_at = [NSAttributedString.Key.font: self.subFont]
         let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
         if let cell: TitleSubtitleTableViewCell = cell as? TitleSubtitleTableViewCell {
             cell.title.attributedText = NSAttributedString.init(string:  self.titles[indexPath.item], attributes: attributes)
