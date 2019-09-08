@@ -50,8 +50,22 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
                 do {
                     if let articles = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<[String : Any]> {
                         self.articles = articles
-                        self.titles = articles.map {$0["title"]} as! Array<String> //be careful, title must be string
-                        self.subtitles = articles.map {$0["abstract"]} as! Array<String>
+                        self.titles = articles.map {
+                            if let title = $0["title"] as? String {
+                                return title
+                            } else {
+                                print("title incorrect format")
+                                return ""
+                            }
+                        } //be careful, title must be string
+                        self.subtitles = articles.map {
+                            if let title = $0["abstract"] as? String {
+                                return title
+                            } else {
+                                print("abstract incorrect format")
+                                return ""
+                            }
+                        }
                     } else {
                         throw NSError(domain: "invalid json", code: 1, userInfo: nil)
                     }
