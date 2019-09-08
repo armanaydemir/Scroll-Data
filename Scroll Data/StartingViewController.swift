@@ -37,7 +37,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
         self.fetchData()
         table.register(UINib.init(nibName: "TitleSubtitleTableViewCell", bundle: nil), forCellReuseIdentifier: "default")
-        table.rowHeight = UITableViewAutomaticDimension
+        table.rowHeight = UITableView.automaticDimension
     }
     private func fetchData() {
         guard let table = self.table, let loadIndicator = self.loadIndicator else {
@@ -50,7 +50,6 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
                 do {
                     if let articles = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<[String : Any]> {
                         self.articles = articles
-                        print(self.articles)
                         self.titles = articles.map {$0["title"]} as! Array<String> //be careful, title must be string
                         self.subtitles = articles.map {$0["abstract"]} as! Array<String>
                     } else {
@@ -67,7 +66,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             }
             
             DispatchQueue.main.async{
-                let attributes = [NSFontAttributeName: self.subFont] as [String : Any]
+                let attributes = [NSAttributedString.Key.font: self.subFont]
                 self.refreshControl.attributedTitle = NSAttributedString(string: (Date().description), attributes: attributes)
                 loadIndicator.stopAnimating()
                 table.reloadData()
@@ -86,8 +85,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let attributes = [NSFontAttributeName: self.headFont] as [String : Any]
-        let sub_at = [NSFontAttributeName: self.subFont] as [String : Any]
+        let attributes = [NSAttributedString.Key.font: self.headFont]
+        let sub_at = [NSAttributedString.Key.font: self.subFont]
         let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
         if let cell: TitleSubtitleTableViewCell = cell as? TitleSubtitleTableViewCell {
             cell.title.attributedText = NSAttributedString.init(string:  self.titles[indexPath.item], attributes: attributes)
@@ -118,7 +117,10 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let vc = segue.destination
         if let destination:ArticleViewController = vc as? ArticleViewController {
-            destination.articleLink = self.link;
+            destination.articleLink = self.link
+            guard let a = UIApplication.shared.delegate as? AppDelegate else {return}
+            a.autoRotate = false
+            a.orientation = UIDevice.current.orientation
         }
     }
 }
