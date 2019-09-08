@@ -139,24 +139,25 @@ import UIKit
         return SystemFont.init(fontName: "Times New Roman")?.fontToFit(text: string, inSize: size, spacing: ArticleTextTableViewCell.topSpacingConstant*2)
     }
     
-    func currentPosition(tableView:UITableView) -> Array<Int> {
-
-        let first_index = tableView.indexPath(for: tableView.visibleCells.first!)?.item
-        let second_index = tableView.indexPath(for: tableView.visibleCells.last!)?.item
-        
-        return [first_index!, second_index!]
-    }
-    
     func sendTextToServer(tableView:UITableView) -> Void {
-       
         let current_offset = tableView.contentOffset.y
-        if tableView.isHidden || current_offset == self.content_offset { return }
         
-        let temp = currentPosition(tableView: tableView)
-        let first_index = temp[0], last_index = temp[1]
+        guard current_offset != self.content_offset && !tableView.isHidden
+            else {
+                print("table not visible or no content offset change")
+                return
+        }
+        
+        guard let first = tableView.visibleCells.first,
+            let first_index = tableView.indexPath(for: first)?.item,
+            let second = tableView.visibleCells.last,
+            let last_index = tableView.indexPath(for: second)?.item
+            else {
+                print("no visible cells")
+                return
+        }
         
         vm.submitData(content_offset: current_offset, first_index: first_index, last_index: last_index)
-        
     }
     
     func cellFit(string:String, attributes: [NSAttributedString.Key: Any]) -> Bool {
