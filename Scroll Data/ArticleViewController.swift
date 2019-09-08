@@ -14,6 +14,7 @@ import UIKit
     var articleLink: String?
     var vm: ArticleViewModel! = nil
     var complete = false
+    var scrollOffset = 0.0
     
     let paragraphStyle = NSMutableParagraphStyle()
     
@@ -22,7 +23,9 @@ import UIKit
     var content_offset:CGFloat?
    
     let timePerCheck = 0.00001
+    let timePerScroll = 0.001
     var timer: Timer? = nil
+    var scroll_timer: Timer? = nil
     
     var minTableDim:CGFloat?
     
@@ -99,7 +102,6 @@ import UIKit
 //
 //                    }
 //                }
-                
                 table.reloadData()
                 
                 self.repeatingCheck(table: table)
@@ -125,11 +127,49 @@ import UIKit
             self.timer = Timer.init(timeInterval: self.timePerCheck, repeats: true, block: { _ in
                 self.sendTextToServer(tableView: table)
             })
+            
+            
+//            self.scroll_timer = Timer.init(timeInterval: self.timePerScroll, repeats: true, block: { _ in
+//                self.scrollOffset = self.scrollOffset + 0.05
+//               //table.contentOffset =
+//                table.setContentOffset(CGPoint.(x: 0.0, y: self.scrollOffset), animated: false)
+//            })
+            
             RunLoop.main.add(self.timer!, forMode: RunLoop.Mode.common)
+            //RunLoop.main.add(self.scroll_timer!, forMode: RunLoop.Mode.common)
             self.spinner?.stopAnimating()
             table.isHidden = false
             self.sendTextToServer(tableView: table)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                UIView.animate(withDuration: 10, animations: {
+                    print(table.contentSize)
+//                    table.scrollRectToVisible(CGRect(x: 0, y: 500, width: 1, height: 1), animated: false)
+                    table.setContentOffset(CGPoint(x: 0, y: table.frame.height), animated: false)
+                    //                    table.scrollToRow(at: IndexPath.init(row: 50, section: 0) , at: UITableView.ScrollPosition.top, animated: false)
+                })
+            })
+            
+            
+//            let scrollCount = table.contentSize.height / table.frame.height
+            
+//            self.scrollAnimation(scrollToPage: 1, inTable: table)
         }
+    }
+    
+    func scrollAnimation(scrollToPage page: Int, inTable table: UITableView) {
+        UIView.animate(withDuration: 2, animations: {
+            print(table.contentSize)
+            table.scrollRectToVisible(CGRect(x: 0, y: Int(table.frame.height) * (page + 1), width: 1, height: 1), animated: false)
+            //                    table.setContentOffset(CGPoint(x: 0, y: 999), animated: false)
+            //                    table.scrollToRow(at: IndexPath.init(row: 50, section: 0) , at: UITableView.ScrollPosition.top, animated: false)
+        }, completion: {
+            _ in
+            
+            if table.contentOffset.y < table.contentSize.height {
+                self.scrollAnimation(scrollToPage: page + 1, inTable: table)
+            }
+        })
     }
     
     func findFontSize(table:UITableView) -> UIFont? {
@@ -169,7 +209,6 @@ import UIKit
         
         return (string as NSString).size(withAttributes: attributes).width < checker - ArticleTextTableViewCell.widthSpacingConstant*2
     }
-    
 
     
     @objc func willResignActive(_ notification: Notification) {
