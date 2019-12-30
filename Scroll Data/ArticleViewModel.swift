@@ -37,7 +37,7 @@ class ArticleViewModel: NSObject {
         }
     }
     
-    func fetchText(completion: @escaping (Array<String>?, String?) -> Void)  {
+    func fetchText(completion: @escaping ([String:Any], String?) -> Void)  {
         let data: [String:Any] = [
             "article_link":self.articleLink ?? "",
             "UDID":self.UDID,
@@ -45,21 +45,21 @@ class ArticleViewModel: NSObject {
             "type":self.deviceType ?? "",
             "version":self.version]
         
-        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/open_article", body: data, completion: { data, response, error in
+        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://localhost:22364/session_replay", body: data, completion: { data, response, error in
             if let dataExists = data, error == nil {
                 do {
-                    if var paragraphs = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<String> {
-                        self.session_id = paragraphs[0]
-                        paragraphs.remove(at: 0)
-                        completion(paragraphs, nil)
+                    if let data = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? [String : Any] {
+                        //self.session_id = paragraphs[0]
+                        //paragraphs.remove(at: 0)
+                        completion(data, nil)
                     } else {
-                        completion(nil, "invalid json")
+                        completion([:], "invalid json")
                     }
                 }catch _{
-                    completion(nil, "invalid json")
+                    completion([:], "invalid json")
                 }
             }else{
-               completion(nil, "server disconnect")
+                completion([:], "server disconnect")
             }
         })
     }
@@ -82,11 +82,11 @@ class ArticleViewModel: NSObject {
                 "previous_last_cell":self.recent_last ?? "",
                 "content_offset":content_offset ]
             
-            Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  {
-                data, response, error in
-                
-                if let e = error {print(e)}
-            })
+//            Networking.request(headers: nil, method: "POST", fullEndpoint: "http://localhost:22364/submit_data", body: data, completion:  {
+//                data, response, error in
+//
+//                if let e = error {print(e)}
+//            })
             
             self.last_sent = cur
             self.recent_last = last_index
@@ -109,8 +109,8 @@ class ArticleViewModel: NSObject {
             "portrait": a.orientation.isPortrait
         ]
         
-        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/close_article", body: data, completion:  { data, response, error in
-            if let e = error {print(e)}
-        })
+//        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://localhost:22364/close_article", body: data, completion:  { data, response, error in
+//            if let e = error {print(e)}
+//        })
     }
 }

@@ -15,6 +15,8 @@ import UIKit
     var vm: ArticleViewModel! = nil
     var complete = false
     var scrollOffset = 0.0
+    var time_offset = 100000000.0
+    var data: [String:Any]  = [:]
     
     let paragraphStyle = NSMutableParagraphStyle()
     
@@ -25,6 +27,8 @@ import UIKit
     let timePerCheck = 0.00001
     let timePerScroll = 0.001
     var timer: Timer? = nil
+    
+    var scrollIndex = 1
     var scroll_timer: Timer? = nil
     
     var minTableDim:CGFloat?
@@ -81,8 +85,8 @@ import UIKit
             self.minTableDim = min(table.frame.size.width, table.frame.size.height)
         }
         
-        vm.fetchText(completion: { paragraphs, error in
-            guard let p = paragraphs else {
+        vm.fetchText(completion: { data, error in
+            guard case let p as [String] = data["paragraphs"] else {
                 let alert = UIAlertController.init(title: "error fetching text", message: error, preferredStyle: UIAlertController.Style.alert)
                 self.present(alert, animated: true, completion: nil)
                 return
@@ -91,17 +95,8 @@ import UIKit
                 self.font = self.findFontSize(table: table) ?? UIFont.preferredFont(forTextStyle: .body)
                 let content = self.convert(paragraphs: p, font: self.font)
                 self.content = content
+                self.data = data
                 
-//                DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
-//                    table.scrollToRow(at: IndexPath.init(row: 15, section: 0) , at: UITableViewScrollPosition.top, animated: true)
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
-//                         table.scrollToRow(at: IndexPath.init(row: content.count, section: 0) , at: UITableViewScrollPosition.top, animated: true)
-//                        DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(5)) {
-//                            _ = self.navigationController?.popViewController(animated: true)
-//                        }
-//
-//                    }
-//                }
                 table.reloadData()
                 
                 self.repeatingCheck(table: table)
@@ -122,38 +117,47 @@ import UIKit
         a.autoRotate = true
     }
     
-    func repeatingCheck(table: UITableView) {
-        DispatchQueue.main.asyncAfter(deadline: .now()) {
-            self.timer = Timer.init(timeInterval: self.timePerCheck, repeats: true, block: { _ in
-                self.sendTextToServer(tableView: table)
+    func scrollEventTrigger(table: UITableView) {
+        guard case let s as Array<[String:Any]> = data["session_data"] else {
+            let alert = UIAlertController.init(title: "error fetching session data", message: nil, preferredStyle: UIAlertController.Style.alert)
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+        
+        guard case let t1 as NSInteger = s[scrollIndex]["time"], case let t2 as NSInteger = s[scrollIndex-1]["time"] else {
+            let alert = UIAlertController.init(title: "error fetching session times", message: nil, preferredStyle: UIAlertController.Style.alert)
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+        guard case let offset as CGFloat = s[scrollIndex]["content_offset"] else {
+            let alert = UIAlertController.init(title: "error fetching session times", message: nil, preferredStyle: UIAlertController.Style.alert)
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+        let t = TimeInterval(Double(t1-t2)/self.time_offset)
+
+        DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
+            UIView.animate(withDuration: t, animations: {
+                print(offset)
+                print("offset")
+                print(s[self.scrollIndex]["last_cell"] ?? "no value")
+                table.setContentOffset(CGPoint(x: 0, y: offset), animated: false)
             })
-            
-            
-//            self.scroll_timer = Timer.init(timeInterval: self.timePerScroll, repeats: true, block: { _ in
-//                self.scrollOffset = self.scrollOffset + 0.05
-//               //table.contentOffset =
-//                table.setContentOffset(CGPoint.(x: 0.0, y: self.scrollOffset), animated: false)
-//            })
-            
-            RunLoop.main.add(self.timer!, forMode: RunLoop.Mode.common)
-            //RunLoop.main.add(self.scroll_timer!, forMode: RunLoop.Mode.common)
+        })
+        self.scroll_timer = Timer.init(timeInterval: t, repeats: false, block: { _ in
+            self.scrollEventTrigger(table: table)
+        })
+        RunLoop.main.add(self.scroll_timer!, forMode: RunLoop.Mode.common)
+        scrollIndex += 1
+    }
+    
+    func repeatingCheck(table: UITableView) {
+        DispatchQueue.main.asyncAfter(deadline: .now()+1) {
+
             self.spinner?.stopAnimating()
             table.isHidden = false
-            self.sendTextToServer(tableView: table)
+            self.scrollEventTrigger(table: table)
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
-                UIView.animate(withDuration: 10, animations: {
-                    print(table.contentSize)
-//                    table.scrollRectToVisible(CGRect(x: 0, y: 500, width: 1, height: 1), animated: false)
-                    table.setContentOffset(CGPoint(x: 0, y: table.frame.height), animated: false)
-                    //                    table.scrollToRow(at: IndexPath.init(row: 50, section: 0) , at: UITableView.ScrollPosition.top, animated: false)
-                })
-            })
-            
-            
-//            let scrollCount = table.contentSize.height / table.frame.height
-            
-//            self.scrollAnimation(scrollToPage: 1, inTable: table)
         }
     }
     
