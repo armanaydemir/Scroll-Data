@@ -155,43 +155,27 @@ import UIKit
             self.present(alert, animated: true, completion: nil)
             return
         }
-        //print(last_cell)
+        
+        guard case let first_cell as Int = s[self.scrollIndex]["first_cell"]  else {
+            let alert = UIAlertController.init(title: "error fetching last cell", message: nil, preferredStyle: UIAlertController.Style.alert)
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+        
         
 //        guard case let offset as CGFloat = s[scrollIndex]["content_offset"] else {
 //            let alert = UIAlertController.init(title: "error fetching offset", message: nil, preferredStyle: UIAlertController.Style.alert)
 //            self.present(alert, animated: true, completion: nil)
 //            return
 //        }
+        
         let t = TimeInterval(Double(t1-t2)/self.time_offset)
         DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
-            let temp = CFAbsoluteTimeGetCurrent()
-            if(self.scroll_type == "exact"){
-                if(last_cell<table.numberOfRows(inSection: 0)-1){
-                    UIView.animate(withDuration: t, delay: 0, options: UIView.AnimationOptions.allowUserInteraction, animations: {table.scrollToRow(at: IndexPath.init(item: last_cell, section: 0), at: UITableView.ScrollPosition.bottom, animated: false)}, completion: nil)
-                }
-            }
-            else if(self.scroll_type == "scroll_every_x" && temp - self.lastTime > self.timeBetweenScroll ){
-                self.lastTime = temp
-                UIView.animate(withDuration: self.timeBetweenScroll, animations: {table.scrollToRow(at: IndexPath.init(item: last_cell, section: 0), at: UITableView.ScrollPosition.bottom, animated: false)})
-            }else{
-                var bot = 0
-                if(self.scrollIndex-5>bot){
-                    bot = self.scrollIndex-5
-                }
-                var top = s.count-1
-                if(self.scrollIndex+5<top){
-                    top = self.scrollIndex+5
-                }
-                var avg = 0
-                while(bot < top){
-                    avg += s[self.scrollIndex]["last_cell"] as! Int
-                    bot += 1
-                }
-                avg = Int(avg/10)
-                if(avg>table.numberOfRows(inSection: 0)-1){
-                    avg = table.numberOfRows(inSection: 0)-1
-                }
-                UIView.animate(withDuration: t, animations: {table.scrollToRow(at: IndexPath.init(item: avg, section: 0), at: UITableView.ScrollPosition.bottom, animated: false)})
+            //let temp = CFAbsoluteTimeGetCurrent()
+            if(first_cell>1){
+                UIView.animate(withDuration: t, delay: 0, options: UIView.AnimationOptions.allowUserInteraction, animations: {table.scrollToRow(at: IndexPath.init(item: first_cell, section: 0), at: UITableView.ScrollPosition.top, animated: false)}, completion: nil)
+            }else if(last_cell<table.numberOfRows(inSection: 0)-1){ //dont really need this check
+                UIView.animate(withDuration: t, delay: 0, options: UIView.AnimationOptions.allowUserInteraction, animations: {table.scrollToRow(at: IndexPath.init(item: last_cell, section: 0), at: UITableView.ScrollPosition.bottom, animated: false)}, completion: nil)
             }
         })
         scrollIndex += 1
