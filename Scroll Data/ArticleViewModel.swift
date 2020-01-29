@@ -9,7 +9,8 @@
 import UIKit
 
 class ArticleViewModel: NSObject {
-    
+    let url = "157.245.227.103"
+    //let url = "localhost"
     let version = "v0.3.1"
     let UDID = UIDevice.current.identifierForVendor!.uuidString
     let timeOffset:Double = 100000000
@@ -45,7 +46,7 @@ class ArticleViewModel: NSObject {
             "type":self.deviceType ?? "",
             "version":self.version]
         
-        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://localhost:22364/session_replay", body: data, completion: { data, response, error in
+        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://"+url+":22364/session_replay", body: data, completion: { data, response, error in
             if let dataExists = data, error == nil {
                 do {
                     if let data = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? [String : Any] {
@@ -82,7 +83,7 @@ class ArticleViewModel: NSObject {
                 "previous_last_cell":self.recent_last ?? "",
                 "content_offset":content_offset ]
             
-//            Networking.request(headers: nil, method: "POST", fullEndpoint: "http://localhost:22364/submit_data", body: data, completion:  {
+//            Networking.request(headers: nil, method: "POST", fullEndpoint: "http://"+url+":22364/submit_data", body: data, completion:  {
 //                data, response, error in
 //
 //                if let e = error {print(e)}
@@ -109,7 +110,7 @@ class ArticleViewModel: NSObject {
             "portrait": a.orientation.isPortrait
         ]
         
-//        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://localhost:22364/close_article", body: data, completion:  { data, response, error in
+//        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://"+url+":22364/close_article", body: data, completion:  { data, response, error in
 //            if let e = error {print(e)}
 //        })
     }

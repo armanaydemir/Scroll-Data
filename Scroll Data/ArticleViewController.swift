@@ -10,6 +10,8 @@ import UIKit
 
 
 @objc class ArticleViewController: UIViewController {
+    //let scroll_type = "exact" //"scroll_every_x"
+    let scroll_type = "exact"
     var content: Array<Content> = []
     var articleLink: String?
     var vm: ArticleViewModel! = nil
@@ -26,6 +28,8 @@ import UIKit
    
     let timePerCheck = 0.00001
     let timePerScroll = 0.001
+    var lastTime = CFAbsoluteTimeGetCurrent()
+    let timeBetweenScroll = 4.0
     var timer: Timer? = nil
     
     var scrollIndex = 1
@@ -44,7 +48,8 @@ import UIKit
             return
         }
         
-        NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
+        
+        //NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
         
         vm = ArticleViewModel.init(articleLink: self.articleLink!)
         
@@ -110,7 +115,8 @@ import UIKit
         let characterIndices = lines.map { $0.firstCharacterIndex }
         
         self.timer?.invalidate()
-
+        self.scroll_timer?.invalidate()
+        
         self.vm.closeArticle(content: self.content.map { $0.toDictionary() }, wordIndicies: wordIndices, characterIndicies: characterIndices, complete: self.complete)
         
         guard let a = UIApplication.shared.delegate as? AppDelegate else {return}
@@ -118,37 +124,110 @@ import UIKit
     }
     
     func scrollEventTrigger(table: UITableView) {
+        //print(data["version"])
         guard case let s as Array<[String:Any]> = data["session_data"] else {
             let alert = UIAlertController.init(title: "error fetching session data", message: nil, preferredStyle: UIAlertController.Style.alert)
             self.present(alert, animated: true, completion: nil)
             return
         }
+        //make check for scrollIndex in bounds
+        //print(s)
+        guard case let v as String = data["version"] else {
+            let alert = UIAlertController.init(title: "error fetching version", message: nil, preferredStyle: UIAlertController.Style.alert)
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+        var t1 = -1
+        var t2 = -1
+        //print(v)
         
-        guard case let t1 as NSInteger = s[scrollIndex]["time"], case let t2 as NSInteger = s[scrollIndex-1]["time"] else {
-            let alert = UIAlertController.init(title: "error fetching session times", message: nil, preferredStyle: UIAlertController.Style.alert)
+        
+        if(v == "v0.2.6" || v == "v0.2.7"){
+            t1 = Int(s[scrollIndex]["appeared"] as! NSNumber)
+            t2 = Int(s[scrollIndex-1]["appeared"] as! NSNumber)
+        }else{
+            t1 = Int(s[scrollIndex]["time"] as! NSNumber)
+            t2 = Int(s[scrollIndex-1]["time"] as! NSNumber)
+        }
+        //print(s[self.scrollIndex]["last_cell"])
+        guard case let last_cell as Int = s[self.scrollIndex]["last_cell"]  else {
+            let alert = UIAlertController.init(title: "error fetching last cell", message: nil, preferredStyle: UIAlertController.Style.alert)
             self.present(alert, animated: true, completion: nil)
             return
         }
-        guard case let offset as CGFloat = s[scrollIndex]["content_offset"] else {
-            let alert = UIAlertController.init(title: "error fetching session times", message: nil, preferredStyle: UIAlertController.Style.alert)
-            self.present(alert, animated: true, completion: nil)
-            return
-        }
+        //print(last_cell)
+        
+//        guard case let offset as CGFloat = s[scrollIndex]["content_offset"] else {
+//            let alert = UIAlertController.init(title: "error fetching offset", message: nil, preferredStyle: UIAlertController.Style.alert)
+//            self.present(alert, animated: true, completion: nil)
+//            return
+//        }
         let t = TimeInterval(Double(t1-t2)/self.time_offset)
-
         DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
-            UIView.animate(withDuration: t, animations: {
-                print(offset)
-                print("offset")
-                print(s[self.scrollIndex]["last_cell"] ?? "no value")
-                table.setContentOffset(CGPoint(x: 0, y: offset), animated: false)
-            })
+            let temp = CFAbsoluteTimeGetCurrent()
+            if(self.scroll_type == "exact"){
+                if(last_cell<table.numberOfRows(inSection: 0)-1){
+                    UIView.animate(withDuration: t, delay: 0, options: UIView.AnimationOptions.allowUserInteraction, animations: {table.scrollToRow(at: IndexPath.init(item: last_cell, section: 0), at: UITableView.ScrollPosition.bottom, animated: false)}, completion: nil)
+                }
+            }
+            else if(self.scroll_type == "scroll_every_x" && temp - self.lastTime > self.timeBetweenScroll ){
+                self.lastTime = temp
+                UIView.animate(withDuration: self.timeBetweenScroll, animations: {table.scrollToRow(at: IndexPath.init(item: last_cell, section: 0), at: UITableView.ScrollPosition.bottom, animated: false)})
+            }else{
+                var bot = 0
+                if(self.scrollIndex-5>bot){
+                    bot = self.scrollIndex-5
+                }
+                var top = s.count-1
+                if(self.scrollIndex+5<top){
+                    top = self.scrollIndex+5
+                }
+                var avg = 0
+                while(bot < top){
+                    avg += s[self.scrollIndex]["last_cell"] as! Int
+                    bot += 1
+                }
+                avg = Int(avg/10)
+                if(avg>table.numberOfRows(inSection: 0)-1){
+                    avg = table.numberOfRows(inSection: 0)-1
+                }
+                UIView.animate(withDuration: t, animations: {table.scrollToRow(at: IndexPath.init(item: avg, section: 0), at: UITableView.ScrollPosition.bottom, animated: false)})
+            }
         })
-        self.scroll_timer = Timer.init(timeInterval: t, repeats: false, block: { _ in
-            self.scrollEventTrigger(table: table)
-        })
-        RunLoop.main.add(self.scroll_timer!, forMode: RunLoop.Mode.common)
         scrollIndex += 1
+        if(scrollIndex < s.count-1){
+            self.scroll_timer = Timer.init(timeInterval: t, repeats: false, block: { _ in
+                self.scrollEventTrigger(table: table)
+            })
+            RunLoop.main.add(self.scroll_timer!, forMode: RunLoop.Mode.common)
+        }else{
+            _ = navigationController?.popViewController(animated: true)
+        }
+        
+    }
+
+    @objc func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        //print("woahhh")
+        self.table?.layer.removeAllAnimations()
+        scroll_timer?.invalidate()
+        timer?.invalidate()
+    }
+    
+    @objc func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        guard let table = self.table else {
+            print("error connecting table")
+            return
+        }
+        self.scrollEventTrigger(table: table)
+    }
+    @objc func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        guard let table = self.table else{
+            print("error connecting table")
+            return
+        }
+        if(!decelerate){
+            self.scrollEventTrigger(table: table)
+        }
     }
     
     func repeatingCheck(table: UITableView) {
@@ -156,24 +235,10 @@ import UIKit
 
             self.spinner?.stopAnimating()
             table.isHidden = false
+            table.dragInteractionEnabled = true
             self.scrollEventTrigger(table: table)
             
         }
-    }
-    
-    func scrollAnimation(scrollToPage page: Int, inTable table: UITableView) {
-        UIView.animate(withDuration: 2, animations: {
-            print(table.contentSize)
-            table.scrollRectToVisible(CGRect(x: 0, y: Int(table.frame.height) * (page + 1), width: 1, height: 1), animated: false)
-            //                    table.setContentOffset(CGPoint(x: 0, y: 999), animated: false)
-            //                    table.scrollToRow(at: IndexPath.init(row: 50, section: 0) , at: UITableView.ScrollPosition.top, animated: false)
-        }, completion: {
-            _ in
-            
-            if table.contentOffset.y < table.contentSize.height {
-                self.scrollAnimation(scrollToPage: page + 1, inTable: table)
-            }
-        })
     }
     
     func findFontSize(table:UITableView) -> UIFont? {
@@ -218,6 +283,7 @@ import UIKit
     @objc func willResignActive(_ notification: Notification) {
         _ = navigationController?.popViewController(animated: true)
     }
+    
     
     func convert(paragraphs: [String], font: UIFont) -> [Content] {
         var cells = [Content].init()
@@ -273,6 +339,8 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return (self.content.count > 0) ? self.content.count + 1 : 0 //plus one for submit button
     }
+    
+
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if(indexPath.item == self.content.count){

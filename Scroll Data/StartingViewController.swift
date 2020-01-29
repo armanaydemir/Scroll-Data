@@ -17,6 +17,9 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     let subFont = SystemFont.init(fontName: "Times New Roman")?.getFont(withTextStyle: .subheadline) ?? UIFont.preferredFont(forTextStyle: .subheadline)
     let headFont = SystemFont.init(fontName: "Times New Roman")?.getFont(withTextStyle: .headline) ?? UIFont.preferredFont(forTextStyle: .headline)
     var link = ""
+    let UDID = UIDevice.current.identifierForVendor!.uuidString
+    let url = "157.245.227.103"
+    //let url = "localhost"
     @IBOutlet weak var loadIndicator: UIActivityIndicatorView!
     
     @IBOutlet weak var table: UITableView!
@@ -44,14 +47,15 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             print("couldn't connect starting vc outlets! bad things coming.....")
             return
         }
-        loadIndicator.startAnimating()
-        Networking.request(headers:nil, method: "POST", fullEndpoint: "http://localhost:22364/sessions", body: ["UDID":"A48F157C_4768_44C9_86BF_6978C67BB756"], completion: { data, response, error in
+        loadIndicator.startAnimating() //POST 
+        Networking.request(headers:nil, method: "GET", fullEndpoint: "http://"+url+":22364/sessions", body: ["UDID":"FCD0FA4A_26EF_4B21_85F8_EADFB8871559"], completion: { data, response, error in
             if let dataExists = data, error == nil {
                 do {
                     if let articles = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<[String : Any]> {
                         self.articles = articles
+                        //print(articles)
                         self.titles = articles.map {
-                            if let title = $0["_id"] as? String {
+                            if let title = $0["article_title"] as? String {
                                 return title
                             } else {
                                 print("title incorrect format")
@@ -59,8 +63,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
                             }
                         } //be careful, title must be string
                         self.subtitles = articles.map {
-                            if let title = $0["completed"] as? String {
-                                return title
+                            if let title = $0["type"] as? String, let version =  $0["version"] as? String {
+                                return title + "    " + version
                             } else {
                                 print("abstract incorrect format")
                                 return ""
