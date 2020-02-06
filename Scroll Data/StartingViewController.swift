@@ -17,6 +17,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     let subFont = SystemFont.init(fontName: "Times New Roman")?.getFont(withTextStyle: .subheadline) ?? UIFont.preferredFont(forTextStyle: .subheadline)
     let headFont = SystemFont.init(fontName: "Times New Roman")?.getFont(withTextStyle: .headline) ?? UIFont.preferredFont(forTextStyle: .headline)
     var link = ""
+    let url = "157.245.227.103"
+    //let url = "localhost"
     @IBOutlet weak var loadIndicator: UIActivityIndicatorView!
     
     @IBOutlet weak var table: UITableView!
@@ -45,7 +47,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             return
         }
         loadIndicator.startAnimating()
-        Networking.request(headers:nil, method: "GET", fullEndpoint: "http://159.203.207.54:22364/articles", body: nil, completion: { data, response, error in
+        Networking.request(headers:nil, method: "GET", fullEndpoint: "http://"+url+":22364/articles", body: nil, completion: { data, response, error in
             if let dataExists = data, error == nil {
                 do {
                     if let articles = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<[String : Any]> {

@@ -21,7 +21,8 @@ class ArticleViewModel: NSObject {
     
     var recent_first: Int?
     var recent_last: Int?
-    
+    let url = "157.245.227.103"
+    //let url = "localhost"
     
     var lines: Array<String>?
     
@@ -45,7 +46,7 @@ class ArticleViewModel: NSObject {
             "type":self.deviceType ?? "",
             "version":self.version]
         
-        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/open_article", body: data, completion: { data, response, error in
+        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://"+url+":22364/open_article", body: data, completion: { data, response, error in
             if let dataExists = data, error == nil {
                 do {
                     if var paragraphs = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<String> {
@@ -82,7 +83,7 @@ class ArticleViewModel: NSObject {
                 "previous_last_cell":self.recent_last ?? "",
                 "content_offset":content_offset ]
             
-            Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/submit_data", body: data, completion:  {
+            Networking.request(headers: nil, method: "POST", fullEndpoint: "http://"+url+":22364/submit_data", body: data, completion:  {
                 data, response, error in
                 
                 if let e = error {print(e)}
@@ -109,7 +110,7 @@ class ArticleViewModel: NSObject {
             "portrait": a.orientation.isPortrait
         ]
         
-        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://159.203.207.54:22364/close_article", body: data, completion:  { data, response, error in
+        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://"+url+":22364/close_article", body: data, completion:  { data, response, error in
             if let e = error {print(e)}
         })
     }
