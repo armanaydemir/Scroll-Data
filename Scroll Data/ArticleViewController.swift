@@ -125,6 +125,7 @@ import UIKit
     
     func scrollEventTrigger(table: UITableView) {
         //print(data["version"])
+        print("scroll event triggered")
         guard case let s as Array<[String:Any]> = data["session_data"] else {
             let alert = UIAlertController.init(title: "error fetching session data", message: nil, preferredStyle: UIAlertController.Style.alert)
             self.present(alert, animated: true, completion: nil)
@@ -161,7 +162,15 @@ import UIKit
             self.present(alert, animated: true, completion: nil)
             return
         }
-        
+        guard let first = table.visibleCells.first,
+            let first_index = table.indexPath(for: first)?.item,
+            let second = table.visibleCells.last,
+            let last_index = table.indexPath(for: second)?.item
+            else {
+                print("no visible cells")
+                return
+        }
+
         
 //        guard case let offset as CGFloat = s[scrollIndex]["content_offset"] else {
 //            let alert = UIAlertController.init(title: "error fetching offset", message: nil, preferredStyle: UIAlertController.Style.alert)
@@ -171,18 +180,21 @@ import UIKit
         
         let t = TimeInterval(Double(t1-t2)/self.time_offset)
         DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
+            self.table?.layer.removeAllAnimations()
             //let temp = CFAbsoluteTimeGetCurrent()
+            print("about to scroll")
             if(first_cell>1){
-                UIView.animate(withDuration: t, delay: 0, options: UIView.AnimationOptions.allowUserInteraction, animations: {table.scrollToRow(at: IndexPath.init(item: first_cell, section: 0), at: UITableView.ScrollPosition.top, animated: false)}, completion: nil)
+                UIView.animate(withDuration: t, delay: 0, options: UIView.AnimationOptions.allowUserInteraction, animations: {table.scrollToRow(at: IndexPath.init(item: first_cell, section: 0), at: UITableView.ScrollPosition.top, animated: false)}, completion: { _ in print("Done") })
             }else if(last_cell<table.numberOfRows(inSection: 0)-1){ //dont really need this check
-                UIView.animate(withDuration: t, delay: 0, options: UIView.AnimationOptions.allowUserInteraction, animations: {table.scrollToRow(at: IndexPath.init(item: last_cell, section: 0), at: UITableView.ScrollPosition.bottom, animated: false)}, completion: nil)
+                UIView.animate(withDuration: t, delay: 0, options: UIView.AnimationOptions.allowUserInteraction, animations: {table.scrollToRow(at: IndexPath.init(item: last_cell, section: 0), at: UITableView.ScrollPosition.bottom, animated: false)}, completion: { _ in print("Done") })
             }
         })
         scrollIndex += 1
         if(scrollIndex < s.count-1){
-            self.scroll_timer = Timer.init(timeInterval: t, repeats: false, block: { _ in
+            self.scroll_timer = Timer.init(timeInterval: t*0.9, repeats: false, block: { _ in
                 self.scrollEventTrigger(table: table)
             })
+            print("starting timer")
             RunLoop.main.add(self.scroll_timer!, forMode: RunLoop.Mode.common)
         }else{
             _ = navigationController?.popViewController(animated: true)
