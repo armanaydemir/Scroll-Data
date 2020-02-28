@@ -191,7 +191,7 @@ import UIKit
         })
         scrollIndex += 1
         if(scrollIndex < s.count-1){
-            self.scroll_timer = Timer.init(timeInterval: t*0.9, repeats: false, block: { _ in
+            self.scroll_timer = Timer.init(timeInterval: t, repeats: false, block: { _ in
                 self.scrollEventTrigger(table: table)
             })
             print("starting timer")
