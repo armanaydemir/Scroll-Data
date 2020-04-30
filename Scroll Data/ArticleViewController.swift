@@ -128,6 +128,16 @@ import UIKit
         a.autoRotate = true
     }
     
+    func startAutoScroll() {
+        guard let table = table else { return }
+        
+        let scroller = Scroller(tableView: table) { time in
+            //TODO: given a TimeInterval since start, return an IndexPath
+        }
+        
+        scroller.start(withTimeInterval: 1)
+    }
+    
     func rowOnScreenForTime(s: Array<[String:Any]>, t:Int){
         let woah = s.first(where: {Int($0["time"] as! NSNumber) > t})
         print(woah)
@@ -325,6 +335,31 @@ struct Content: Codable {
             "first_character_index" : firstCharacterIndex,
             "spacer" : spacer
         ]
+    }
+}
+
+class Scroller {
+    
+    let tableView: UITableView
+    
+    typealias TimeMap = (_ time: TimeInterval) -> IndexPath
+    let timeToIndexPath: TimeMap
+    
+    init(tableView: UITableView, timeToIndexPath: @escaping TimeMap) {
+        self.tableView = tableView
+        self.timeToIndexPath = timeToIndexPath
+    }
+    
+    func start(withTimeInterval interval: TimeInterval) {
+        let startTime = Date()
+        
+        Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
+            let indexPath = self.timeToIndexPath(Date().timeIntervalSince(startTime))
+
+            UIView.animate(withDuration: interval, delay: 0, options: UIView.AnimationOptions.curveLinear, animations: {
+                self.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
+            }, completion: nil)
+        }
     }
 }
 
