@@ -32,9 +32,6 @@ import UIKit
     let timeBetweenScroll = 4.0
     var timer: Timer? = nil
     
-    var scrollIndex = 1
-    var scroll_timer: Timer? = nil
-    
     var minTableDim:CGFloat?
     
     @IBOutlet weak var table: UITableView?
@@ -96,6 +93,7 @@ import UIKit
                 self.present(alert, animated: true, completion: nil)
                 return
             }
+            
             DispatchQueue.main.async {
                 self.font = self.findFontSize(table: table) ?? UIFont.preferredFont(forTextStyle: .body)
                 let content = self.convert(paragraphs: p, font: self.font)
@@ -111,30 +109,8 @@ import UIKit
                 self.spinner?.stopAnimating()
                 table.isHidden = false
                 table.dragInteractionEnabled = false //true make sure to remember this
-                var t1 = Int(s[0]["time"] as! NSNumber)
-                var t2 = Int(s[0]["startTime"] as! NSNumber)
-                var data = Int(s[0]["time"] as! NSNumber)
-                var ndata =  Int(s[0]["time"] as! NSNumber)
-                for (index, d) in s.enumerated() {
-                    let ndata = Int(d["time"] as! NSNumber)
-                    guard case let first_cell as Int = d["first_cell"] else {
-                        let alert = UIAlertController.init(title: "error fetching last cell", message: nil, preferredStyle: UIAlertController.Style.alert)
-                        self.present(alert, animated: true, completion: nil)
-                        return
-                    }
-                    t1 = Int(d["time"] as! NSNumber)
-                    t2 = Int(d["startTime"] as! NSNumber)
-                    if(index != 0){
-                        let timer = Timer.init(timeInterval: TimeInterval(Double(t1-t2)/self.time_offset), repeats: false, block: {_ in
-                            self.scrollEventTrigger(table: table, first_cell:first_cell, scroll_time:)
-                        })
-                        s[index]["timer"] = timer
-                    }
-                    data = ndata
-                }
-                s.forEach { d in
-                     RunLoop.main.add(d["timer"] as! Timer, forMode: RunLoop.Mode.common)
-                }
+                let t1 = Int(s[0]["time"] as! NSNumber)
+                self.scrollEventTrigger(table: table, s:s, last_time:t1 ,scrollIndex:1)
             }
         })
     }
@@ -145,7 +121,6 @@ import UIKit
         let characterIndices = lines.map { $0.firstCharacterIndex }
         
         self.timer?.invalidate()
-        self.scroll_timer?.invalidate()
         
         self.vm.closeArticle(content: self.content.map { $0.toDictionary() }, wordIndicies: wordIndices, characterIndicies: characterIndices, complete: self.complete)
         
@@ -153,16 +128,34 @@ import UIKit
         a.autoRotate = true
     }
     
-    func scrollEventTrigger(table: UITableView, first_cell:Int, data:Int, ndata:Int) {
+    func rowOnScreenForTime(s: Array<[String:Any]>, t:Int){
+        let woah = s.first(where: {Int($0["time"] as! NSNumber) > t})
+        print(woah)
+    }
+    
+    func scrollEventTrigger(table: UITableView, s: Array<[String:Any]>, last_time:Int, scrollIndex:Int) {
         //print(data["version"])
         print("scroll event triggered")
+        print(scrollIndex)
 
 
-        let t1 = data
-        let t2 = ndata
+        let t1 = last_time
+        let t2 = Int(s[scrollIndex]["time"] as! NSNumber)
         let t = TimeInterval(Double(t2-t1)/self.time_offset)
+        guard case let first_cell as Int = s[scrollIndex]["first_cell"] else {
+            let alert = UIAlertController.init(title: "error fetching last cell", message: nil, preferredStyle: UIAlertController.Style.alert)
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
         DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
-                UIView.animate(withDuration: t, delay: 0, options: UIView.AnimationOptions.allowUserInteraction, animations: {table.scrollToRow(at: IndexPath.init(item: first_cell, section: 0), at: UITableView.ScrollPosition.top, animated: false)}, completion: { _ in print("Done") })
+                print(t)
+                UIView.animate(withDuration: t, delay: 0, options: UIView.AnimationOptions.allowUserInteraction, animations: {table.scrollToRow(at: IndexPath.init(item: first_cell, section: 0), at: UITableView.ScrollPosition.top, animated: false)}, completion: { _ in
+                    if(scrollIndex+1 < s.count){
+                        print(scrollIndex)
+                        print("end")
+                        self.scrollEventTrigger(table: table, s:s, last_time:t2 ,scrollIndex:scrollIndex+1)
+                    }
+                })
         })
     }
     
