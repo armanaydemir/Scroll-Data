@@ -180,20 +180,17 @@ import Foundation
         let time_key = "appeared"
         let key = "scrollAnim"
         let stime = Double(s[0]["startTime"] as! NSNumber)/self.time_offset
-        let tsize = table.rect(forSection: 0).size
-        let screenH = -viewableAreaHeight(showOnBottom: false)
-        let tableH = table.frame.height
-        self.tableH = tableH
-        let diffH = screenH + tableH
-        let offset_val = diffH*4
+//        let tsize = table.rect(forSection: 0).size
+        let diffH = viewableAreaHeight(showOnBottom: true) - viewableAreaHeight(showOnBottom: false)
+        let offset_val = diffH * 4
 //        let height_per_line = (tsize.height-screenH) / CGFloat.init(exactly: s.count-2)!
         let anim = CAKeyframeAnimation(keyPath: "position.y")
         var anim_vals: [CGFloat] = []
         var anim_keyTimes: [NSNumber] = []
         var llcell = -1
         var ffcell = -1
-        anim.duration = 5 + (Double(s.last![time_key] as! NSNumber)/self.time_offset)-stime
-        
+//        anim.duration = 5 + (Double(s.last![time_key] as! NSNumber)/self.time_offset)-stime
+        anim.duration = (Double(s.last![time_key] as! NSNumber)/self.time_offset)-stime
         var i = 0
         while(i < s.count){
             let t1  = Double(s[i][time_key] as! NSNumber)/self.time_offset
@@ -221,8 +218,8 @@ import Foundation
                 
                 anim_vals.append(offset_val + tottemp)
             }
-            anim_keyTimes.append(NSNumber(value: (5 + t1-stime)/anim.duration))
-                
+//            anim_keyTimes.append(NSNumber(value: (5 + t1-stime)/anim.duration))
+            anim_keyTimes.append(NSNumber(value: (t1-stime)/anim.duration))
 
             llcell = Int(last_cell)
             ffcell = Int(first_cell)
