@@ -103,8 +103,8 @@ import Foundation
             DispatchQueue.main.async {
                 self.data = data
                 self.font = self.findFontSize(table: table) ?? UIFont.preferredFont(forTextStyle: .body)
-                //let content = self.convert(paragraphs: p, font: self.font)
-                let content = self.convertSession(font: self.font)
+                let content = self.convert(paragraphs: p, font: self.font)
+//                let content = self.convertSession(font: self.font)
                 self.content = content
                 
                 
@@ -119,15 +119,11 @@ import Foundation
                 self.spinner?.stopAnimating()
                 table.isHidden = false
                 
-                print(table.rectForRow(at: IndexPath.init(row: 1, section: 0)).size)
-                print(table.rect(forSection: 0).size)
                 UIGraphicsBeginImageContext(table.rect(forSection: 0).size)
                 table.dragInteractionEnabled = false //true make sure to remember this
 //                let t1 = Int(s[0]["time"] as! NSNumber)
                 self.collectContentOffsets(table: table)
                 let image = self.asFullImage(table: table)
-                
-                print(image)
                 
                 let imageView = UIImageView(image: image!)
                 imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -201,98 +197,43 @@ import Foundation
         anim.duration = (Double(s.last![time_key] as! NSNumber)/self.time_offset)-stime
         while(i < s.count){
             let t1  = Double(s[i][time_key] as! NSNumber)/self.time_offset
-            //let t2 = Double(s[i+1]["time"] as! NSNumber)
+            
             let last_cell = Double(s[i]["last_cell"] as! NSNumber)
             let first_cell = Double(s[i]["first_cell"] as! NSNumber)
-            //anim.fromValue = CGFloat.init(exactly: height_per_line)
-            //anim.toValue = CGFloat.init(exactly: fvalue)
-            //anim.fromValue = fvalue
-            //anim.toValue = -(height_per_line*CGFloat(last_cell)) +  imageView.frame.origin.y + offset_val
-//            if(llcell != last_cell){
-//                if(last_cell == 1){
-//                    print(-(height_per_line*CGFloat(last_cell)) + imageView.frame.origin.y + offset_val)
-//                    print(-(s[i]["content_offset"] as! CGFloat) + offset_val)
-//                }
-            print(self.contentTopOffsets.count)
-            print(s.count)
-            if(Int(last_cell) - self.content.count >= -1){
+            
+            if(Int(last_cell) > self.content.count - 2){
                 let c = self.data["content"] as! Array<[String:Any]>
                 let first_percen = (first_cell/Double(c.count))*Double(self.content.count)
-                let ccount = c.count
-                let contcount = self.content.count
-
                 let tottemp = -self.contentTopOffsets[Int(first_percen)]
+                
                 anim_vals.append(offset_val + tottemp)
             }else if(first_cell <= 1){
                 let c = self.data["content"] as! Array<[String:Any]>
                 let last_percen = (last_cell/Double(c.count))*Double(self.content.count)
-                let ccount = c.count
-                let contcount = self.content.count
-
                 let tottemp = -self.contentBottomOffsets[Int(last_percen)]
+                
                 anim_vals.append(offset_val + tottemp)
             }else{
                 let c = self.data["content"] as! Array<[String:Any]>
                 let first_percen = (first_cell/Double(c.count))*Double(self.content.count)
                 let last_percen = (last_cell/Double(c.count))*Double(self.content.count)
-                let ccount = c.count
-                let contcount = self.content.count
-
                 let tottemp = (-self.contentTopOffsets[Int(first_percen)] - self.contentBottomOffsets[Int(last_percen)])/2
+                
                 anim_vals.append(offset_val + tottemp)
             }
-            //anim_vals.append(-self.contentBottomOffsets[last_cell])
             anim_keyTimes.append(NSNumber(value: (t1-stime)/anim.duration))
                 
-//                print("last")
-//                print(offset_val)
-//            }
-//            else if(ffcell != first_cell){
-//                anim_vals.append(-self.contentTopOffsets[first_cell])
-//                anim_keyTimes.append(NSNumber(value: (t1-stime)/anim.duration))
-//            }
-//            print(-(s[i]["content_offset"] as! CGFloat) + offset_val)
-//            print(anim_vals.last)
-//            print("-----------")
+
             llcell = Int(last_cell)
             ffcell = Int(first_cell)
-            //anim_vals.append(-(s[i]["content_offset"] as! CGFloat) + offset_val)
-            //fvalue = anim.toValue as! CGFloat
-           
-            //anim.duration = 5.0
-            //tot_dur += CFTimeInterval(Double(t2-t1)/self.time_offset)
+
             i += 1
         }
         anim.values = anim_vals
         anim.keyTimes = anim_keyTimes
         anim.isAdditive = true
-//        anim.calculationMode = CAAnimationCalculationMode.linear
-//        anim.calculationMode = CAAnimationCalculationMode.cubic
-        // anim.calculationMode = CAAnimationCalculationMode.discrete
-//        print(anim.beginTime)
-        print(anim.values)
-//        print(anim.keyTimes)
-//        print(anim.duration)
-//        print("----")
+
         imageView.superview?.layer.add(anim, forKey: key)
-        
-//        DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
-//            i = 0
-//            while(i < anims.count){
-//                imageView.layer.add(anims[i], forKey: nil)
-//                i += 1
-//            }
-//        })
-//
-        
-        
-//        var m = CGAffineTransform.init(translationX: 0, y: 200)
-//        table.layer.setAffineTransform(m)
-//        table.layer.affineTransform()
-//
-//        m = CGAffineTransform.init(translationX: 50, y: 0)
-//        table.layer.setAffineTransform(m)
-//        table.layer.affineTransform()
         
     }
 
