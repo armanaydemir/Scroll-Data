@@ -10,30 +10,21 @@ import UIKit
 import Foundation
 
 @objc class ArticleViewController: UIViewController {
-    //let scroll_type = "exact" //"scroll_every_x"
-    let scroll_type = "exact"
-    var content: Array<Content> = []
-    var articleLink: String?
-    var vm: ArticleViewModel! = nil
-    var complete = false
-    var scrollOffset = 0.0
-    var time_offset = 100000000.0
     var data: [String:Any]  = [:]
-    var contentTopOffsets: [CGFloat] = []
-    var contentBottomOffsets: [CGFloat] = []
-    var tableH: CGFloat = 0.0
+    var content: Array<Content> = []
+    var vm: ArticleViewModel! = nil
+    let time_offset = 100000000.0
+    var articleLink: String?
     
-    let paragraphStyle = NSMutableParagraphStyle()
+    var complete = false
+    var content_offset:CGFloat?
     
     var font: UIFont = UIFont.init(name: "Times New Roman", size: UIFont.systemFontSize) ?? UIFont.systemFont(ofSize: UIFont.systemFontSize)
     let titleFont = SystemFont.init(fontName: "Times New Roman")?.getFont(withTextStyle: .title1) ?? UIFont.preferredFont(forTextStyle: .title1)
-    var content_offset:CGFloat?
-   
-    let timePerCheck = 0.00001
-    let timePerScroll = 0.001
-    var lastTime = CFAbsoluteTimeGetCurrent()
-    let timeBetweenScroll = 4.0
-    var timer: Timer? = nil
+    
+    
+    var contentTopOffsets: [CGFloat] = []
+    var contentBottomOffsets: [CGFloat] = []
     
     var minTableDim:CGFloat?
     
@@ -104,24 +95,16 @@ import Foundation
                 self.data = data
                 self.font = self.findFontSize(table: table) ?? UIFont.preferredFont(forTextStyle: .body)
                 let content = self.convert(paragraphs: p, font: self.font)
-//                let content = self.convertSession(font: self.font)
+//                let content = self.convertSession(font: self.font, data: data)
                 self.content = content
                 
                 
-                guard case var s as Array<[String:Any]> = self.data["session_data"] else {
-                    let alert = UIAlertController.init(title: "error fetching session data", message: nil, preferredStyle: UIAlertController.Style.alert)
-                    self.present(alert, animated: true, completion: nil)
-                    return
-                }
-                
-                //print(s[1])
                 table.reloadData()
                 self.spinner?.stopAnimating()
                 table.isHidden = false
                 
                 UIGraphicsBeginImageContext(table.rect(forSection: 0).size)
                 table.dragInteractionEnabled = false //true make sure to remember this
-//                let t1 = Int(s[0]["time"] as! NSNumber)
                 self.collectContentOffsets(table: table)
                 let image = self.asFullImage(table: table)
                 
@@ -141,10 +124,77 @@ import Foundation
                 self.view.backgroundColor = UIColor.white
                 imageView.backgroundColor = UIColor.white
                 //UIGraphicsEndImageContext()
-                self.startAutoScroll(imageView: imageView, s: s)
+                self.startAutoScroll(imageView: imageView, data: data)
                 //self.scrollEventTrigger(table: table, s:s, last_time:t1 ,scrollIndex:1)
             }
         })
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        let lines = self.content.filter { return !$0.spacer }
+        let wordIndices = lines.map { $0.firstWordIndex }
+        let characterIndices = lines.map { $0.firstCharacterIndex }
+        
+        self.vm.closeArticle(content: self.content.map { $0.toDictionary() }, wordIndicies: wordIndices, characterIndicies: characterIndices, complete: self.complete)
+        
+        guard let a = UIApplication.shared.delegate as? AppDelegate else {return}
+        a.autoRotate = true
+    }
+    
+    
+    func startAutoScroll(imageView: UIView, data: [String:Any]) {
+        let s = self.data["session_data"] as! Array<[String:Any]>
+        let time_key = "appeared"
+        let key = "scrollAnim"
+        let stime = Double(s[0]["startTime"] as! NSNumber)/self.time_offset
+        let diffH = viewableAreaHeight(showOnBottom: true) - viewableAreaHeight(showOnBottom: false)
+        let offset_val = diffH * 4
+        let anim = CAKeyframeAnimation(keyPath: "position.y")
+        var anim_vals: [CGFloat] = []
+        var anim_keyTimes: [NSNumber] = []
+        anim.duration = (Double(s.last![time_key] as! NSNumber)/self.time_offset)-stime
+        
+        //        anim.duration = 5 + (Double(s.last![time_key] as! NSNumber)/self.time_offset)-stime
+        //        let tsize = table.rect(forSection: 0).size
+        //        let height_per_line = (tsize.height-screenH) / CGFloat.init(exactly: s.count-2)!
+        
+        var i = 0
+        while(i < s.count){
+            let t1  = Double(s[i][time_key] as! NSNumber)/self.time_offset
+            
+            let last_cell = Double(s[i]["last_cell"] as! NSNumber)
+            let first_cell = Double(s[i]["first_cell"] as! NSNumber)
+            
+            if(Int(last_cell) > self.content.count - 2){
+                let c = data["content"] as! Array<[String:Any]>
+                let first_percen = (first_cell/Double(c.count))*Double(self.content.count)
+                let tottemp = -self.contentTopOffsets[Int(first_percen)]
+                
+                anim_vals.append(offset_val + tottemp)
+            }else if(first_cell <= 1){
+                let c = data["content"] as! Array<[String:Any]>
+                let last_percen = (last_cell/Double(c.count))*Double(self.content.count)
+                let tottemp = -self.contentBottomOffsets[Int(last_percen)]
+                
+                anim_vals.append(offset_val + tottemp)
+            }else{
+                let c = data["content"] as! Array<[String:Any]>
+                let first_percen = (first_cell/Double(c.count))*Double(self.content.count)
+                let last_percen = (last_cell/Double(c.count))*Double(self.content.count)
+                let tottemp = (-self.contentTopOffsets[Int(first_percen)] - self.contentBottomOffsets[Int(last_percen)])/2
+                
+                anim_vals.append(offset_val + tottemp)
+            }
+//            anim_keyTimes.append(NSNumber(value: (5 + t1-stime)/anim.duration))
+            anim_keyTimes.append(NSNumber(value: (t1-stime)/anim.duration))
+            i += 1
+        }
+        anim.values = anim_vals
+        anim.keyTimes = anim_keyTimes
+        anim.isAdditive = true
+
+        imageView.superview?.layer.add(anim, forKey: key)
+        
     }
     
     func collectContentOffsets(table:UITableView) {
@@ -161,80 +211,22 @@ import Foundation
         }
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        let lines = self.content.filter { return !$0.spacer }
-        let wordIndices = lines.map { $0.firstWordIndex }
-        let characterIndices = lines.map { $0.firstCharacterIndex }
-        
-        self.timer?.invalidate()
-        
-        self.vm.closeArticle(content: self.content.map { $0.toDictionary() }, wordIndicies: wordIndices, characterIndicies: characterIndices, complete: self.complete)
-        
-        guard let a = UIApplication.shared.delegate as? AppDelegate else {return}
-        a.autoRotate = true
+    func findFontSize(table:UITableView) -> UIFont? {
+        let string = sizingString
+        let height = viewableAreaHeight(showOnBottom: false)
+        let size = CGSize.init(width: table.frame.width-ArticleTextTableViewCell.widthSpacingConstant*2, height: height)
+        return SystemFont.init(fontName: "Times New Roman")?.fontToFit(text: string, inSize: size, spacing: ArticleTextTableViewCell.topSpacingConstant*2)
     }
     
-    
-    func startAutoScroll(imageView: UIView, s:Array<[String:Any]>) {
-        guard let table = table else { return }
-        let time_key = "appeared"
-        let key = "scrollAnim"
-        let stime = Double(s[0]["startTime"] as! NSNumber)/self.time_offset
-//        let tsize = table.rect(forSection: 0).size
-        let diffH = viewableAreaHeight(showOnBottom: true) - viewableAreaHeight(showOnBottom: false)
-        let offset_val = diffH * 4
-//        let height_per_line = (tsize.height-screenH) / CGFloat.init(exactly: s.count-2)!
-        let anim = CAKeyframeAnimation(keyPath: "position.y")
-        var anim_vals: [CGFloat] = []
-        var anim_keyTimes: [NSNumber] = []
-        var llcell = -1
-        var ffcell = -1
-//        anim.duration = 5 + (Double(s.last![time_key] as! NSNumber)/self.time_offset)-stime
-        anim.duration = (Double(s.last![time_key] as! NSNumber)/self.time_offset)-stime
-        var i = 0
-        while(i < s.count){
-            let t1  = Double(s[i][time_key] as! NSNumber)/self.time_offset
-            
-            let last_cell = Double(s[i]["last_cell"] as! NSNumber)
-            let first_cell = Double(s[i]["first_cell"] as! NSNumber)
-            
-            if(Int(last_cell) > self.content.count - 2){
-                let c = self.data["content"] as! Array<[String:Any]>
-                let first_percen = (first_cell/Double(c.count))*Double(self.content.count)
-                let tottemp = -self.contentTopOffsets[Int(first_percen)]
-                
-                anim_vals.append(offset_val + tottemp)
-            }else if(first_cell <= 1){
-                let c = self.data["content"] as! Array<[String:Any]>
-                let last_percen = (last_cell/Double(c.count))*Double(self.content.count)
-                let tottemp = -self.contentBottomOffsets[Int(last_percen)]
-                
-                anim_vals.append(offset_val + tottemp)
-            }else{
-                let c = self.data["content"] as! Array<[String:Any]>
-                let first_percen = (first_cell/Double(c.count))*Double(self.content.count)
-                let last_percen = (last_cell/Double(c.count))*Double(self.content.count)
-                let tottemp = (-self.contentTopOffsets[Int(first_percen)] - self.contentBottomOffsets[Int(last_percen)])/2
-                
-                anim_vals.append(offset_val + tottemp)
-            }
-//            anim_keyTimes.append(NSNumber(value: (5 + t1-stime)/anim.duration))
-            anim_keyTimes.append(NSNumber(value: (t1-stime)/anim.duration))
-
-            llcell = Int(last_cell)
-            ffcell = Int(first_cell)
-
-            i += 1
+    func cellFit(string:String, attributes: [NSAttributedString.Key: Any]) -> Bool {
+        guard let checker = self.minTableDim else {
+            //print("not table exists, this should never happen")
+            print("error in cellFit")
+            return false
         }
-        anim.values = anim_vals
-        anim.keyTimes = anim_keyTimes
-        anim.isAdditive = true
-
-        imageView.superview?.layer.add(anim, forKey: key)
         
+        return (string as NSString).size(withAttributes: attributes).width < checker - ArticleTextTableViewCell.widthSpacingConstant*2
     }
-
-    
 
     
     func sendTextToServer(tableView:UITableView) -> Void {
@@ -257,81 +249,11 @@ import Foundation
         
         vm.submitData(content_offset: current_offset, first_index: first_index, last_index: last_index)
     }
-    
-    func findFontSize(table:UITableView) -> UIFont? {
-        let string = sizingString
-        let height = viewableAreaHeight(showOnBottom: false)
-        let size = CGSize.init(width: table.frame.width-ArticleTextTableViewCell.widthSpacingConstant*2, height: height)
-        return SystemFont.init(fontName: "Times New Roman")?.fontToFit(text: string, inSize: size, spacing: ArticleTextTableViewCell.topSpacingConstant*2)
-    }
-    
-    func cellFit(string:String, attributes: [NSAttributedString.Key: Any]) -> Bool {
-        guard let checker = self.minTableDim else {
-            //print("not table exists, this should never happen")
-            print("error in cellFit")
-            return false
-        }
-        
-        return (string as NSString).size(withAttributes: attributes).width < checker - ArticleTextTableViewCell.widthSpacingConstant*2
-    }
 
     
-    @objc func willResignActive(_ notification: Notification) {
-        _ = navigationController?.popViewController(animated: true)
-    }
-    
-    func convertSession(font : UIFont) -> [Content] {
-        var cells = [Content].init()
-        let c = self.data["content"] as! Array<[String:Any]>
-        var i = 0
-        while(i < c.count){
-            cells.append(Content.init(text:  c[i]["text"] as! String, paragraph: c[i]["paragraph"] as! Int, firstWordIndex: c[i]["first_word_index"] as! Int, firstCharacterIndex: c[i]["first_character_index"] as! Int, spacer: (c[i]["spacer"] != nil)))
-            i = i + 1
-        }
-        return cells
-    }
-    
-    
-    func convert(paragraphs: [String], font: UIFont) -> [Content] {
-        var cells = [Content].init()
-        var p = 0
-        var word_count = 0
-        var char_count = 0
-        let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: font]
-        cells.append(Content.init(text: paragraphs[0], paragraph: p, firstWordIndex: word_count, firstCharacterIndex: char_count, spacer: false))
-        p+=1
-        for section in paragraphs.dropFirst(){
-            var words = section.split(separator: " ").map({substring in
-                return String.init(substring)
-            })
-            
-            while(!words.isEmpty){
-                var cell = [String]()
-                var temp = [words[0]]
-                while(!words.isEmpty && cellFit(string: temp.joined(separator: " "), attributes: attributes)){
-                    cell.append(words.removeFirst())
-                    if let w = words.first{
-                        temp = cell
-                        temp.append(w)
-                    }
-                }
-                word_count += cell.count
-                let current_text = cell.joined(separator: " ")
-                char_count += current_text.count
-                cells.append(Content.init(text: current_text, paragraph: p, firstWordIndex: word_count, firstCharacterIndex: char_count, spacer: false))
-
-            }
-            p += 1
-            cells.append(Content.init(text: "", paragraph: p, firstWordIndex: word_count, firstCharacterIndex: char_count, spacer: true))
-        }
-        return cells
-    }
-    
-    func viewableAreaHeight(showOnBottom: Bool) -> CGFloat {
-        var viewableHeight = UIScreen.main.bounds.height - self.view.safeAreaInsets.top
-        if !showOnBottom { viewableHeight = viewableHeight - self.view.safeAreaInsets.bottom }
-        return viewableHeight
-    }
+//    @objc func willResignActive(_ notification: Notification) {
+//        _ = navigationController?.popViewController(animated: true)
+//    }
 }
 
 extension ArticleViewController: SubmitTableViewCellDelegate {
@@ -406,6 +328,59 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension ArticleViewController {
+    func convertSession(font : UIFont, data: [String:Any]) -> [Content] {
+        var cells = [Content].init()
+        let c = data["content"] as! Array<[String:Any]>
+        var i = 0
+        while(i < c.count){
+            cells.append(Content.init(text:  c[i]["text"] as! String, paragraph: c[i]["paragraph"] as! Int, firstWordIndex: c[i]["first_word_index"] as! Int, firstCharacterIndex: c[i]["first_character_index"] as! Int, spacer: (c[i]["spacer"] != nil)))
+            i = i + 1
+        }
+        return cells
+    }
+    
+    
+    func convert(paragraphs: [String], font: UIFont) -> [Content] {
+        var cells = [Content].init()
+        var p = 0
+        var word_count = 0
+        var char_count = 0
+        let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: font]
+        cells.append(Content.init(text: paragraphs[0], paragraph: p, firstWordIndex: word_count, firstCharacterIndex: char_count, spacer: false))
+        p+=1
+        for section in paragraphs.dropFirst(){
+            var words = section.split(separator: " ").map({substring in
+                return String.init(substring)
+            })
+            
+            while(!words.isEmpty){
+                var cell = [String]()
+                var temp = [words[0]]
+                while(!words.isEmpty && cellFit(string: temp.joined(separator: " "), attributes: attributes)){
+                    cell.append(words.removeFirst())
+                    if let w = words.first{
+                        temp = cell
+                        temp.append(w)
+                    }
+                }
+                word_count += cell.count
+                let current_text = cell.joined(separator: " ")
+                char_count += current_text.count
+                cells.append(Content.init(text: current_text, paragraph: p, firstWordIndex: word_count, firstCharacterIndex: char_count, spacer: false))
+
+            }
+            p += 1
+            cells.append(Content.init(text: "", paragraph: p, firstWordIndex: word_count, firstCharacterIndex: char_count, spacer: true))
+        }
+        return cells
+    }
+    
+    func viewableAreaHeight(showOnBottom: Bool) -> CGFloat {
+        var viewableHeight = UIScreen.main.bounds.height - self.view.safeAreaInsets.top
+        if !showOnBottom { viewableHeight = viewableHeight - self.view.safeAreaInsets.bottom }
+        return viewableHeight
+    }
+    
     func asFullImage(table:UITableView) -> UIImage? {
         guard table.numberOfSections > 0, table.numberOfRows(inSection: 0) > 0 else {
             return nil
