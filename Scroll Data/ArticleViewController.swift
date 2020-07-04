@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import Foundation
 
 @objc class ArticleViewController: UIViewController {
     //let scroll_type = "exact" //"scroll_every_x"
@@ -19,6 +19,9 @@ import UIKit
     var scrollOffset = 0.0
     var time_offset = 100000000.0
     var data: [String:Any]  = [:]
+    var contentTopOffsets: [CGFloat] = []
+    var contentBottomOffsets: [CGFloat] = []
+    var tableH: CGFloat = 0.0
     
     let paragraphStyle = NSMutableParagraphStyle()
     
@@ -67,6 +70,9 @@ import UIKit
         
         let model = UIDevice.current.model.lowercased()
         if(model.contains("ipad")){
+            print("woahipad")
+            print(view.readableContentGuide.trailingAnchor.description)
+            print(view.readableContentGuide.leadingAnchor.description)
             NSLayoutConstraint.activate([
                 table.leadingAnchor.constraint(equalTo: view.readableContentGuide.leadingAnchor),
                 table.trailingAnchor.constraint(equalTo: view.readableContentGuide.trailingAnchor),
@@ -95,24 +101,68 @@ import UIKit
             }
             
             DispatchQueue.main.async {
-                self.font = self.findFontSize(table: table) ?? UIFont.preferredFont(forTextStyle: .body)
-                let content = self.convert(paragraphs: p, font: self.font)
-                self.content = content
                 self.data = data
+                self.font = self.findFontSize(table: table) ?? UIFont.preferredFont(forTextStyle: .body)
+                //let content = self.convert(paragraphs: p, font: self.font)
+                let content = self.convertSession(font: self.font)
+                self.content = content
+                
                 
                 guard case var s as Array<[String:Any]> = self.data["session_data"] else {
                     let alert = UIAlertController.init(title: "error fetching session data", message: nil, preferredStyle: UIAlertController.Style.alert)
                     self.present(alert, animated: true, completion: nil)
                     return
                 }
+                
+                //print(s[1])
                 table.reloadData()
                 self.spinner?.stopAnimating()
                 table.isHidden = false
+                
+                print(table.rectForRow(at: IndexPath.init(row: 1, section: 0)).size)
+                print(table.rect(forSection: 0).size)
+                UIGraphicsBeginImageContext(table.rect(forSection: 0).size)
                 table.dragInteractionEnabled = false //true make sure to remember this
-                let t1 = Int(s[0]["time"] as! NSNumber)
-                self.scrollEventTrigger(table: table, s:s, last_time:t1 ,scrollIndex:1)
+//                let t1 = Int(s[0]["time"] as! NSNumber)
+                self.collectContentOffsets(table: table)
+                let image = self.asFullImage(table: table)
+                
+                print(image)
+                
+                let imageView = UIImageView(image: image!)
+                imageView.translatesAutoresizingMaskIntoConstraints = false
+//                imageView.contentMode = UIView;
+//                imageView.frame = table.rect(forSection: 0)
+   
+                self.view.addSubview(imageView)
+                NSLayoutConstraint.activate([
+                    imageView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
+                ])
+                self.view.layoutIfNeeded()
+                imageView.layoutIfNeeded()
+                self.view.bringSubviewToFront(imageView)
+                table.isHidden = true
+                self.view.backgroundColor = UIColor.white
+                imageView.backgroundColor = UIColor.white
+                //UIGraphicsEndImageContext()
+                self.startAutoScroll(imageView: imageView, s: s)
+                //self.scrollEventTrigger(table: table, s:s, last_time:t1 ,scrollIndex:1)
             }
         })
+    }
+    
+    func collectContentOffsets(table:UITableView) {
+        guard table.numberOfSections > 0, table.numberOfRows(inSection: 0) > 0 else {
+            return
+        }
+        for section in 0..<table.numberOfSections {
+            for row in 0..<table.numberOfRows(inSection: section) {
+                table.scrollToRow(at: IndexPath(row: row, section: section), at: .bottom, animated: false)
+                self.contentBottomOffsets.append(table.contentOffset.y)
+                table.scrollToRow(at: IndexPath(row: row, section: section), at: .top, animated: false)
+                self.contentTopOffsets.append(table.contentOffset.y)
+            }
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -128,53 +178,126 @@ import UIKit
         a.autoRotate = true
     }
     
-    func startAutoScroll() {
+    
+    func startAutoScroll(imageView: UIView, s:Array<[String:Any]>) {
         guard let table = table else { return }
-        
-        let scroller = Scroller(tableView: table) { time in
-            //TODO: given a TimeInterval since start, return an IndexPath
-        }
-        
-        scroller.start(withTimeInterval: 1)
-    }
-    
-    func rowOnScreenForTime(s: Array<[String:Any]>, t:Int){
-        let woah = s.first(where: {Int($0["time"] as! NSNumber) > t})
-        print(woah)
-    }
-    
-    func scrollEventTrigger(table: UITableView, s: Array<[String:Any]>, last_time:Int, scrollIndex:Int) {
-        //print(data["version"])
-        print("scroll event triggered")
-        print(scrollIndex)
+        let time_key = "appeared"
+        let key = "scrollAnim"
+        let stime = Double(s[0]["startTime"] as! NSNumber)/self.time_offset
+        let tsize = table.rect(forSection: 0).size
+        let screenH = -viewableAreaHeight(showOnBottom: false)
+        let tableH = table.frame.height
+        self.tableH = tableH
+        let diffH = screenH + tableH
+        let offset_val = -diffH
+        let height_per_line = (tsize.height-screenH) / CGFloat.init(exactly: s.count-2)!
+        var i = 0
+        //var anims: [CAKeyframeAnimation] = []
+        let anim = CAKeyframeAnimation(keyPath: "position.y")
+        var anim_vals: [CGFloat] = []
+        var anim_keyTimes: [NSNumber] = []
+        var llcell = -1
+        var ffcell = -1
+        anim.duration = (Double(s.last![time_key] as! NSNumber)/self.time_offset)-stime
+        while(i < s.count){
+            let t1  = Double(s[i][time_key] as! NSNumber)/self.time_offset
+            //let t2 = Double(s[i+1]["time"] as! NSNumber)
+            let last_cell = Double(s[i]["last_cell"] as! NSNumber)
+            let first_cell = Double(s[i]["first_cell"] as! NSNumber)
+            //anim.fromValue = CGFloat.init(exactly: height_per_line)
+            //anim.toValue = CGFloat.init(exactly: fvalue)
+            //anim.fromValue = fvalue
+            //anim.toValue = -(height_per_line*CGFloat(last_cell)) +  imageView.frame.origin.y + offset_val
+//            if(llcell != last_cell){
+//                if(last_cell == 1){
+//                    print(-(height_per_line*CGFloat(last_cell)) + imageView.frame.origin.y + offset_val)
+//                    print(-(s[i]["content_offset"] as! CGFloat) + offset_val)
+//                }
+            print(self.contentTopOffsets.count)
+            print(s.count)
+            if(Int(last_cell) - self.content.count >= -1){
+                let c = self.data["content"] as! Array<[String:Any]>
+                let first_percen = (first_cell/Double(c.count))*Double(self.content.count)
+                let ccount = c.count
+                let contcount = self.content.count
 
+                let tottemp = -self.contentTopOffsets[Int(first_percen)]
+                anim_vals.append(offset_val + tottemp)
+            }else if(first_cell <= 1){
+                let c = self.data["content"] as! Array<[String:Any]>
+                let last_percen = (last_cell/Double(c.count))*Double(self.content.count)
+                let ccount = c.count
+                let contcount = self.content.count
 
-        let t1 = last_time
-        let t2 = Int(s[scrollIndex]["time"] as! NSNumber)
-        let t = TimeInterval(Double(t2-t1)/self.time_offset)
-        guard case let first_cell as Int = s[scrollIndex]["first_cell"] else {
-            let alert = UIAlertController.init(title: "error fetching last cell", message: nil, preferredStyle: UIAlertController.Style.alert)
-            self.present(alert, animated: true, completion: nil)
-            return
+                let tottemp = -self.contentBottomOffsets[Int(last_percen)]
+                anim_vals.append(offset_val + tottemp)
+            }else{
+                let c = self.data["content"] as! Array<[String:Any]>
+                let first_percen = (first_cell/Double(c.count))*Double(self.content.count)
+                let last_percen = (last_cell/Double(c.count))*Double(self.content.count)
+                let ccount = c.count
+                let contcount = self.content.count
+
+                let tottemp = (-self.contentTopOffsets[Int(first_percen)] - self.contentBottomOffsets[Int(last_percen)])/2
+                anim_vals.append(offset_val + tottemp)
+            }
+            //anim_vals.append(-self.contentBottomOffsets[last_cell])
+            anim_keyTimes.append(NSNumber(value: (t1-stime)/anim.duration))
+                
+//                print("last")
+//                print(offset_val)
+//            }
+//            else if(ffcell != first_cell){
+//                anim_vals.append(-self.contentTopOffsets[first_cell])
+//                anim_keyTimes.append(NSNumber(value: (t1-stime)/anim.duration))
+//            }
+//            print(-(s[i]["content_offset"] as! CGFloat) + offset_val)
+//            print(anim_vals.last)
+//            print("-----------")
+            llcell = Int(last_cell)
+            ffcell = Int(first_cell)
+            //anim_vals.append(-(s[i]["content_offset"] as! CGFloat) + offset_val)
+            //fvalue = anim.toValue as! CGFloat
+           
+            //anim.duration = 5.0
+            //tot_dur += CFTimeInterval(Double(t2-t1)/self.time_offset)
+            i += 1
         }
-        DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
-                print(t)
-                UIView.animate(withDuration: t, delay: 0, options: UIView.AnimationOptions.allowUserInteraction, animations: {table.scrollToRow(at: IndexPath.init(item: first_cell, section: 0), at: UITableView.ScrollPosition.top, animated: false)}, completion: { _ in
-                    if(scrollIndex+1 < s.count){
-                        print(scrollIndex)
-                        print("end")
-                        self.scrollEventTrigger(table: table, s:s, last_time:t2 ,scrollIndex:scrollIndex+1)
-                    }
-                })
-        })
+        anim.values = anim_vals
+        anim.keyTimes = anim_keyTimes
+        anim.isAdditive = true
+//        anim.calculationMode = CAAnimationCalculationMode.linear
+//        anim.calculationMode = CAAnimationCalculationMode.cubic
+        // anim.calculationMode = CAAnimationCalculationMode.discrete
+//        print(anim.beginTime)
+        print(anim.values)
+//        print(anim.keyTimes)
+//        print(anim.duration)
+//        print("----")
+        imageView.superview?.layer.add(anim, forKey: key)
+        
+//        DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
+//            i = 0
+//            while(i < anims.count){
+//                imageView.layer.add(anims[i], forKey: nil)
+//                i += 1
+//            }
+//        })
+//
+        
+        
+//        var m = CGAffineTransform.init(translationX: 0, y: 200)
+//        table.layer.setAffineTransform(m)
+//        table.layer.affineTransform()
+//
+//        m = CGAffineTransform.init(translationX: 50, y: 0)
+//        table.layer.setAffineTransform(m)
+//        table.layer.affineTransform()
+        
     }
+
     
-    func findFontSize(table:UITableView) -> UIFont? {
-        let string = sizingString
-        let height = viewableAreaHeight(showOnBottom: false)
-        let size = CGSize.init(width: table.frame.width-ArticleTextTableViewCell.widthSpacingConstant*2, height: height)
-        return SystemFont.init(fontName: "Times New Roman")?.fontToFit(text: string, inSize: size, spacing: ArticleTextTableViewCell.topSpacingConstant*2)
-    }
+
     
     func sendTextToServer(tableView:UITableView) -> Void {
         let current_offset = tableView.contentOffset.y
@@ -197,6 +320,13 @@ import UIKit
         vm.submitData(content_offset: current_offset, first_index: first_index, last_index: last_index)
     }
     
+    func findFontSize(table:UITableView) -> UIFont? {
+        let string = sizingString
+        let height = viewableAreaHeight(showOnBottom: false)
+        let size = CGSize.init(width: table.frame.width-ArticleTextTableViewCell.widthSpacingConstant*2, height: height)
+        return SystemFont.init(fontName: "Times New Roman")?.fontToFit(text: string, inSize: size, spacing: ArticleTextTableViewCell.topSpacingConstant*2)
+    }
+    
     func cellFit(string:String, attributes: [NSAttributedString.Key: Any]) -> Bool {
         guard let checker = self.minTableDim else {
             //print("not table exists, this should never happen")
@@ -210,6 +340,17 @@ import UIKit
     
     @objc func willResignActive(_ notification: Notification) {
         _ = navigationController?.popViewController(animated: true)
+    }
+    
+    func convertSession(font : UIFont) -> [Content] {
+        var cells = [Content].init()
+        let c = self.data["content"] as! Array<[String:Any]>
+        var i = 0
+        while(i < c.count){
+            cells.append(Content.init(text:  c[i]["text"] as! String, paragraph: c[i]["paragraph"] as! Int, firstWordIndex: c[i]["first_word_index"] as! Int, firstCharacterIndex: c[i]["first_character_index"] as! Int, spacer: (c[i]["spacer"] != nil)))
+            i = i + 1
+        }
+        return cells
     }
     
     
@@ -275,6 +416,8 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
             let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "submit", for: indexPath)
             if let cell: SubmitTableViewCell = cell as? SubmitTableViewCell {
                 cell.submitButton.setTitle("Tap to submit data", for: UIControl.State.normal)
+                cell.submitButton.titleLabel?.textColor = UIColor.black
+                cell.textLabel?.textColor = UIColor.black
                 cell.selectionStyle = .none
                 cell.isSelected = false
                 cell.accessibilityLabel = "submitCell"
@@ -288,6 +431,8 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
                 if let cell: TitleCellTableViewCell = cell as? TitleCellTableViewCell {
                     let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: self.titleFont]
                     cell.titleText.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
+                    cell.titleText.textColor = UIColor.black
+                    cell.textLabel?.textColor = UIColor.black
                     cell.selectionStyle = .none
                     cell.isSelected = false
                     cell.isUserInteractionEnabled = false
@@ -299,6 +444,8 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
                 if let cell: ArticleTextTableViewCell = cell as? ArticleTextTableViewCell {
                     let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: font]
                     cell.textSection.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
+                    cell.textSection.textColor = UIColor.black
+                    cell.textLabel?.textColor = UIColor.black
                     cell.isSelected = false
                     cell.isUserInteractionEnabled = false
                     cell.accessibilityLabel = "textCell"
@@ -320,6 +467,45 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+extension ArticleViewController {
+    func asFullImage(table:UITableView) -> UIImage? {
+        guard table.numberOfSections > 0, table.numberOfRows(inSection: 0) > 0 else {
+            return nil
+        }
+
+        table.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+        var height: CGFloat = 0.0
+        for section in 0..<table.numberOfSections {
+            var cellHeight: CGFloat = 0.0
+            for row in 0..<table.numberOfRows(inSection: section) {
+                let indexPath = IndexPath(row: row, section: section)
+                guard let cell = table.cellForRow(at: indexPath) else { continue }
+                cellHeight = cell.frame.size.height
+            }
+            height += cellHeight * CGFloat(table.numberOfRows(inSection: section))
+        }
+
+        UIGraphicsBeginImageContextWithOptions(CGSize(width: table.contentSize.width, height: height), false, UIScreen.main.scale)
+
+        for section in 0..<table.numberOfSections {
+            for row in 0..<table.numberOfRows(inSection: section) {
+                let indexPath = IndexPath(row: row, section: section)
+                guard let cell = table.cellForRow(at: indexPath) else { continue }
+                cell.contentView.drawHierarchy(in: cell.frame, afterScreenUpdates: true)
+
+                if row < table.numberOfRows(inSection: section) - 1 {
+                    table.scrollToRow(at: IndexPath(row: row+1, section: section), at: .bottom, animated: false)
+                }
+            }
+        }
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return image!
+    }
+    
+}
+
 struct Content: Codable {
     let text: String
     let paragraph: Int
@@ -333,35 +519,11 @@ struct Content: Codable {
             "paragraph" : paragraph,
             "first_word_index" : firstWordIndex,
             "first_character_index" : firstCharacterIndex,
-            "spacer" : spacer
+            "spacer" : spacer,
         ]
     }
 }
 
-class Scroller {
-    
-    let tableView: UITableView
-    
-    typealias TimeMap = (_ time: TimeInterval) -> IndexPath
-    let timeToIndexPath: TimeMap
-    
-    init(tableView: UITableView, timeToIndexPath: @escaping TimeMap) {
-        self.tableView = tableView
-        self.timeToIndexPath = timeToIndexPath
-    }
-    
-    func start(withTimeInterval interval: TimeInterval) {
-        let startTime = Date()
-        
-        Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
-            let indexPath = self.timeToIndexPath(Date().timeIntervalSince(startTime))
-
-            UIView.animate(withDuration: interval, delay: 0, options: UIView.AnimationOptions.curveLinear, animations: {
-                self.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
-            }, completion: nil)
-        }
-    }
-}
 
 let sizingString = """
 President Trump’s $1.5 trillion tax cut was supposed to be a big selling point for congressional Republicans in the midterm elections. Instead, it appears to have done more to hurt, than help, Republicans in high-tax districts across California, New Jersey, Virginia and other states.
