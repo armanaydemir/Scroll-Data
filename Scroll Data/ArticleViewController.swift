@@ -93,9 +93,14 @@ import Foundation
             
             DispatchQueue.main.async {
                 self.data = data
-                self.font = self.findFontSize(table: table) ?? UIFont.preferredFont(forTextStyle: .body)
-                let content = self.convert(paragraphs: p, font: self.font)
-//                let content = self.convertSession(font: self.font, data: data)
+                
+                
+//                self.font = self.findFontSize(table: table) ?? UIFont.preferredFont(forTextStyle: .body)
+//                let content = self.convert(paragraphs: p, font: self.font)
+                
+                //render as rendered on recorded device
+                let content = self.convertSession(data: data)
+                self.font =  self.findSessionFontSize(table: table, c: content, data: data) ?? UIFont.preferredFont(forTextStyle: .body)
                 self.content = content
                 
                 
@@ -215,7 +220,32 @@ import Foundation
         let string = sizingString
         let height = viewableAreaHeight(showOnBottom: false)
         let size = CGSize.init(width: table.frame.width-ArticleTextTableViewCell.widthSpacingConstant*2, height: height)
-        return SystemFont.init(fontName: "Times New Roman")?.fontToFit(text: string, inSize: size, spacing: ArticleTextTableViewCell.topSpacingConstant*2)
+        let ff = SystemFont.init(fontName: "Times New Roman")?.fontToFit(text: string, inSize: size, spacing: ArticleTextTableViewCell.topSpacingConstant*2)
+        return ff
+    }
+    
+    func findSessionFontSize(table:UITableView, c: [Content], data: [String:Any]) -> UIFont? {
+        let s = data["session_data"] as! Array<[String:Any]>
+        var i = 1 //need to finish this func
+        var fonts: [UIFont?] = []
+        while(i < c.count - 1){
+            if(c[i].text != ""){
+                let height = viewableAreaHeight(showOnBottom: false)
+                let size = CGSize.init(width: table.frame.width-ArticleTextTableViewCell.widthSpacingConstant*2, height: height)
+                fonts.append(SystemFont.init(fontName: "Times New Roman")?.fontToFitLine(text: c[i].text, inSize: size, spacing: ArticleTextTableViewCell.topSpacingConstant*2))
+            }
+            i = i + 1
+            
+        }
+        i = 0
+        var smallestFont = fonts[0]
+        while(i < fonts.count){
+            if(smallestFont!.pointSize > fonts[i]!.pointSize){
+                smallestFont = fonts[i]
+            }
+            i = i + 1
+        }
+        return smallestFont
     }
     
     func cellFit(string:String, attributes: [NSAttributedString.Key: Any]) -> Bool {
@@ -305,6 +335,7 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
                     let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: font]
                     cell.textSection.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
                     cell.textSection.textColor = UIColor.black
+                    cell.textSection.adjustsFontSizeToFitWidth = true
                     cell.textLabel?.textColor = UIColor.black
                     cell.isSelected = false
                     cell.isUserInteractionEnabled = false
@@ -328,7 +359,7 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension ArticleViewController {
-    func convertSession(font : UIFont, data: [String:Any]) -> [Content] {
+    func convertSession(data: [String:Any]) -> [Content] {
         var cells = [Content].init()
         let c = data["content"] as! Array<[String:Any]>
         var i = 0

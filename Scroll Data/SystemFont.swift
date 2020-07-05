@@ -41,7 +41,34 @@ class SystemFont {
             boundingBox = aString.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, context: nil)
         }
         return font
-        
+    }
+    
+    func fontToFitLine(text: String, inSize size: CGSize, spacing: CGFloat) -> UIFont {
+        let constraintRect = CGSize(width: size.width, height: .greatestFiniteMagnitude)
+        var font_size = CGFloat(8.0) //self.basicFont.pointSize
+        var font = UIFont.init(descriptor: self.basicFont.fontDescriptor, size: font_size)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = spacing
+        var attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: font, NSAttributedString.Key.paragraphStyle: paragraphStyle]
+        var aString = NSAttributedString.init(string: text, attributes: attributes)
+        var boundingBox = aString.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, context: nil)
+//        print(font.capHeight)
+//        print(font.xHeight)
+//        print(boundingBox.height)
+//        print("---")
+//
+        while boundingBox.height <= font.lineHeight {
+            font_size += 0.1
+            font = UIFont.init(descriptor: self.basicFont.fontDescriptor, size: font_size)
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineSpacing = spacing
+            attributes = [NSAttributedString.Key.font: font, NSAttributedString.Key.paragraphStyle: paragraphStyle]
+            aString = NSAttributedString.init(string: text, attributes: attributes)
+            boundingBox = aString.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, context: nil)
+        }
+        font_size -= 0.1
+        font = UIFont.init(descriptor: self.basicFont.fontDescriptor, size: font_size)
+        return font
     }
     
 }
