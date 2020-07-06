@@ -84,7 +84,7 @@ import Foundation
         DispatchQueue.main.async {
             self.minTableDim = min(table.frame.size.width, table.frame.size.height)
         }
-        imageView.isHidden = true
+//        imageView.isHidden = true
         vm.fetchText(completion: { data, error in
             DispatchQueue.main.async {
                 self.data = data
@@ -103,24 +103,26 @@ import Foundation
                 table.isHidden = false
                 print(table.numberOfRows(inSection: 0))
                 print(content.count)
-                DispatchQueue.main.asyncAfter(deadline: .now()+5) {
+                DispatchQueue.main.asyncAfter(deadline: .now()+1) {
 
                     self.collectContentOffsets(table: table)
                     let image = self.asFullImage(table: table)!
+                    let imageView = UIImageView(image: image)
                     print(image)
                     
-                    UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
-//                    let i = UIImage(named: "test")
-//                    UIImageWriteToSavedPhotosAlbum(i!, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
-                    self.imageView.image = image
-    //                imageView.contentMode = UIView;
-    //                imageView.frame = table.rect(forSection: 0)
-
+                   
+                    self.view.addSubview(imageView)
+                    NSLayoutConstraint.activate([
+                        imageView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
+                    ])
+                    self.view.layoutIfNeeded()
+                    imageView.layoutIfNeeded()
+                    self.view.bringSubviewToFront(imageView)
                     table.isHidden = true
                     self.view.backgroundColor = UIColor.white
                     self.view.superview?.backgroundColor = UIColor.white
-                    self.imageView.backgroundColor = UIColor.blue
-                    self.startAutoScroll(imageView: self.imageView, data: data)
+                    imageView.backgroundColor = UIColor.white
+                    self.startAutoScroll(imageView: imageView, data: data)
                 }
             }
         })
@@ -158,7 +160,7 @@ import Foundation
         let key = "scrollAnim"
         let stime = Double(s[0]["startTime"] as! NSNumber)/self.time_offset
 //        let diffH = viewableAreaHeight(showOnBottom: true) - viewableAreaHeight(showOnBottom: false)
-        let offset_val = CGFloat(0)
+        let offset_val = self.view.safeAreaInsets.bottom + self.view.safeAreaInsets.top
         let anim = CAKeyframeAnimation(keyPath: "position.y")
         var anim_vals: [CGFloat] = []
         var anim_keyTimes: [NSNumber] = []
