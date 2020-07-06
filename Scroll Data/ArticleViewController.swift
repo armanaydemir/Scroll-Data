@@ -23,6 +23,7 @@ import Foundation
     let titleFont = SystemFont.init(fontName: "Times New Roman")?.getFont(withTextStyle: .title1) ?? UIFont.preferredFont(forTextStyle: .title1)
     
     
+    @IBOutlet weak var imageView: UIImageView!
     var contentTopOffsets: [CGFloat] = []
     var contentBottomOffsets: [CGFloat] = []
     
@@ -83,14 +84,8 @@ import Foundation
         DispatchQueue.main.async {
             self.minTableDim = min(table.frame.size.width, table.frame.size.height)
         }
-        
+        imageView.isHidden = true
         vm.fetchText(completion: { data, error in
-            guard case let p as [String] = data["paragraphs"] else {
-                let alert = UIAlertController.init(title: "error fetching text", message: error, preferredStyle: UIAlertController.Style.alert)
-                self.present(alert, animated: true, completion: nil)
-                return
-            }
-            
             DispatchQueue.main.async {
                 self.data = data
                 
@@ -103,36 +98,46 @@ import Foundation
                 self.font =  self.findSessionFontSize(table: table, c: content, data: data) ?? UIFont.preferredFont(forTextStyle: .body)
                 self.content = content
                 
-                
                 table.reloadData()
                 self.spinner?.stopAnimating()
                 table.isHidden = false
-                
-                UIGraphicsBeginImageContext(table.rect(forSection: 0).size)
-                table.dragInteractionEnabled = false //true make sure to remember this
-                self.collectContentOffsets(table: table)
-                let image = self.asFullImage(table: table)
-                
-                let imageView = UIImageView(image: image!)
-                imageView.translatesAutoresizingMaskIntoConstraints = false
-//                imageView.contentMode = UIView;
-//                imageView.frame = table.rect(forSection: 0)
-   
-                self.view.addSubview(imageView)
-                NSLayoutConstraint.activate([
-                    imageView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
-                ])
-                self.view.layoutIfNeeded()
-                imageView.layoutIfNeeded()
-                self.view.bringSubviewToFront(imageView)
-                table.isHidden = true
-                self.view.backgroundColor = UIColor.white
-                imageView.backgroundColor = UIColor.white
-                //UIGraphicsEndImageContext()
-                self.startAutoScroll(imageView: imageView, data: data)
-                //self.scrollEventTrigger(table: table, s:s, last_time:t1 ,scrollIndex:1)
+                print(table.numberOfRows(inSection: 0))
+                print(content.count)
+                DispatchQueue.main.asyncAfter(deadline: .now()+5) {
+
+                    self.collectContentOffsets(table: table)
+                    let image = self.asFullImage(table: table)!
+                    print(image)
+                    
+                    UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
+//                    let i = UIImage(named: "test")
+//                    UIImageWriteToSavedPhotosAlbum(i!, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
+                    self.imageView.image = image
+    //                imageView.contentMode = UIView;
+    //                imageView.frame = table.rect(forSection: 0)
+
+                    table.isHidden = true
+                    self.view.backgroundColor = UIColor.white
+                    self.view.superview?.backgroundColor = UIColor.white
+                    self.imageView.backgroundColor = UIColor.blue
+                    self.startAutoScroll(imageView: self.imageView, data: data)
+                }
             }
         })
+    }
+    
+    //MARK: - Add image to Library
+    @objc func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        if let error = error {
+            // we got back an error!
+            let ac = UIAlertController(title: "Save error", message: error.localizedDescription, preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default))
+            present(ac, animated: true)
+        } else {
+            let ac = UIAlertController(title: "Saved!", message: "Your altered image has been saved to your photos.", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default))
+            present(ac, animated: true)
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -152,14 +157,14 @@ import Foundation
         let time_key = "appeared"
         let key = "scrollAnim"
         let stime = Double(s[0]["startTime"] as! NSNumber)/self.time_offset
-        let diffH = viewableAreaHeight(showOnBottom: true) - viewableAreaHeight(showOnBottom: false)
-        let offset_val = diffH * 4
+//        let diffH = viewableAreaHeight(showOnBottom: true) - viewableAreaHeight(showOnBottom: false)
+        let offset_val = CGFloat(0)
         let anim = CAKeyframeAnimation(keyPath: "position.y")
         var anim_vals: [CGFloat] = []
         var anim_keyTimes: [NSNumber] = []
-        anim.duration = (Double(s.last![time_key] as! NSNumber)/self.time_offset)-stime
         
-        //        anim.duration = 5 + (Double(s.last![time_key] as! NSNumber)/self.time_offset)-stime
+//        anim.duration = (Double(s.last![time_key] as! NSNumber)/self.time_offset)-stime
+        anim.duration = 10 + (Double(s.last![time_key] as! NSNumber)/self.time_offset)-stime
         //        let tsize = table.rect(forSection: 0).size
         //        let height_per_line = (tsize.height-screenH) / CGFloat.init(exactly: s.count-2)!
         
@@ -190,8 +195,8 @@ import Foundation
                 
                 anim_vals.append(offset_val + tottemp)
             }
-//            anim_keyTimes.append(NSNumber(value: (5 + t1-stime)/anim.duration))
-            anim_keyTimes.append(NSNumber(value: (t1-stime)/anim.duration))
+            anim_keyTimes.append(NSNumber(value: (5 + t1-stime)/anim.duration))
+//            anim_keyTimes.append(NSNumber(value: (t1-stime)/anim.duration))
             i += 1
         }
         anim.values = anim_vals
@@ -225,8 +230,7 @@ import Foundation
     }
     
     func findSessionFontSize(table:UITableView, c: [Content], data: [String:Any]) -> UIFont? {
-        let s = data["session_data"] as! Array<[String:Any]>
-        var i = 1 //need to finish this func
+        var i = 1
         var fonts: [UIFont?] = []
         while(i < c.count - 1){
             if(c[i].text != ""){
@@ -416,19 +420,21 @@ extension ArticleViewController {
         guard table.numberOfSections > 0, table.numberOfRows(inSection: 0) > 0 else {
             return nil
         }
-
+        print(table.isHidden)
         table.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
         var height: CGFloat = 0.0
+        var counter = 0
         for section in 0..<table.numberOfSections {
             var cellHeight: CGFloat = 0.0
             for row in 0..<table.numberOfRows(inSection: section) {
                 let indexPath = IndexPath(row: row, section: section)
+                counter += 1
                 guard let cell = table.cellForRow(at: indexPath) else { continue }
                 cellHeight = cell.frame.size.height
             }
             height += cellHeight * CGFloat(table.numberOfRows(inSection: section))
         }
-
+        print(counter)
         UIGraphicsBeginImageContextWithOptions(CGSize(width: table.contentSize.width, height: height), false, UIScreen.main.scale)
 
         for section in 0..<table.numberOfSections {
@@ -445,7 +451,7 @@ extension ArticleViewController {
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
 
-        return image!
+        return image
     }
     
 }
