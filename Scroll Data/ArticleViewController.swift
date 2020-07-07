@@ -93,21 +93,26 @@ import Foundation
                 
                 //render as rendered on recorded device
                 let content = self.convertSession(data: data)
-                self.view.layoutIfNeeded()
-                
-                
-                self.font =  self.findSessionFontSize(table: table, c: content, data: data) ?? UIFont.preferredFont(forTextStyle: .body)
-                self.content = content
-                
-                table.reloadData()
-                self.spinner?.stopAnimating()
-                table.isHidden = false
-                if(self.replay){
-                    DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-                        self.collectContentOffsets(table: table)
-                        self.image = self.asFullImage(table: table)!
-                        self.performSegue(withIdentifier: "startDisplay", sender: self)
+                if(content.count > 0){
+                    self.view.layoutIfNeeded()
+                    
+                    
+                    self.font =  self.findSessionFontSize(table: table, c: content, data: data) ?? UIFont.preferredFont(forTextStyle: .body)
+                    self.content = content
+                    
+                    table.reloadData()
+                    self.spinner?.stopAnimating()
+                    table.isHidden = false
+                    if(self.replay){
+                        DispatchQueue.main.asyncAfter(deadline: .now()+1) {
+                            self.collectContentOffsets(table: table)
+                            self.image = self.asFullImage(table: table)!
+                            self.performSegue(withIdentifier: "startDisplay", sender: self)
+                        }
                     }
+                }
+                else{
+                        self.navigationController?.popViewController(animated: true)
                 }
             }
         })
@@ -315,7 +320,11 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
 extension ArticleViewController {
     func convertSession(data: [String:Any]) -> [Content] {
         var cells = [Content].init()
-        let c = data["content"] as! Array<[String:Any]>
+        guard let c = data["content"] as? Array<[String:Any]> else {
+            print("couldn't get content from data, bad things coming.....")
+            return []
+        }
+        
         var i = 0
         while(i < c.count){
             cells.append(Content.init(text:  c[i]["text"] as! String, paragraph: c[i]["paragraph"] as! Int, firstWordIndex: c[i]["first_word_index"] as! Int, firstCharacterIndex: c[i]["first_character_index"] as! Int, spacer: (c[i]["spacer"] != nil)))
