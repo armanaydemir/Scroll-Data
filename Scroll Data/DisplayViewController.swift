@@ -18,8 +18,7 @@ class DisplayViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        
+        self.navigationController?.viewControllers.remove(at: (self.navigationController?.viewControllers.firstIndex(of: self)!)!-1)
     }
     
     
