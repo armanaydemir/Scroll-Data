@@ -11,7 +11,7 @@ import UIKit
 class ArticleViewModel: NSObject {
     let url = "157.245.227.103"
     //let url = "localhost"
-    let version = "v0.3.1"
+    let version = "v0.4.0"
     let UDID = UIDevice.current.identifierForVendor!.uuidString
     let timeOffset:Double = 100000000
     var startTime = CFAbsoluteTimeGetCurrent()

@@ -16,8 +16,6 @@ class DisplayViewController: UIViewController {
     var contentBottomOffsets: [CGFloat] = []
     var image = UIImage.init(named: "test")
     
-
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -30,7 +28,6 @@ class DisplayViewController: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
                 self.view.addSubview(imageView)
                 self.view.bringSubviewToFront(imageView)
-                var ww = self.view.frame.width
                 NSLayoutConstraint.activate([
 //                    imageView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 0),
 //                    imageView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: 0),

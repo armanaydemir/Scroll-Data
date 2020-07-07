@@ -10,11 +10,12 @@ import UIKit
 import Foundation
 
 @objc class ArticleViewController: UIViewController {
-    let replay = true
+    let replay = false
     var data: [String:Any]  = [:]
     var content: Array<Content> = []
     var vm: ArticleViewModel! = nil
     let time_offset = 100000000.0
+    var linesPerScreen = 22.5 // 30.0 too much, 25 even a little over
     var articleLink: String?
     
     var image = UIImage.init(named: "test")
@@ -58,7 +59,7 @@ import Foundation
         table.delegate = self
         table.cellLayoutMarginsFollowReadableWidth = false
         table.rowHeight = UITableView.automaticDimension
-        table.estimatedRowHeight = 68.0
+        table.estimatedRowHeight = viewableAreaHeight(showOnBottom: true)/CGFloat(linesPerScreen)
         spinner.hidesWhenStopped = true
         spinner.startAnimating()
         
@@ -90,10 +91,6 @@ import Foundation
         vm.fetchText(completion: { data, error in
             DispatchQueue.main.async {
                 self.data = data
-                
-                
-//                self.font = self.findFontSize(table: table) ?? UIFont.preferredFont(forTextStyle: .body)
-//                let content = self.convert(paragraphs: p, font: self.font)
                 
                 //render as rendered on recorded device
                 let content = self.convertSession(data: data)
@@ -155,14 +152,6 @@ import Foundation
                 self.contentTopOffsets.append(table.contentOffset.y)
             }
         }
-    }
-    
-    func findFontSize(table:UITableView) -> UIFont? {
-        let string = sizingString
-        let height = viewableAreaHeight(showOnBottom: false)
-        let size = CGSize.init(width: table.frame.width-ArticleTextTableViewCell.widthSpacingConstant*2, height: height)
-        let ff = SystemFont.init(fontName: "Times New Roman")?.fontToFit(text: string, inSize: size, spacing: ArticleTextTableViewCell.topSpacingConstant*2)
-        return ff
     }
     
     func findSessionFontSize(table:UITableView, c: [Content], data: [String:Any]) -> UIFont? {
@@ -256,8 +245,6 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
         return (self.content.count > 0) ? self.content.count + 1 : 0 //plus one for submit button
     }
     
-
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if(indexPath.item == self.content.count){
             let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "submit", for: indexPath)
@@ -313,7 +300,7 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
         case self.content.count:
             return viewableAreaHeight(showOnBottom: false)
         default:
-            return UITableView.automaticDimension
+            return viewableAreaHeight(showOnBottom: false)/CGFloat(linesPerScreen)//UITableView.automaticDimension
         }
     }
 }
@@ -427,12 +414,3 @@ struct Content: Codable {
         ]
     }
 }
-
-
-let sizingString = """
-President Trump’s $1.5 trillion tax cut was supposed to be a big selling point for congressional Republicans in the midterm elections. Instead, it appears to have done more to hurt, than help, Republicans in high-tax districts across California, New Jersey, Virginia and other states.
-
-House Republicans suffered heavy Election Day losses in districts where large concentrations of taxpayers claim a popular tax break — the state and local tax deduction — which the law capped at $10,000 per household. The new limit resulted in an effective tax increase for high-earning residents of high-tax states who claim more than $10,000 per year in SALT.
-
-Democrats swept four Republican-held districts in Orange County, Calif., where at least 40 percent of taxpayers claim the SALT tax break, defeating a pair of Republican incumbents and winning seats vacated by Representatives Ed Royce and Darrell Issa. Those districts include longtime Republican strongholds, like Newport Beach, and rank among the country’s largest users of the state and local tax break.
-"""
