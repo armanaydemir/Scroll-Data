@@ -87,12 +87,12 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="k8p-iG-GI0" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="3VD-PR-unI"/>
+                            <constraint firstItem="k8p-iG-GI0" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="DmV-GO-EYN"/>
+                            <constraint firstAttribute="bottom" secondItem="k8p-iG-GI0" secondAttribute="bottom" id="Nhb-8J-pGt"/>
                             <constraint firstItem="y80-SR-T2z" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="QmK-zz-dmB"/>
-                            <constraint firstAttribute="bottom" secondItem="k8p-iG-GI0" secondAttribute="bottom" id="YKW-Po-Pnk"/>
+                            <constraint firstItem="k8p-iG-GI0" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" priority="750" id="RFw-5p-sqe"/>
                             <constraint firstItem="y80-SR-T2z" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="jNb-8U-rAY"/>
-                            <constraint firstItem="k8p-iG-GI0" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" priority="750" id="os8-rr-UUL"/>
-                            <constraint firstItem="k8p-iG-GI0" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="uxx-pJ-gr9"/>
-                            <constraint firstItem="k8p-iG-GI0" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ygy-pQ-lWb"/>
                         </constraints>
                     </view>
                     <toolbarItems/>

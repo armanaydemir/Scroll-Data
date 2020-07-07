@@ -54,24 +54,18 @@ import Foundation
         table.register(UINib.init(nibName: "SubmitTableViewCell", bundle: nil), forCellReuseIdentifier: "submit")
         table.delegate = self
         table.cellLayoutMarginsFollowReadableWidth = false
-        table.estimatedRowHeight = 68.0
         table.rowHeight = UITableView.automaticDimension
-
+        table.estimatedRowHeight = 68.0
         spinner.hidesWhenStopped = true
         spinner.startAnimating()
         
         let model = UIDevice.current.model.lowercased()
         if(model.contains("ipad")){
-            print("woahipad")
-            print(view.readableContentGuide.trailingAnchor.description)
-            print(view.readableContentGuide.leadingAnchor.description)
+            print("ipad")
             NSLayoutConstraint.activate([
                 table.leadingAnchor.constraint(equalTo: view.readableContentGuide.leadingAnchor),
                 table.trailingAnchor.constraint(equalTo: view.readableContentGuide.trailingAnchor),
-                table.bottomAnchor.constraint(equalTo: view.readableContentGuide.bottomAnchor),
-                table.topAnchor.constraint(equalTo: view.readableContentGuide.topAnchor)
                 ])
-            self.view.layoutIfNeeded()
         }
     }
     
@@ -80,6 +74,11 @@ import Foundation
             print("couldn't connect outlets! bad things coming.....")
             return
         }
+        
+ 
+        table.backgroundColor = UIColor.white
+        self.view.backgroundColor = UIColor.white
+        self.view.superview?.backgroundColor = UIColor.white
 
         DispatchQueue.main.async {
             self.minTableDim = min(table.frame.size.width, table.frame.size.height)
@@ -95,33 +94,38 @@ import Foundation
                 
                 //render as rendered on recorded device
                 let content = self.convertSession(data: data)
+                self.view.layoutIfNeeded()
+                
+                
                 self.font =  self.findSessionFontSize(table: table, c: content, data: data) ?? UIFont.preferredFont(forTextStyle: .body)
                 self.content = content
                 
                 table.reloadData()
                 self.spinner?.stopAnimating()
                 table.isHidden = false
-                print(table.numberOfRows(inSection: 0))
-                print(content.count)
+                table.tintColor = UIColor.clear
                 DispatchQueue.main.asyncAfter(deadline: .now()+1) {
 
                     self.collectContentOffsets(table: table)
                     let image = self.asFullImage(table: table)!
                     let imageView = UIImageView(image: image)
+                    imageView.translatesAutoresizingMaskIntoConstraints = false
                     print(image)
-                    
-                   
+
+
                     self.view.addSubview(imageView)
-                    NSLayoutConstraint.activate([
-                        imageView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
-                    ])
-                    self.view.layoutIfNeeded()
-                    imageView.layoutIfNeeded()
+//                    NSLayoutConstraint.activate([
+//                        imageView.topAnchor.constraint(equalTo: table.topAnchor),
+//                        imageView.bottomAnchor.constraint(equalTo: table.bottomAnchor),
+//                        imageView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+//                        imageView.widthAnchor.constraint(equalTo: table.widthAnchor)
+//                    ])
                     self.view.bringSubviewToFront(imageView)
+                    
+                    
                     table.isHidden = true
-                    self.view.backgroundColor = UIColor.white
-                    self.view.superview?.backgroundColor = UIColor.white
-                    imageView.backgroundColor = UIColor.white
+
+                    imageView.backgroundColor = UIColor.yellow
                     self.startAutoScroll(imageView: imageView, data: data)
                 }
             }
@@ -313,6 +317,7 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
             if let cell: SubmitTableViewCell = cell as? SubmitTableViewCell {
                 cell.submitButton.setTitle("Tap to submit data", for: UIControl.State.normal)
                 cell.submitButton.titleLabel?.textColor = UIColor.black
+                cell.backgroundColor = UIColor.white
                 cell.textLabel?.textColor = UIColor.black
                 cell.selectionStyle = .none
                 cell.isSelected = false
@@ -328,6 +333,7 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
                     let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: self.titleFont]
                     cell.titleText.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
                     cell.titleText.textColor = UIColor.black
+                    cell.backgroundColor = UIColor.white
                     cell.textLabel?.textColor = UIColor.black
                     cell.selectionStyle = .none
                     cell.isSelected = false
@@ -341,7 +347,8 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
                     let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: font]
                     cell.textSection.attributedText = NSAttributedString.init(string: aString, attributes: attributes)
                     cell.textSection.textColor = UIColor.black
-                    cell.textSection.adjustsFontSizeToFitWidth = true
+                    cell.backgroundColor = UIColor.white
+                    //cell.textSection.adjustsFontSizeToFitWidth = true
                     cell.textLabel?.textColor = UIColor.black
                     cell.isSelected = false
                     cell.isUserInteractionEnabled = false
