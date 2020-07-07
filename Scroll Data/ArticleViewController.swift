@@ -109,7 +109,7 @@ import Foundation
                     self.collectContentOffsets(table: table)
                     let image = self.asFullImage(table: table)!
                     let imageView = UIImageView(image: image)
-                    imageView.translatesAutoresizingMaskIntoConstraints = false
+//                    imageView.translatesAutoresizingMaskIntoConstraints = true
                     print(image)
 
 
@@ -429,7 +429,6 @@ extension ArticleViewController {
         guard table.numberOfSections > 0, table.numberOfRows(inSection: 0) > 0 else {
             return nil
         }
-        print(table.isHidden)
         table.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
         var height: CGFloat = 0.0
         var counter = 0
@@ -443,7 +442,6 @@ extension ArticleViewController {
             }
             height += cellHeight * CGFloat(table.numberOfRows(inSection: section))
         }
-        print(counter)
         UIGraphicsBeginImageContextWithOptions(CGSize(width: table.contentSize.width, height: height), false, UIScreen.main.scale)
 
         for section in 0..<table.numberOfSections {
