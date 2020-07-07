@@ -102,22 +102,104 @@ import Foundation
                 
                 table.reloadData()
                 self.spinner?.stopAnimating()
-                table.isHidden = false
-//                if(self.replay){
-//                    DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-//                        self.captureReplayImage(table: table)
-//                    }
-//                }
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    self.autoscrollTest(table: table)
+                table.isHidden = true
+                if(self.replay){
+                    DispatchQueue.main.asyncAfter(deadline: .now()+1) {
+//                        self.captureReplayImage(table: table)
+                        
+                        self.loadScrollView()
+                        self.autoScrollScrollView()
+                    }
                 }
+                
+
             }
         })
     }
     
+    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var scrollViewContentView: UIView!
     
-    func autoscrollTest(table: UITableView) {
+    @IBOutlet weak var scrollContentViewHeightConstraint: NSLayoutConstraint!
+    
+    func loadScrollView() {
+        scrollViewContentView.backgroundColor = UIColor.purple
+        scrollView.backgroundColor = UIColor.green
+
+        let labels: [UILabel] = self.content.map { content in
+            let label = UILabel(frame: CGRect.zero)
+            label.text = content.text
+            label.translatesAutoresizingMaskIntoConstraints = false
+            scrollViewContentView.addSubview(label)
+            return label
+        }
+        
+        let maxVisibleLines = 20 //TODO: should come from server
+        
+        let normalLineLabelHeight: CGFloat = scrollView.frame.size.height / CGFloat(maxVisibleLines)
+        let titleLabelHeight: CGFloat = scrollView.frame.size.height
+        
+        scrollContentViewHeightConstraint.constant = titleLabelHeight + CGFloat(labels.count-1) * normalLineLabelHeight
+        
+        for (index, label) in labels.enumerated() {
+            
+            //vertical constraints
+            switch index {
+            case 0:
+                label.numberOfLines = 0
+                label.font = self.titleFont
+                label.textAlignment = .center
+                NSLayoutConstraint.activate([
+                    label.heightAnchor.constraint(equalToConstant: titleLabelHeight),
+                    label.topAnchor.constraint(equalTo: scrollViewContentView.topAnchor)
+                ])
+            case labels.count - 1:
+                NSLayoutConstraint.activate([
+                    label.bottomAnchor.constraint(equalTo: scrollViewContentView.bottomAnchor)
+                ])
+                fallthrough
+            default:
+                label.font = self.font
+                label.textAlignment = .justified
+                NSLayoutConstraint.activate([
+                    label.topAnchor.constraint(equalTo: labels[index-1].bottomAnchor),
+                    label.heightAnchor.constraint(equalToConstant: normalLineLabelHeight)
+                ])
+            }
+            
+            //horizontal
+            NSLayoutConstraint.activate([
+                label.leadingAnchor.constraint(equalTo: scrollViewContentView.leadingAnchor, constant: 16),
+                label.trailingAnchor.constraint(equalTo: scrollViewContentView.trailingAnchor, constant: -16)
+            ])
+        }
+        
+        scrollViewContentView.layoutIfNeeded()
+    }
+    
+    func autoScrollScrollView() {
+        let (moments, totalDuration) = self.retrieveMoments()
+        
+        let keyFrames: (() -> Void) = {
+            moments.sorted { $0.relativeStartTime < $1.relativeStartTime }.forEach { moment in
+                
+                print("\(moment.firstLine), \(moment.relativeStartTime*totalDuration), \(moment.relativeDuration*totalDuration), \(moment.contentOffset)")
+
+                UIView.addKeyframe(withRelativeStartTime: moment.relativeStartTime, relativeDuration: moment.relativeDuration) {
+                    self.scrollView.contentOffset = CGPoint(x: CGFloat(0), y: moment.contentOffset)
+                }
+            }
+        }
+        
+        UIView.animateKeyframes(withDuration: totalDuration,
+                                delay: 0,
+                                options: [.beginFromCurrentState],
+                                animations: keyFrames,
+                                completion: nil)
+    }
+    
+    func retrieveMoments() -> (moments: [Moment], totalDuration: TimeInterval) {
         let sessionDataKey = "session_data"
         let appearedTimeKey = "appeared"
         let startTimeKey = "startTime"
@@ -129,12 +211,12 @@ import Foundation
         guard let sessionData = self.data[sessionDataKey] as? [[String : Any]],
             let unconvertedStartTime = sessionData.first?[startTimeKey] as? Int,
             let unconvertedEndTime = sessionData.last?[appearedTimeKey] as? Int
-            else { return }
+            else { return ([], 0) }
         
         let startTime = Double(unconvertedStartTime)/self.time_offset
         let endTime = Double(unconvertedEndTime)/self.time_offset
         
-        let totalDuration = endTime - startTime
+        let totalDuration: TimeInterval = endTime - startTime
         
         let moments: [Moment] = sessionData.compactMap { momentData in
             guard let unconvertedAppearTime = momentData[appearedTimeKey] as? Int,
@@ -145,63 +227,27 @@ import Foundation
                 else { return nil }
             
             let appearTime = Double(unconvertedAppearTime)/self.time_offset
-//            let relativeStartTime = (appearTime - startTime) / totalDuration
+            let relativeStartTime = (appearTime - startTime) / totalDuration
             
             let momentDuration = Double(unconvertedDuration)/self.time_offset
             let relativeDuration = (momentDuration - appearTime) / totalDuration
             
-            return Moment(duration: relativeDuration*totalDuration, contentOffset: contentOffset, firstLine: firstCell, lastLine: lastCell)
+            return Moment(relativeStartTime: relativeStartTime, relativeDuration: relativeDuration, contentOffset: contentOffset, firstLine: firstCell, lastLine: lastCell)
         }
         
-        self.animateNextMoment(moments: moments, index: 0, table: table)
-        
-        
+        return (moments, totalDuration)
     }
     
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-
-    }
     
     struct Moment {
-        let duration: TimeInterval
+        let relativeStartTime: Double
+        let relativeDuration: Double
+        
         let contentOffset: CGFloat
         
         let firstLine: Int
         let lastLine: Int
     }
-    
-    func animateNextMoment(moments: [Moment], index: Int, table: UITableView) {
-        UIView.animateKeyframes(withDuration: moments[index].duration, delay: 0, options: [.beginFromCurrentState], animations: {
-            UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1, animations: {
-                table.contentOffset = CGPoint(x: 0, y: moments[index].contentOffset)
-            })
-        }) { (completed) in
-            
-            if moments.count > index + 1 {
-                self.animateNextMoment(moments: moments, index: index+1, table: table)
-            } else {
-                return
-            }
-        }
-        
-        
-        
-        
-//        UIView.animate(withDuration: moments[index].duration, delay: 0.1, options: [.beginFromCurrentState, .curveLinear], animations: {
-//            table.contentOffset = CGPoint(x: 0, y: moments[index].contentOffset)
-//        }) { (completed) in
-////            let indices = Array(moments[index].firstLine...moments[index].lastLine).map { IndexPath(row: $0, section: 0) }
-////            table.reloadRows(at: indices, with: .fade)
-//            if moments.count > index + 1 {
-//                self.animateNextMoment(moments: moments, index: index+1, table: table)
-//            } else {
-//                return
-//            }
-//        }
-    }
-    
-    
     
     
     func captureReplayImage(table: UITableView) {
