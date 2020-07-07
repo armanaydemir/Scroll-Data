@@ -25,8 +25,6 @@ import Foundation
     var font: UIFont = UIFont.init(name: "Times New Roman", size: UIFont.systemFontSize) ?? UIFont.systemFont(ofSize: UIFont.systemFontSize)
     let titleFont = SystemFont.init(fontName: "Times New Roman")?.getFont(withTextStyle: .title1) ?? UIFont.preferredFont(forTextStyle: .title1)
     
-    
-    @IBOutlet weak var imageView: UIImageView!
     var contentTopOffsets: [CGFloat] = []
     var contentBottomOffsets: [CGFloat] = []
     
@@ -42,7 +40,6 @@ import Foundation
             print("couldn't connect outlets! bad things coming.....")
             return
         }
-        
         
         //NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
         
@@ -106,15 +103,111 @@ import Foundation
                 table.reloadData()
                 self.spinner?.stopAnimating()
                 table.isHidden = false
-                if(self.replay){
-                    DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-                        self.collectContentOffsets(table: table)
-                        self.image = self.asFullImage(table: table)!
-                        self.performSegue(withIdentifier: "startDisplay", sender: self)
-                    }
+//                if(self.replay){
+//                    DispatchQueue.main.asyncAfter(deadline: .now()+1) {
+//                        self.captureReplayImage(table: table)
+//                    }
+//                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    self.autoscrollTest(table: table)
                 }
             }
         })
+    }
+    
+    
+    func autoscrollTest(table: UITableView) {
+        let sessionDataKey = "session_data"
+        let appearedTimeKey = "appeared"
+        let startTimeKey = "startTime"
+        let lastCellKey = "last_cell"
+        let firstCellKey = "first_cell"
+        let timeKey = "time"
+        let contentOffsetKey = "content_offset"
+        
+        guard let sessionData = self.data[sessionDataKey] as? [[String : Any]],
+            let unconvertedStartTime = sessionData.first?[startTimeKey] as? Int,
+            let unconvertedEndTime = sessionData.last?[appearedTimeKey] as? Int
+            else { return }
+        
+        let startTime = Double(unconvertedStartTime)/self.time_offset
+        let endTime = Double(unconvertedEndTime)/self.time_offset
+        
+        let totalDuration = endTime - startTime
+        
+        let moments: [Moment] = sessionData.compactMap { momentData in
+            guard let unconvertedAppearTime = momentData[appearedTimeKey] as? Int,
+                let firstCell = momentData[firstCellKey] as? Int,
+                let lastCell = momentData[lastCellKey] as? Int,
+                let unconvertedDuration = momentData[timeKey] as? Int,
+                let contentOffset = momentData[contentOffsetKey] as? CGFloat
+                else { return nil }
+            
+            let appearTime = Double(unconvertedAppearTime)/self.time_offset
+//            let relativeStartTime = (appearTime - startTime) / totalDuration
+            
+            let momentDuration = Double(unconvertedDuration)/self.time_offset
+            let relativeDuration = (momentDuration - appearTime) / totalDuration
+            
+            return Moment(duration: relativeDuration*totalDuration, contentOffset: contentOffset, firstLine: firstCell, lastLine: lastCell)
+        }
+        
+        self.animateNextMoment(moments: moments, index: 0, table: table)
+        
+        
+    }
+    
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+
+    }
+    
+    struct Moment {
+        let duration: TimeInterval
+        let contentOffset: CGFloat
+        
+        let firstLine: Int
+        let lastLine: Int
+    }
+    
+    func animateNextMoment(moments: [Moment], index: Int, table: UITableView) {
+        UIView.animateKeyframes(withDuration: moments[index].duration, delay: 0, options: [.beginFromCurrentState], animations: {
+            UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1, animations: {
+                table.contentOffset = CGPoint(x: 0, y: moments[index].contentOffset)
+            })
+        }) { (completed) in
+            
+            if moments.count > index + 1 {
+                self.animateNextMoment(moments: moments, index: index+1, table: table)
+            } else {
+                return
+            }
+        }
+        
+        
+        
+        
+//        UIView.animate(withDuration: moments[index].duration, delay: 0.1, options: [.beginFromCurrentState, .curveLinear], animations: {
+//            table.contentOffset = CGPoint(x: 0, y: moments[index].contentOffset)
+//        }) { (completed) in
+////            let indices = Array(moments[index].firstLine...moments[index].lastLine).map { IndexPath(row: $0, section: 0) }
+////            table.reloadRows(at: indices, with: .fade)
+//            if moments.count > index + 1 {
+//                self.animateNextMoment(moments: moments, index: index+1, table: table)
+//            } else {
+//                return
+//            }
+//        }
+    }
+    
+    
+    
+    
+    func captureReplayImage(table: UITableView) {
+        self.collectContentOffsets(table: table)
+        self.image = self.asFullImage(table: table)!
+        self.performSegue(withIdentifier: "startDisplay", sender: self)
     }
     
     //MARK: - Add image to Library
