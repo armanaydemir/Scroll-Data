@@ -83,11 +83,11 @@ class ArticleViewModel: NSObject {
                 "previous_last_cell":self.recent_last ?? "",
                 "content_offset":content_offset ]
             
-            Networking.request(headers: nil, method: "POST", fullEndpoint: "http://"+url+":22364/submit_data", body: data, completion:  {
-                data, response, error in
-
-                if let e = error {print(e)}
-            })
+//            Networking.request(headers: nil, method: "POST", fullEndpoint: "http://"+url+":22364/submit_data", body: data, completion:  {
+//                data, response, error in
+//
+//                if let e = error {print(e)}
+//            })
             
             self.last_sent = cur
             self.recent_last = last_index
@@ -110,8 +110,8 @@ class ArticleViewModel: NSObject {
             "portrait": a.orientation.isPortrait
         ]
         
-        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://"+url+":22364/close_article", body: data, completion:  { data, response, error in
-            if let e = error {print(e)}
-        })
+//        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://"+url+":22364/close_article", body: data, completion:  { data, response, error in
+//            if let e = error {print(e)}
+//        })
     }
 }

@@ -10,11 +10,14 @@ import UIKit
 import Foundation
 
 @objc class ArticleViewController: UIViewController {
+    let replay = true
     var data: [String:Any]  = [:]
     var content: Array<Content> = []
     var vm: ArticleViewModel! = nil
     let time_offset = 100000000.0
     var articleLink: String?
+    
+    var image = UIImage.init(named: "test")
     
     var complete = false
     var content_offset:CGFloat?
@@ -103,30 +106,12 @@ import Foundation
                 table.reloadData()
                 self.spinner?.stopAnimating()
                 table.isHidden = false
-                table.tintColor = UIColor.clear
-                DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-
-                    self.collectContentOffsets(table: table)
-                    let image = self.asFullImage(table: table)!
-                    let imageView = UIImageView(image: image)
-//                    imageView.translatesAutoresizingMaskIntoConstraints = true
-                    print(image)
-
-
-                    self.view.addSubview(imageView)
-//                    NSLayoutConstraint.activate([
-//                        imageView.topAnchor.constraint(equalTo: table.topAnchor),
-//                        imageView.bottomAnchor.constraint(equalTo: table.bottomAnchor),
-//                        imageView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-//                        imageView.widthAnchor.constraint(equalTo: table.widthAnchor)
-//                    ])
-                    self.view.bringSubviewToFront(imageView)
-                    
-                    
-                    table.isHidden = true
-
-                    imageView.backgroundColor = UIColor.yellow
-                    self.startAutoScroll(imageView: imageView, data: data)
+                if(self.replay){
+                    DispatchQueue.main.asyncAfter(deadline: .now()+1) {
+                        self.collectContentOffsets(table: table)
+                        self.image = self.asFullImage(table: table)!
+                        self.performSegue(withIdentifier: "startDisplay", sender: self)
+                    }
                 }
             }
         })
@@ -157,61 +142,6 @@ import Foundation
         a.autoRotate = true
     }
     
-    
-    func startAutoScroll(imageView: UIView, data: [String:Any]) {
-        let s = self.data["session_data"] as! Array<[String:Any]>
-        let time_key = "appeared"
-        let key = "scrollAnim"
-        let stime = Double(s[0]["startTime"] as! NSNumber)/self.time_offset
-//        let diffH = viewableAreaHeight(showOnBottom: true) - viewableAreaHeight(showOnBottom: false)
-        let offset_val = self.view.safeAreaInsets.bottom + self.view.safeAreaInsets.top
-        let anim = CAKeyframeAnimation(keyPath: "position.y")
-        var anim_vals: [CGFloat] = []
-        var anim_keyTimes: [NSNumber] = []
-        
-//        anim.duration = (Double(s.last![time_key] as! NSNumber)/self.time_offset)-stime
-        anim.duration = 10 + (Double(s.last![time_key] as! NSNumber)/self.time_offset)-stime
-        //        let tsize = table.rect(forSection: 0).size
-        //        let height_per_line = (tsize.height-screenH) / CGFloat.init(exactly: s.count-2)!
-        
-        var i = 0
-        while(i < s.count){
-            let t1  = Double(s[i][time_key] as! NSNumber)/self.time_offset
-            
-            let last_cell = Double(s[i]["last_cell"] as! NSNumber)
-            let first_cell = Double(s[i]["first_cell"] as! NSNumber)
-            
-            if(Int(last_cell) > self.content.count - 2){
-                let c = data["content"] as! Array<[String:Any]>
-                let first_percen = (first_cell/Double(c.count))*Double(self.content.count)
-                let tottemp = -self.contentTopOffsets[Int(first_percen)]
-                
-                anim_vals.append(offset_val + tottemp)
-            }else if(first_cell <= 1){
-                let c = data["content"] as! Array<[String:Any]>
-                let last_percen = (last_cell/Double(c.count))*Double(self.content.count)
-                let tottemp = -self.contentBottomOffsets[Int(last_percen)]
-                
-                anim_vals.append(offset_val + tottemp)
-            }else{
-                let c = data["content"] as! Array<[String:Any]>
-                let first_percen = (first_cell/Double(c.count))*Double(self.content.count)
-                let last_percen = (last_cell/Double(c.count))*Double(self.content.count)
-                let tottemp = (-self.contentTopOffsets[Int(first_percen)] - self.contentBottomOffsets[Int(last_percen)])/2
-                
-                anim_vals.append(offset_val + tottemp)
-            }
-            anim_keyTimes.append(NSNumber(value: (5 + t1-stime)/anim.duration))
-//            anim_keyTimes.append(NSNumber(value: (t1-stime)/anim.duration))
-            i += 1
-        }
-        anim.values = anim_vals
-        anim.keyTimes = anim_keyTimes
-        anim.isAdditive = true
-
-        imageView.superview?.layer.add(anim, forKey: key)
-        
-    }
     
     func collectContentOffsets(table:UITableView) {
         guard table.numberOfSections > 0, table.numberOfRows(inSection: 0) > 0 else {
@@ -294,6 +224,23 @@ import Foundation
 //    @objc func willResignActive(_ notification: Notification) {
 //        _ = navigationController?.popViewController(animated: true)
 //    }
+    
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let vc = segue.destination
+        if let destination:DisplayViewController = vc as? DisplayViewController {
+            destination.data = self.data
+            destination.contentBottomOffsets = self.contentBottomOffsets
+            destination.contentTopOffsets = self.contentTopOffsets
+            destination.content = self.content
+            destination.image = self.image
+            guard let a = UIApplication.shared.delegate as? AppDelegate else {return}
+            a.autoRotate = false
+            a.orientation = UIDevice.current.orientation
+        }
+    }
 }
 
 extension ArticleViewController: SubmitTableViewCellDelegate {
