@@ -154,6 +154,7 @@ import Foundation
 
                 UIView.addKeyframe(withRelativeStartTime: pageState.relativeStartTime, relativeDuration: pageState.relativeDuration) {
                     self.hardTableView.contentOffset = CGPoint(x: CGFloat(0), y: pageState.contentOffset)
+                    print("visible cells: \(self.hardTableView.visibleIndices())")
                 }
             }
         }

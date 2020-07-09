@@ -81,7 +81,7 @@ class HardTableView: UIScrollView {
             switch index {
             case indices.startIndex:
                 verticalConstraints.append(view.topAnchor.constraint(equalTo: contentView.topAnchor))
-            case indices.endIndex:
+            case indices.endIndex - 1:
                 verticalConstraints.append(view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor))
                 fallthrough
             default:
@@ -133,5 +133,18 @@ class HardTableView: UIScrollView {
         }
         
         setContentOffset(CGPoint(x: 0, y: finalOffset), animated: animated)
+    }
+    
+    public func visibleIndices() -> Range<Int> {
+        let minimumY = contentOffset.y
+        let maximumY = minimumY + frame.size.height
+        
+        guard let firstVisibleCell = cumulativeHeight.filter({ $0.value >= minimumY }).min(by: { $0.value < $1.value })?.key,
+            let firstInvisibleCell = cumulativeHeight.filter({ $0.value >= maximumY }).min(by: { $0.value < $1.value })?.key,
+            let firstIndex = cells.firstIndex(of: firstVisibleCell),
+            let firstInvisibleIndex = cells.firstIndex(of: firstInvisibleCell)
+            else { return 0..<0 }
+        
+        return firstIndex..<firstInvisibleIndex
     }
 }
