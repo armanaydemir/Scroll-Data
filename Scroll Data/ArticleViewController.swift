@@ -74,7 +74,6 @@ import Foundation
             print("couldn't connect outlets! bad things coming.....")
             return
         }
-        
  
         table.backgroundColor = UIColor.white
         self.view.backgroundColor = UIColor.white
@@ -83,22 +82,20 @@ import Foundation
         DispatchQueue.main.async {
             self.minTableDim = min(table.frame.size.width, table.frame.size.height)
         }
-//        imageView.isHidden = true
+        
         vm.fetchText(completion: { data, error in
             DispatchQueue.main.async {
                 self.data = data
                 
-                
-//                self.font = self.findFontSize(table: table) ?? UIFont.preferredFont(forTextStyle: .body)
-//                let content = self.convert(paragraphs: p, font: self.font)
-                
                 //render as rendered on recorded device
-                let content = self.convertSession(data: data)
+                
+                let dataList = (data["content"] as? [Any])?.compactMap { try? Content(data: $0) }
+                guard let contentList = dataList else { return }
+                
                 self.view.layoutIfNeeded()
                 
-                
-                self.font =  self.findSessionFontSize(table: table, c: content, data: data) ?? UIFont.preferredFont(forTextStyle: .body)
-                self.content = content
+                self.font =  self.findSessionFontSize(table: table, c: contentList, data: data) ?? UIFont.preferredFont(forTextStyle: .body)
+                self.content = contentList
                 
                 table.reloadData()
                 self.spinner?.stopAnimating()
@@ -106,21 +103,18 @@ import Foundation
                 table.isHidden = true
                 if(self.replay){
                     DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-//                        self.captureReplayImage(table: table)
                         
-                        self.loadScrollView()
-                        self.autoScrollScrollView()
+                        self.loadHardTableView()
+                        self.startAutoScrolling()
                     }
                 }
-                
-
             }
         })
     }
     
     @IBOutlet weak var hardTableView: HardTableView!
     
-    func loadScrollView() {
+    func loadHardTableView() {
         
         let maxVisibleLines = 20 //TODO: should come from server
         
@@ -150,96 +144,25 @@ import Foundation
         hardTableView.backgroundColor = UIColor.purple
     }
     
-    func autoScrollScrollView() {
-        let (moments, totalDuration) = self.retrieveMoments()
+    func startAutoScrolling() {
+        guard let session = try? Session(data: self.data) else { return }
         
         let keyFrames: (() -> Void) = {
-            moments.sorted { $0.relativeStartTime < $1.relativeStartTime }.forEach { moment in
+            session.pageStates.sorted { $0.relativeStartTime < $1.relativeStartTime }.forEach { pageState in
                 
-                print("\(moment.firstLine), \(moment.relativeStartTime*totalDuration), \(moment.relativeDuration*totalDuration), \(moment.contentOffset)")
+                print("\(pageState.firstLine), \(pageState.relativeStartTime * session.totalDuration), \(pageState.relativeDuration * session.totalDuration), \(pageState.contentOffset)")
 
-                UIView.addKeyframe(withRelativeStartTime: moment.relativeStartTime, relativeDuration: moment.relativeDuration) {
-                    self.hardTableView.contentOffset = CGPoint(x: CGFloat(0), y: moment.contentOffset)
+                UIView.addKeyframe(withRelativeStartTime: pageState.relativeStartTime, relativeDuration: pageState.relativeDuration) {
+                    self.hardTableView.contentOffset = CGPoint(x: CGFloat(0), y: pageState.contentOffset)
                 }
             }
         }
         
-        UIView.animateKeyframes(withDuration: totalDuration,
+        UIView.animateKeyframes(withDuration: session.totalDuration,
                                 delay: 0,
                                 options: [.beginFromCurrentState],
                                 animations: keyFrames,
                                 completion: nil)
-    }
-    
-    func retrieveMoments() -> (moments: [Moment], totalDuration: TimeInterval) {
-        let sessionDataKey = "session_data"
-        let appearedTimeKey = "appeared"
-        let startTimeKey = "startTime"
-        let lastCellKey = "last_cell"
-        let firstCellKey = "first_cell"
-        let timeKey = "time"
-        let contentOffsetKey = "content_offset"
-        
-        guard let sessionData = self.data[sessionDataKey] as? [[String : Any]],
-            let unconvertedStartTime = sessionData.first?[startTimeKey] as? Int,
-            let unconvertedEndTime = sessionData.last?[appearedTimeKey] as? Int
-            else { return ([], 0) }
-        
-        let startTime = Double(unconvertedStartTime)/self.time_offset
-        let endTime = Double(unconvertedEndTime)/self.time_offset
-        
-        let totalDuration: TimeInterval = endTime - startTime
-        
-        let moments: [Moment] = sessionData.compactMap { momentData in
-            guard let unconvertedAppearTime = momentData[appearedTimeKey] as? Int,
-                let firstCell = momentData[firstCellKey] as? Int,
-                let lastCell = momentData[lastCellKey] as? Int,
-                let unconvertedDuration = momentData[timeKey] as? Int,
-                let contentOffset = momentData[contentOffsetKey] as? CGFloat
-                else { return nil }
-            
-            let appearTime = Double(unconvertedAppearTime)/self.time_offset
-            let relativeStartTime = (appearTime - startTime) / totalDuration
-            
-            let momentDuration = Double(unconvertedDuration)/self.time_offset
-            let relativeDuration = (momentDuration - appearTime) / totalDuration
-            
-            return Moment(relativeStartTime: relativeStartTime, relativeDuration: relativeDuration, contentOffset: contentOffset, firstLine: firstCell, lastLine: lastCell)
-        }
-        
-        return (moments, totalDuration)
-    }
-    
-    
-    struct Moment {
-        let relativeStartTime: Double
-        let relativeDuration: Double
-        
-        let contentOffset: CGFloat
-        
-        let firstLine: Int
-        let lastLine: Int
-    }
-    
-    
-    func captureReplayImage(table: UITableView) {
-        self.collectContentOffsets(table: table)
-        self.image = self.asFullImage(table: table)!
-        self.performSegue(withIdentifier: "startDisplay", sender: self)
-    }
-    
-    //MARK: - Add image to Library
-    @objc func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
-        if let error = error {
-            // we got back an error!
-            let ac = UIAlertController(title: "Save error", message: error.localizedDescription, preferredStyle: .alert)
-            ac.addAction(UIAlertAction(title: "OK", style: .default))
-            present(ac, animated: true)
-        } else {
-            let ac = UIAlertController(title: "Saved!", message: "Your altered image has been saved to your photos.", preferredStyle: .alert)
-            ac.addAction(UIAlertAction(title: "OK", style: .default))
-            present(ac, animated: true)
-        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -430,16 +353,6 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension ArticleViewController {
-    func convertSession(data: [String:Any]) -> [Content] {
-        var cells = [Content].init()
-        let c = data["content"] as! Array<[String:Any]>
-        var i = 0
-        while(i < c.count){
-            cells.append(Content.init(text:  c[i]["text"] as! String, paragraph: c[i]["paragraph"] as! Int, firstWordIndex: c[i]["first_word_index"] as! Int, firstCharacterIndex: c[i]["first_character_index"] as! Int, spacer: (c[i]["spacer"] != nil)))
-            i = i + 1
-        }
-        return cells
-    }
     
     
     func convert(paragraphs: [String], font: UIFont) -> [Content] {
@@ -481,61 +394,6 @@ extension ArticleViewController {
         var viewableHeight = UIScreen.main.bounds.height - self.view.safeAreaInsets.top
         if !showOnBottom { viewableHeight = viewableHeight - self.view.safeAreaInsets.bottom }
         return viewableHeight
-    }
-    
-    func asFullImage(table:UITableView) -> UIImage? {
-        guard table.numberOfSections > 0, table.numberOfRows(inSection: 0) > 0 else {
-            return nil
-        }
-        table.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
-        var height: CGFloat = 0.0
-        var counter = 0
-        for section in 0..<table.numberOfSections {
-            var cellHeight: CGFloat = 0.0
-            for row in 0..<table.numberOfRows(inSection: section) {
-                let indexPath = IndexPath(row: row, section: section)
-                counter += 1
-                guard let cell = table.cellForRow(at: indexPath) else { continue }
-                cellHeight = cell.frame.size.height
-            }
-            height += cellHeight * CGFloat(table.numberOfRows(inSection: section))
-        }
-        UIGraphicsBeginImageContextWithOptions(CGSize(width: table.contentSize.width, height: height), false, UIScreen.main.scale)
-
-        for section in 0..<table.numberOfSections {
-            for row in 0..<table.numberOfRows(inSection: section) {
-                let indexPath = IndexPath(row: row, section: section)
-                guard let cell = table.cellForRow(at: indexPath) else { continue }
-                cell.contentView.drawHierarchy(in: cell.frame, afterScreenUpdates: true)
-
-                if row < table.numberOfRows(inSection: section) - 1 {
-                    table.scrollToRow(at: IndexPath(row: row+1, section: section), at: .bottom, animated: false)
-                }
-            }
-        }
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
-        return image
-    }
-    
-}
-
-struct Content: Codable {
-    let text: String
-    let paragraph: Int
-    let firstWordIndex: Int
-    let firstCharacterIndex: Int
-    let spacer: Bool
-    
-    func toDictionary() -> [String : Any] {
-        return [
-            "text" : text,
-            "paragraph" : paragraph,
-            "first_word_index" : firstWordIndex,
-            "first_character_index" : firstCharacterIndex,
-            "spacer" : spacer,
-        ]
     }
 }
 

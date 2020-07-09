@@ -10,6 +10,7 @@
 		226A57DF215B1E2E0029D798 /* TitleSubtitleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226A57DD215B1E2E0029D798 /* TitleSubtitleTableViewCell.swift */; };
 		226A57E0215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 226A57DE215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib */; };
 		229B641824B6D66000BA76C7 /* HardTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229B641724B6D66000BA76C7 /* HardTableView.swift */; };
+		229B641A24B6EC9100BA76C7 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229B641924B6EC9100BA76C7 /* Model.swift */; };
 		93867E5324B413C6005E6156 /* DisplayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93867E5224B413C6005E6156 /* DisplayViewController.swift */; };
 		9930C4B221A4C0D3000C2420 /* TitleCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9930C4B021A4C0D3000C2420 /* TitleCellTableViewCell.swift */; };
 		9930C4B321A4C0D3000C2420 /* TitleCellTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9930C4B121A4C0D3000C2420 /* TitleCellTableViewCell.xib */; };
@@ -51,6 +52,7 @@
 		226A57DD215B1E2E0029D798 /* TitleSubtitleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleSubtitleTableViewCell.swift; sourceTree = "<group>"; };
 		226A57DE215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TitleSubtitleTableViewCell.xib; sourceTree = "<group>"; };
 		229B641724B6D66000BA76C7 /* HardTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardTableView.swift; sourceTree = "<group>"; };
+		229B641924B6EC9100BA76C7 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		93867E5224B413C6005E6156 /* DisplayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayViewController.swift; sourceTree = "<group>"; };
 		93B029B723BD52140089DE49 /* v024.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; name = v024.mobileprovision; path = ../../../v024.mobileprovision; sourceTree = "<group>"; };
 		9930C4B021A4C0D3000C2420 /* TitleCellTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitleCellTableViewCell.swift; sourceTree = "<group>"; };
@@ -159,6 +161,7 @@
 				226A57DD215B1E2E0029D798 /* TitleSubtitleTableViewCell.swift */,
 				226A57DE215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib */,
 				229B641724B6D66000BA76C7 /* HardTableView.swift */,
+				229B641924B6EC9100BA76C7 /* Model.swift */,
 			);
 			path = "Scroll Data";
 			sourceTree = "<group>";
@@ -336,6 +339,7 @@
 				99931E132127EE31006CAC45 /* StartingViewController.swift in Sources */,
 				93867E5324B413C6005E6156 /* DisplayViewController.swift in Sources */,
 				99DF26A721ACEAF7007D6788 /* ArticleViewModel.swift in Sources */,
+				229B641A24B6EC9100BA76C7 /* Model.swift in Sources */,
 				99DF26A021ACDDCA007D6788 /* ArticleTextTableViewCell.swift in Sources */,
 				F15A535C2070748200C2F7B6 /* ArticleViewController.swift in Sources */,
 				9930C4B221A4C0D3000C2420 /* TitleCellTableViewCell.swift in Sources */,
