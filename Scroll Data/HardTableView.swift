@@ -37,7 +37,13 @@ class HardTableView: UIScrollView {
     
     
     override func awakeFromNib() {
+        setUpContentView()
         contentViewConstraints()
+    }
+    
+    private func setUpContentView() {
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(contentView)
     }
     
     private func contentViewConstraints() {
@@ -50,6 +56,8 @@ class HardTableView: UIScrollView {
             contentView.widthAnchor.constraint(equalTo: frameLayoutGuide.widthAnchor, multiplier: 1),
             contentHeightConstraint
         ])
+        
+        layoutIfNeeded()
     }
     
     private func updateCells(newCells: [Cell], oldCells: [Cell]) {
@@ -85,8 +93,10 @@ class HardTableView: UIScrollView {
                 view.heightAnchor.constraint(equalToConstant: cell.height),
                 view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0),
                 view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0)
-            ])
+            ] + verticalConstraints)
         }
+        
+        layoutIfNeeded()
     }
 
     

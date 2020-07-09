@@ -118,64 +118,36 @@ import Foundation
         })
     }
     
-    @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet weak var scrollViewContentView: UIView!
-    
-    @IBOutlet weak var scrollContentViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var hardTableView: HardTableView!
     
     func loadScrollView() {
-        scrollViewContentView.backgroundColor = UIColor.purple
-        scrollView.backgroundColor = UIColor.green
-
-        let labels: [UILabel] = self.content.map { content in
-            let label = UILabel(frame: CGRect.zero)
-            label.text = content.text
-            label.translatesAutoresizingMaskIntoConstraints = false
-            scrollViewContentView.addSubview(label)
-            return label
-        }
         
         let maxVisibleLines = 20 //TODO: should come from server
         
-        let normalLineLabelHeight: CGFloat = scrollView.frame.size.height / CGFloat(maxVisibleLines)
-        let titleLabelHeight: CGFloat = scrollView.frame.size.height
+        let normalLineLabelHeight: CGFloat = hardTableView.frame.size.height / CGFloat(maxVisibleLines)
+        let titleLabelHeight: CGFloat = hardTableView.frame.size.height
         
-        scrollContentViewHeightConstraint.constant = titleLabelHeight + CGFloat(labels.count-1) * normalLineLabelHeight
-        
-        for (index, label) in labels.enumerated() {
+        let cells: [HardTableView.Cell] = self.content.enumerated().map { index, content in
             
-            //vertical constraints
+            let label = UILabel(frame: CGRect.zero)
+            label.text = content.text
+            label.translatesAutoresizingMaskIntoConstraints = false
+            
             switch index {
             case 0:
                 label.numberOfLines = 0
                 label.font = self.titleFont
                 label.textAlignment = .center
-                NSLayoutConstraint.activate([
-                    label.heightAnchor.constraint(equalToConstant: titleLabelHeight),
-                    label.topAnchor.constraint(equalTo: scrollViewContentView.topAnchor)
-                ])
-            case labels.count - 1:
-                NSLayoutConstraint.activate([
-                    label.bottomAnchor.constraint(equalTo: scrollViewContentView.bottomAnchor)
-                ])
-                fallthrough
+                return HardTableView.Cell(view: label, height: titleLabelHeight)
             default:
                 label.font = self.font
                 label.textAlignment = .justified
-                NSLayoutConstraint.activate([
-                    label.topAnchor.constraint(equalTo: labels[index-1].bottomAnchor),
-                    label.heightAnchor.constraint(equalToConstant: normalLineLabelHeight)
-                ])
+                return HardTableView.Cell(view: label, height: normalLineLabelHeight)
             }
-            
-            //horizontal
-            NSLayoutConstraint.activate([
-                label.leadingAnchor.constraint(equalTo: scrollViewContentView.leadingAnchor, constant: 16),
-                label.trailingAnchor.constraint(equalTo: scrollViewContentView.trailingAnchor, constant: -16)
-            ])
         }
         
-        scrollViewContentView.layoutIfNeeded()
+        hardTableView.cells = cells
+        hardTableView.backgroundColor = UIColor.purple
     }
     
     func autoScrollScrollView() {
@@ -187,7 +159,7 @@ import Foundation
                 print("\(moment.firstLine), \(moment.relativeStartTime*totalDuration), \(moment.relativeDuration*totalDuration), \(moment.contentOffset)")
 
                 UIView.addKeyframe(withRelativeStartTime: moment.relativeStartTime, relativeDuration: moment.relativeDuration) {
-                    self.scrollView.contentOffset = CGPoint(x: CGFloat(0), y: moment.contentOffset)
+                    self.hardTableView.contentOffset = CGPoint(x: CGFloat(0), y: moment.contentOffset)
                 }
             }
         }
