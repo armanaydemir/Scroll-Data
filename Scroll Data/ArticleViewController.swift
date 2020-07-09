@@ -153,7 +153,10 @@ import Foundation
                 print("\(pageState.firstLine), \(pageState.relativeStartTime * session.totalDuration), \(pageState.relativeDuration * session.totalDuration), \(pageState.contentOffset)")
 
                 UIView.addKeyframe(withRelativeStartTime: pageState.relativeStartTime, relativeDuration: pageState.relativeDuration) {
-                    self.hardTableView.contentOffset = CGPoint(x: CGFloat(0), y: pageState.contentOffset)
+                    
+                    self.hardTableView.scrollToRow(index: pageState.firstLine, position: .top, animated: false)
+//                    self.hardTableView.contentOffset = CGPoint(x: CGFloat(0), y: pageState.contentOffset)
+                    
                     print("visible cells: \(self.hardTableView.visibleIndices())")
                 }
             }

@@ -139,8 +139,9 @@ class HardTableView: UIScrollView {
         let minimumY = contentOffset.y
         let maximumY = minimumY + frame.size.height
         
-        guard let firstVisibleCell = cumulativeHeight.filter({ $0.value >= minimumY }).min(by: { $0.value < $1.value })?.key,
-            let firstInvisibleCell = cumulativeHeight.filter({ $0.value >= maximumY }).min(by: { $0.value < $1.value })?.key,
+        
+        guard let firstVisibleCell = cumulativeHeight.filter({ $0.value >= minimumY }).min(by: { $0.value < $1.value })?.key ?? cells.first,
+            let firstInvisibleCell = cumulativeHeight.filter({ $0.value >= maximumY }).min(by: { $0.value < $1.value })?.key ?? cells.last,
             let firstIndex = cells.firstIndex(of: firstVisibleCell),
             let firstInvisibleIndex = cells.firstIndex(of: firstInvisibleCell)
             else { return 0..<0 }
