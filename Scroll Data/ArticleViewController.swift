@@ -10,12 +10,15 @@ import UIKit
 import Foundation
 
 @objc class ArticleViewController: UIViewController {
-    let replay = true
+    let replay = false
     var data: [String:Any]  = [:]
     var content: Array<Content> = []
     var vm: ArticleViewModel! = nil
     let time_offset = 100000000.0
     var articleLink: String?
+    
+    let timePerCheck = 0.00001
+    var timer: Timer? = nil
     
     var image = UIImage.init(named: "test")
     
@@ -32,6 +35,7 @@ import Foundation
     
     @IBOutlet weak var table: UITableView?
     @IBOutlet weak var spinner: UIActivityIndicatorView?
+    @IBOutlet weak var hardTableView: HardTableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -101,18 +105,19 @@ import Foundation
                 self.spinner?.stopAnimating()
                 
                 table.isHidden = true
+                self.loadHardTableView()
                 if(self.replay){
                     DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-                        
-                        self.loadHardTableView()
                         self.startAutoScrolling()
+                    }
+                }else{
+                    DispatchQueue.main.asyncAfter(deadline: .now()){
+                        self.repeatingCheck()
                     }
                 }
             }
         })
     }
-    
-    @IBOutlet weak var hardTableView: HardTableView!
     
     func loadHardTableView() {
         
@@ -235,27 +240,38 @@ import Foundation
         
         return (string as NSString).size(withAttributes: attributes).width < checker - ArticleTextTableViewCell.widthSpacingConstant*2
     }
+    
+    func repeatingCheck() {
+        DispatchQueue.main.asyncAfter(deadline: .now()) {
+            self.timer = Timer.init(timeInterval: self.timePerCheck, repeats: true, block: { _ in
+                self.sendTextToServer()
+            })
+            RunLoop.main.add(self.timer!, forMode: RunLoop.Mode.common)
+            self.spinner?.stopAnimating()
+            self.sendTextToServer()
+        }
+    }
 
     
-    func sendTextToServer(tableView:UITableView) -> Void {
-        let current_offset = tableView.contentOffset.y
-        
-        guard current_offset != self.content_offset && !tableView.isHidden
-            else {
-                print("table not visible or no content offset change")
-                return
-        }
-        
-        guard let first = tableView.visibleCells.first,
-            let first_index = tableView.indexPath(for: first)?.item,
-            let second = tableView.visibleCells.last,
-            let last_index = tableView.indexPath(for: second)?.item
-            else {
-                print("no visible cells")
-                return
-        }
-        
-        vm.submitData(content_offset: current_offset, first_index: first_index, last_index: last_index)
+    func sendTextToServer() -> Void {
+//        let current_offset = tableView.contentOffset.y
+//
+//        guard current_offset != self.content_offset && !tableView.isHidden
+//            else {
+//                print("table not visible or no content offset change")
+//                return
+//        }
+//
+//        guard let first = tableView.visibleCells.first,
+//            let first_index = tableView.indexPath(for: first)?.item,
+//            let second = tableView.visibleCells.last,
+//            let last_index = tableView.indexPath(for: second)?.item
+//            else {
+//                print("no visible cells")
+//                return
+//        }
+        print(self.hardTableView.visibleIndices())
+        //vm.submitData(content_offset: current_offset, first_index: first_index, last_index: last_index)
     }
 
     

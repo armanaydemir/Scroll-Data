@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SubmitTableViewCell: UITableViewCell {
+class SubmitTableViewCell: UIView {
     @IBOutlet weak var submitButton: UIButton!
     
     weak var delegate: SubmitTableViewCellDelegate?
@@ -18,11 +18,6 @@ class SubmitTableViewCell: UITableViewCell {
         // Initialization code
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
     
     @IBAction func submitData(_ sender: Any) {
         self.delegate?.submitData()
