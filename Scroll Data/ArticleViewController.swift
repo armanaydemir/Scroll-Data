@@ -310,8 +310,6 @@ extension ArticleViewController: UITableViewDelegate, UITableViewDataSource {
         return (self.content.count > 0) ? self.content.count + 1 : 0 //plus one for submit button
     }
     
-
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if(indexPath.item == self.content.count){
             let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "submit", for: indexPath)

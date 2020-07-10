@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SubmitTableViewCell: UIView {
+class SubmitTableViewCell: UITableViewCell {
     @IBOutlet weak var submitButton: UIButton!
     
     weak var delegate: SubmitTableViewCellDelegate?
