@@ -152,10 +152,12 @@ import Foundation
     func startAutoScrolling() {
         guard let session = try? Session(data: self.data) else { return }
         
+        let totalDuration = session.endTime - session.startTime
+        
         let keyFrames: (() -> Void) = {
-            session.pageStates.sorted { $0.relativeStartTime < $1.relativeStartTime }.forEach { pageState in
+            session.relativePageStates.sorted { $0.relativeStartTime < $1.relativeStartTime }.forEach { pageState in
                 
-                print("\(pageState.firstLine), \(pageState.relativeStartTime * session.totalDuration), \(pageState.relativeDuration * session.totalDuration), \(pageState.contentOffset)")
+                print("\(pageState.firstLine), \(pageState.relativeStartTime * totalDuration), \(pageState.relativeDuration * totalDuration), \(pageState.contentOffset)")
 
                 UIView.addKeyframe(withRelativeStartTime: pageState.relativeStartTime, relativeDuration: pageState.relativeDuration) {
                     
@@ -167,7 +169,7 @@ import Foundation
             }
         }
         
-        UIView.animateKeyframes(withDuration: session.totalDuration,
+        UIView.animateKeyframes(withDuration: totalDuration,
                                 delay: 0,
                                 options: [.beginFromCurrentState],
                                 animations: keyFrames,
