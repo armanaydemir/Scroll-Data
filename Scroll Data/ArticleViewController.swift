@@ -122,8 +122,27 @@ import UIKit
             
         }
         
+        let submitButton = UIButton(type: .system)
+        submitButton.setTitle("Submit Reading", for: .normal)
+        submitButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(submitButton)
+        
+        let buttonSpacing: CGFloat = 8
+        
+        NSLayoutConstraint.activate([
+            submitButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            submitButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            submitButton.topAnchor.constraint(lessThanOrEqualTo: containerView.topAnchor, constant: buttonSpacing),
+            submitButton.bottomAnchor.constraint(lessThanOrEqualTo: containerView.bottomAnchor, constant: buttonSpacing)
+        ])
+        
+        let buttonCell = HardTableView.Cell(view: containerView, height: 44 + 2 * buttonSpacing)
+        
 
-        hardTableView.cells = cells
+        hardTableView.cells = cells + [buttonCell]
         hardTableView.backgroundColor = UIColor.purple
         
         hardTableView.layoutIfNeeded()
@@ -163,17 +182,16 @@ import UIKit
             self.spinner?.stopAnimating()
         }
     }
+    
+    @objc func submitData() {
+        _ = navigationController?.popViewController(animated: true)
+    }
+    
 
     
 //    @objc func willResignActive(_ notification: Notification) {
 //        _ = navigationController?.popViewController(animated: true)
 //    }
-}
-
-extension ArticleViewController: SubmitTableViewCellDelegate {
-    func submitData() {
-        _ = navigationController?.popViewController(animated: true)
-    }
 }
 
 extension ArticleViewController {
