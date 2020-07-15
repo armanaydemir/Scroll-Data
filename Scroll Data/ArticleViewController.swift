@@ -30,6 +30,7 @@ import Foundation
     
     var contentTopOffsets: [CGFloat] = []
     var contentBottomOffsets: [CGFloat] = []
+    var maxLinesOnScreen = 20.0
     
     var minTableDim:CGFloat?
     
@@ -92,7 +93,8 @@ import Foundation
                 self.data = data
                 
                 //render as rendered on recorded device
-                
+                self.maxLinesOnScreen = data["max_lines"] as! Double
+        
                 let dataList = (data["content"] as? [Any])?.compactMap { try? Content(data: $0) }
                 guard let contentList = dataList else { return }
                 
@@ -121,7 +123,7 @@ import Foundation
     
     func loadHardTableView() {
         
-        let maxVisibleLines = 20 //TODO: should come from server
+        let maxVisibleLines = self.maxLinesOnScreen //TODO: should come from server
         
         let normalLineLabelHeight: CGFloat = hardTableView.frame.size.height / CGFloat(maxVisibleLines)
         let titleLabelHeight: CGFloat = hardTableView.frame.size.height
@@ -202,13 +204,13 @@ import Foundation
         }
     }
     
-    func findFontSize(table:UITableView) -> UIFont? {
-        let string = sizingString
-        let height = viewableAreaHeight(showOnBottom: false)
-        let size = CGSize.init(width: table.frame.width-ArticleTextTableViewCell.widthSpacingConstant*2, height: height)
-        let ff = SystemFont.init(fontName: "Times New Roman")?.fontToFit(text: string, inSize: size, spacing: ArticleTextTableViewCell.topSpacingConstant*2)
-        return ff
-    }
+//    func findFontSize(table:UITableView) -> UIFont? {
+//        let string = sizingString
+//        let height = viewableAreaHeight(showOnBottom: false)
+//        let size = CGSize.init(width: table.frame.width-ArticleTextTableViewCell.widthSpacingConstant*2, height: height)
+//        let ff = SystemFont.init(fontName: "Times New Roman")?.fontToFit(text: string, inSize: size, spacing: ArticleTextTableViewCell.topSpacingConstant*2)
+//        return ff
+//    }
     
     func findSessionFontSize(table:UITableView, c: [Content], data: [String:Any]) -> UIFont? {
         var i = 1
