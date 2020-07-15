@@ -8,6 +8,9 @@
 
 import UIKit
 
+
+let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "unknown"
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
