@@ -18,8 +18,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     let headFont = SystemFont.init(fontName: "Times New Roman")?.getFont(withTextStyle: .headline) ?? UIFont.preferredFont(forTextStyle: .headline)
     var link = ""
     let UDID = UIDevice.current.identifierForVendor!.uuidString
-    let url = "157.245.227.103"
-    //let url = "localhost"
+//    let url = "157.245.227.103"
+    let url = "localhost"
     @IBOutlet weak var loadIndicator: UIActivityIndicatorView!
     
     @IBOutlet weak var table: UITableView!

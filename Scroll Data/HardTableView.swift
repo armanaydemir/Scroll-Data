@@ -47,15 +47,28 @@ class HardTableView: UIScrollView {
     }
     
     private func contentViewConstraints() {
-        NSLayoutConstraint.activate([
-            contentView.topAnchor.constraint(equalTo: contentLayoutGuide.topAnchor, constant: 0),
-            contentView.bottomAnchor.constraint(equalTo: contentLayoutGuide.bottomAnchor, constant: 0),
-            contentView.leadingAnchor.constraint(equalTo: contentLayoutGuide.leadingAnchor, constant: 0),
-            contentView.trailingAnchor.constraint(equalTo: contentLayoutGuide.trailingAnchor, constant: 0),
-            
-            contentView.widthAnchor.constraint(equalTo: frameLayoutGuide.widthAnchor, multiplier: 1),
-            contentHeightConstraint
-        ])
+        let model = UIDevice.current.model.lowercased()
+        if(model.contains("ipad")){
+            NSLayoutConstraint.activate([
+                contentView.topAnchor.constraint(equalTo: contentLayoutGuide.topAnchor, constant: 0),
+                contentView.bottomAnchor.constraint(equalTo: contentLayoutGuide.bottomAnchor, constant: 0),
+                contentView.leadingAnchor.constraint(equalTo: readableContentGuide.leadingAnchor, constant: 0),
+                contentView.trailingAnchor.constraint(equalTo: readableContentGuide.trailingAnchor, constant: 0),
+                
+                contentView.widthAnchor.constraint(equalTo: readableContentGuide.widthAnchor, multiplier: 1),
+                contentHeightConstraint
+            ])
+        }else{
+            NSLayoutConstraint.activate([
+                contentView.topAnchor.constraint(equalTo: contentLayoutGuide.topAnchor, constant: 0),
+                contentView.bottomAnchor.constraint(equalTo: contentLayoutGuide.bottomAnchor, constant: 0),
+                contentView.leadingAnchor.constraint(equalTo: contentLayoutGuide.leadingAnchor, constant: 0),
+                contentView.trailingAnchor.constraint(equalTo: contentLayoutGuide.trailingAnchor, constant: 0),
+                
+                contentView.widthAnchor.constraint(equalTo: frameLayoutGuide.widthAnchor, multiplier: 1),
+                contentHeightConstraint
+            ])
+        }
         
         layoutIfNeeded()
     }

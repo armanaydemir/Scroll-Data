@@ -10,7 +10,7 @@ import UIKit
 import Foundation
 
 @objc class ArticleViewController: UIViewController {
-    let replay = false
+    let replay = true
     var data: [String:Any]  = [:]
     var content: Array<Content> = []
     var vm: ArticleViewModel! = nil
