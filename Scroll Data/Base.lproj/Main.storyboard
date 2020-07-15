@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="67l-c2-P28">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="67l-c2-P28">
     <device id="ipad12_9" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -109,31 +109,11 @@
                         <outlet property="hardTableView" destination="2d6-TB-O24" id="4NM-W6-XB3"/>
                         <outlet property="spinner" destination="y80-SR-T2z" id="u7m-WR-EOU"/>
                         <outlet property="table" destination="k8p-iG-GI0" id="ADc-Rt-bsU"/>
-                        <segue destination="CAw-td-Xag" kind="show" identifier="startDisplay" id="kd4-K3-0Iq"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="275.9765625" y="220.93704245973643"/>
-        </scene>
-        <!--Display View Controller-->
-        <scene sceneID="j0R-tg-1gp">
-            <objects>
-                <viewController id="CAw-td-Xag" customClass="DisplayViewController" customModule="Replay_Scroll_Data" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="pui-EA-kSt"/>
-                        <viewControllerLayoutGuide type="bottom" id="wUx-Zo-8a5"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="B7K-pd-HiF">
-                        <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="F3R-Gf-DiT"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="GYX-Hb-TgI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-1743" y="-60"/>
         </scene>
     </scenes>
 </document>

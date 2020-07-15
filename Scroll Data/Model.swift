@@ -31,9 +31,8 @@ public struct Session {
     public let endTime: TimeInterval
     public let relativePageStates: [RelativePageState]
     
-    public init(data: Any) throws {
-        guard let data = data as? [String : Any],
-            let sessionData = data[sessionDataKey] as? [[String : Any]],
+    public init(data: [Any]?) throws {
+        guard let sessionData = data as? [[String : Any]],
             let unconvertedStartTime = sessionData.first?[startTimeKey] as? Int,
             let unconvertedEndTime = sessionData.last?[appearedTimeKey] as? Int
             else { throw ModelError.errorParsingJSON }
@@ -158,6 +157,37 @@ private let paragraphKey = "paragraph"
 private let firstWordIndexKey = "first_word_index"
 private let firstCharacterIndexKey = "first_character_index"
 private let spacerKey = "spacer"
+
+private let contentKey = "content"
+private let visibleLinesKey = "max_lines"
+
+private let defaultVisibleLines = 28
+
+struct SessionReplayResponse {
+    let session: Session
+    let content: [Content]
+    let visibleLines: Int
+    
+    init(data: Any?) throws {
+        guard let data = data as? [String : Any],
+            let content = try (data[contentKey] as? [Any])?.compactMap({ try Content(data: $0) })
+            else { throw ModelError.errorParsingJSON }
+        
+        let session = try Session(data: (data[sessionDataKey] as? [Any]))
+
+        let visibleLines: Int
+        if let v = data[visibleLinesKey] as? Int {
+            visibleLines = v
+        } else {
+            visibleLines = defaultVisibleLines
+            print("No visible lines count sent from server, using default of \(visibleLines)")
+        }
+        
+        self.visibleLines = visibleLines
+        self.content = content
+        self.session = session
+    }
+}
 
 struct Content: Codable {
     let text: String

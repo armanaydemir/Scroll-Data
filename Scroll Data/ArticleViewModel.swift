@@ -9,8 +9,8 @@
 import UIKit
 
 class ArticleViewModel: NSObject {
-//    let url = "157.245.227.103"
-    let url = "localhost"
+    let url = "157.245.227.103"
+//    let url = "localhost"
     let version = "v0.3.1"
     let UDID = UIDevice.current.identifierForVendor!.uuidString
     let timeOffset:Double = 100000000
@@ -38,7 +38,7 @@ class ArticleViewModel: NSObject {
         }
     }
     
-    func fetchText(completion: @escaping ([String:Any], String?) -> Void)  {
+    func fetchText(completion: @escaping ((_ result: Result<SessionReplayResponse, Error>) -> Void))  {
         let data: [String:Any] = [
             "article_link":self.articleLink ?? "",
             "UDID":self.UDID,
@@ -49,18 +49,14 @@ class ArticleViewModel: NSObject {
         Networking.request(headers: nil, method: "POST", fullEndpoint: "http://"+url+":22364/session_replay", body: data, completion: { data, response, error in
             if let dataExists = data, error == nil {
                 do {
-                    if let data = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? [String : Any] {
-                        //self.session_id = paragraphs[0]
-                        //paragraphs.remove(at: 0)
-                        completion(data, nil)
-                    } else {
-                        completion([:], "invalid json")
-                    }
-                }catch _{
-                    completion([:], "invalid json")
+                    let data = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments)
+                    let sessionReplay = try SessionReplayResponse(data: data)
+                    completion(.success(sessionReplay))
+                } catch {
+                    completion(.failure(error))
                 }
-            }else{
-                completion([:], "server disconnect")
+            } else {
+                completion(.failure(ServerError.serverDisconnected))
             }
         })
     }
@@ -114,4 +110,9 @@ class ArticleViewModel: NSObject {
 //            if let e = error {print(e)}
 //        })
     }
+}
+
+
+enum ServerError: String, Error {
+    case serverDisconnected
 }

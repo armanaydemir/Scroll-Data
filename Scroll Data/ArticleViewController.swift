@@ -11,7 +11,7 @@ import Foundation
 
 @objc class ArticleViewController: UIViewController {
     let replay = true
-    var data: [String:Any]  = [:]
+    var data: SessionReplayResponse?
     var content: Array<Content> = []
     var vm: ArticleViewModel! = nil
     let time_offset = 100000000.0
@@ -30,7 +30,6 @@ import Foundation
     
     var contentTopOffsets: [CGFloat] = []
     var contentBottomOffsets: [CGFloat] = []
-    var maxLinesOnScreen = 20.0
     
     var minTableDim:CGFloat?
     
@@ -88,47 +87,48 @@ import Foundation
             self.minTableDim = min(table.frame.size.width, table.frame.size.height)
         }
         
-        vm.fetchText(completion: { data, error in
-            DispatchQueue.main.async {
-                self.data = data
-                
-                //render as rendered on recorded device
-                self.maxLinesOnScreen = data["max_lines"] as! Double
-        
-                let dataList = (data["content"] as? [Any])?.compactMap { try? Content(data: $0) }
-                guard let contentList = dataList else { return }
-                
-                self.view.layoutIfNeeded()
-                
-                self.font =  self.findSessionFontSize(table: table, c: contentList, data: data) ?? UIFont.preferredFont(forTextStyle: .body)
-                self.content = contentList
-                
-                table.reloadData()
-                self.spinner?.stopAnimating()
-                
-                table.isHidden = true
-                self.loadHardTableView()
-                if(self.replay){
-                    DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-                        self.startAutoScrolling()
-                    }
-                }else{
-                    DispatchQueue.main.asyncAfter(deadline: .now()){
-                        self.repeatingCheck()
-                    }
-                }
+        vm.fetchText(completion: { result in
+            switch result {
+            case .success(let sessionReplay):
+                self.useSessionReplay(sessionReplay: sessionReplay)
+            case .failure(let error):
+                print(error)
             }
+            
         })
     }
     
-    func loadHardTableView() {
+    func useSessionReplay(sessionReplay: SessionReplayResponse) {
+        DispatchQueue.main.async {
+            self.data = sessionReplay
+            self.content = sessionReplay.content
+            
+            self.view.layoutIfNeeded()
+            
+//            self.font =  self.findSessionFontSize(table: table, c: contentList, data: data) ?? UIFont.preferredFont(forTextStyle: .body)
+            
+            self.spinner?.stopAnimating()
+            self.loadHardTableView(content: sessionReplay.content, maxVisibleLines: sessionReplay.visibleLines)
+            if(self.replay){
+                DispatchQueue.main.asyncAfter(deadline: .now()+1) {
+                    self.startAutoScrolling(session: sessionReplay.session)
+                }
+            }else{
+                DispatchQueue.main.asyncAfter(deadline: .now()){
+                    self.repeatingCheck()
+                }
+            }
+        }
+    }
+    
+    func loadHardTableView(content: [Content], maxVisibleLines: Int) {
         
-        let maxVisibleLines = self.maxLinesOnScreen //TODO: should come from server
+        let maxVisibleLines = maxVisibleLines
         
         let normalLineLabelHeight: CGFloat = hardTableView.frame.size.height / CGFloat(maxVisibleLines)
         let titleLabelHeight: CGFloat = hardTableView.frame.size.height
         
-        let cells: [HardTableView.Cell] = self.content.enumerated().map { index, content in
+        let cells: [HardTableView.Cell] = content.enumerated().map { index, content in
             
             let label = UILabel(frame: CGRect.zero)
             label.text = content.text
@@ -151,9 +151,7 @@ import Foundation
         hardTableView.backgroundColor = UIColor.purple
     }
     
-    func startAutoScrolling() {
-        guard let session = try? Session(data: self.data) else { return }
-        
+    func startAutoScrolling(session: Session) {
         let totalDuration = session.endTime - session.startTime
         
         let keyFrames: (() -> Void) = {
@@ -282,23 +280,6 @@ import Foundation
 //    @objc func willResignActive(_ notification: Notification) {
 //        _ = navigationController?.popViewController(animated: true)
 //    }
-    
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let vc = segue.destination
-        if let destination:DisplayViewController = vc as? DisplayViewController {
-            destination.data = self.data
-            destination.contentBottomOffsets = self.contentBottomOffsets
-            destination.contentTopOffsets = self.contentTopOffsets
-            destination.content = self.content
-            destination.image = self.image
-            guard let a = UIApplication.shared.delegate as? AppDelegate else {return}
-            a.autoRotate = false
-            a.orientation = UIDevice.current.orientation
-        }
-    }
 }
 
 extension ArticleViewController: SubmitTableViewCellDelegate {
