@@ -130,6 +130,8 @@ class ReadArticleViewModel {
             "portrait": a.orientation.isPortrait
         ]
         
+        print(data)
+        
 //        Networking.request(headers: nil, method: "POST", fullEndpoint: serverURL+"/close_article", body: data, completion:  { data, response, error in
 //            if let e = error {print(e)}
 //        })

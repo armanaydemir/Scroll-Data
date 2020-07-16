@@ -10,12 +10,12 @@ import UIKit
 
 class StartingViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     private let refreshControl = UIRefreshControl()
+    
     var articles: Array<[String : Any]> = []
     var titles: Array<String> = []
     var subtitles: Array<String> = []
     var last_refresh: Date?
-    let subFont = SystemFont.init(fontName: "Times New Roman")?.getFont(withTextStyle: .subheadline) ?? UIFont.preferredFont(forTextStyle: .subheadline)
-    let headFont = SystemFont.init(fontName: "Times New Roman")?.getFont(withTextStyle: .headline) ?? UIFont.preferredFont(forTextStyle: .headline)
+    
     var link = ""
     
     @IBOutlet weak var loadIndicator: UIActivityIndicatorView!
@@ -82,7 +82,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             }
             
             DispatchQueue.main.async{
-                let attributes = [NSAttributedString.Key.font: self.subFont]
+                let attributes = [NSAttributedString.Key.font: baseFont.withTextStyle(.subheadline)!]
                 self.refreshControl.attributedTitle = NSAttributedString(string: (Date().description), attributes: attributes)
                 loadIndicator.stopAnimating()
                 table.reloadData()
@@ -101,8 +101,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let attributes = [NSAttributedString.Key.font: self.headFont]
-        let sub_at = [NSAttributedString.Key.font: self.subFont]
+        let attributes = [NSAttributedString.Key.font: baseFont.withTextStyle(.headline)!]
+        let sub_at = [NSAttributedString.Key.font: baseFont.withTextStyle(.subheadline)!]
         let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
         if let cell: TitleSubtitleTableViewCell = cell as? TitleSubtitleTableViewCell {
             cell.title.attributedText = NSAttributedString.init(string:  self.titles[indexPath.item], attributes: attributes)
@@ -134,6 +134,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         let vc = segue.destination
         if let destination: ArticleViewController = vc as? ArticleViewController {
             destination.mode = .read(viewModel: ReadArticleViewModel(articleLink: self.link))
+//            destination.mode = .replay(viewModel: SessionReplayViewModel(articleLink: self.link))
+
             guard let a = UIApplication.shared.delegate as? AppDelegate else {return}
             a.autoRotate = false
             a.orientation = UIDevice.current.orientation

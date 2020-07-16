@@ -30,6 +30,8 @@ import UIKit
         
         spinner.hidesWhenStopped = true
         spinner.startAnimating()
+        
+        self.hardTableView.delegate = self
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -50,8 +52,7 @@ import UIKit
                 DispatchQueue.main.async {
                     self.spinner.stopAnimating()
                     self.loadHardTableView(content: sessionReplay.content, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: true)
-                    self.hardTableView.delegate = self
-                    self.lastVisibleIndices = self.hardTableView.visibleIndices()
+                    self.scrollViewDidScroll(self.hardTableView)
                 }
             case .failure(let error):
                 print(error)
@@ -76,88 +77,92 @@ import UIKit
     }
     
     func loadHardTableView(content: [Content], maxVisibleLines: Int, includeSubmitButton: Bool) {
-        
-        let maxVisibleLines = maxVisibleLines
-        
+
+        let contentCells = createContentCells(content: content, maxVisibleLines: maxVisibleLines)
+        let buttonCell = [ createSubmitButtonCell() ]
+
+        hardTableView.cells = includeSubmitButton ? contentCells + buttonCell : contentCells
+    }
+    
+    func createContentCells(content: [Content], maxVisibleLines: Int) -> [HardTableView.Cell] {
         let tableHeight = hardTableView.frame.size.height
         let tableWidth = hardTableView.frame.size.width
-        
+
         let normalLineLabelHeight: CGFloat = tableHeight  / CGFloat(maxVisibleLines)
         let titleLabelHeight: CGFloat = tableHeight
         
+        let readableTextAspectRatio: CGFloat = 2
+
         let minimumMargin: CGFloat = 8
-        let textWidth = min(tableHeight / 2, tableWidth - 2 * minimumMargin)
-        let font = fittedFont(baseFont: defaultFont, cellHeight: normalLineLabelHeight, maxWidth: textWidth, content: content)
-        
+        let textWidth = min(tableHeight / readableTextAspectRatio, tableWidth - 2 * minimumMargin)
+        let font = fittedFont(baseFont: baseFont, cellHeight: normalLineLabelHeight, maxWidth: textWidth, content: content)
+
         let cells: [HardTableView.Cell] = content.enumerated().map { index, content in
-            
-            let containerView = UIView()
-            containerView.translatesAutoresizingMaskIntoConstraints = false
+           
+           let containerView = UIView()
+           containerView.translatesAutoresizingMaskIntoConstraints = false
 
-            let label = UILabel(frame: CGRect.zero)
-            label.text = content.text
-            label.translatesAutoresizingMaskIntoConstraints = false
-            
-            let cellHeight: CGFloat
-            
-            let isTitle = index == 0
-            
-            if isTitle {
-                label.numberOfLines = 0
-                label.font = defaultFont.withTextStyle(.title1)!
-                label.textAlignment = .center
-                cellHeight = titleLabelHeight
-            } else {
-                label.font = font
-                label.textAlignment = .justified
-                cellHeight = normalLineLabelHeight
-            }
-            
-            containerView.addSubview(label)
-            
-            NSLayoutConstraint.activate([
-                label.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: (tableWidth - textWidth) / 2),
-                label.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-                label.topAnchor.constraint(equalTo: containerView.topAnchor),
-                label.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
-            ])
-            
-            return HardTableView.Cell(view: containerView, height: cellHeight)
-        }
-        
-        let finalCells: [HardTableView.Cell]
-        
-        if includeSubmitButton {
-            finalCells = cells + [ createSubmitButtonCell() ]
-        } else {
-            finalCells = cells
+           let label = UILabel(frame: CGRect.zero)
+           label.text = content.text
+           label.translatesAutoresizingMaskIntoConstraints = false
+           
+           let cellHeight: CGFloat
+           
+           let isTitle = index == 0
+           
+           if isTitle {
+               label.numberOfLines = 0
+               label.font = baseFont.withTextStyle(.title1)!
+               label.textAlignment = .center
+               cellHeight = titleLabelHeight
+           } else {
+               label.font = font
+               label.textAlignment = .justified
+               cellHeight = normalLineLabelHeight
+           }
+           
+           containerView.addSubview(label)
+           
+           NSLayoutConstraint.activate([
+               label.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: (tableWidth - textWidth) / 2),
+               label.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+               label.topAnchor.constraint(equalTo: containerView.topAnchor),
+               label.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
+           ])
+           
+           return HardTableView.Cell(view: containerView, height: cellHeight)
         }
 
-        hardTableView.cells = finalCells
-        hardTableView.backgroundColor = UIColor.purple
+        return cells
     }
     
     func createSubmitButtonCell() -> HardTableView.Cell {
         let submitButton = UIButton(type: .system)
-         submitButton.setTitle("Submit Reading", for: .normal)
-         submitButton.translatesAutoresizingMaskIntoConstraints = false
-         
-         let containerView = UIView()
-         containerView.translatesAutoresizingMaskIntoConstraints = false
-         containerView.addSubview(submitButton)
-         
-         let buttonSpacing: CGFloat = 8
-         let buttonHeight: CGFloat = 44
-         
-         NSLayoutConstraint.activate([
-             submitButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-             submitButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-             submitButton.topAnchor.constraint(lessThanOrEqualTo: containerView.topAnchor, constant: buttonSpacing),
-             submitButton.bottomAnchor.constraint(lessThanOrEqualTo: containerView.bottomAnchor, constant: buttonSpacing),
-             submitButton.heightAnchor.constraint(equalToConstant: buttonHeight)
-         ])
-         
-         return HardTableView.Cell(view: containerView, height: buttonHeight + 2 * buttonSpacing)
+        submitButton.setTitle("Submit Reading", for: .normal)
+        submitButton.translatesAutoresizingMaskIntoConstraints = false
+        submitButton.addTarget(self, action: #selector(self.submitData(_:)), for: .touchUpInside)
+
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(submitButton)
+
+        let buttonSpacing: CGFloat = 8
+        let buttonHeight: CGFloat = 44
+
+        NSLayoutConstraint.activate([
+            submitButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            submitButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            submitButton.topAnchor.constraint(lessThanOrEqualTo: containerView.topAnchor, constant: buttonSpacing),
+            submitButton.bottomAnchor.constraint(lessThanOrEqualTo: containerView.bottomAnchor, constant: buttonSpacing),
+            submitButton.heightAnchor.constraint(equalToConstant: buttonHeight)
+        ])
+
+        return HardTableView.Cell(view: containerView, height: buttonHeight + 2 * buttonSpacing)
+    }
+    
+    @objc func submitData(_ sender: UIButton) {
+        //TODO: close article through view model
+        _ = navigationController?.popViewController(animated: true)
     }
     
     func startAutoScrolling(session: Session) {
@@ -166,10 +171,11 @@ import UIKit
         let keyFrames: (() -> Void) = {
             session.relativePageStates.sorted { $0.relativeStartTime < $1.relativeStartTime }.forEach { pageState in
                 
-                print("\(pageState.firstLine), \(pageState.relativeStartTime * totalDuration), \(pageState.relativeDuration * totalDuration), \(pageState.contentOffset)")
+                print("\(pageState.firstLine), \(pageState.lastLine), \(pageState.relativeStartTime * totalDuration), \(pageState.relativeDuration * totalDuration), \(pageState.contentOffset)")
 
                 UIView.addKeyframe(withRelativeStartTime: pageState.relativeStartTime, relativeDuration: pageState.relativeDuration) {
-                    self.hardTableView.scrollToRow(index: pageState.firstLine, position: .top, animated: false)
+                    
+                    self.hardTableView.scrollToRow(index: pageState.lastLine, position: .bottom, animated: false)
                     print("visible cells: \(self.hardTableView.visibleIndices())")
                 }
             }
@@ -180,10 +186,6 @@ import UIKit
                                 options: [.beginFromCurrentState],
                                 animations: keyFrames,
                                 completion: nil)
-    }
-    
-    @objc func submitData() {
-        _ = navigationController?.popViewController(animated: true)
     }
     
     

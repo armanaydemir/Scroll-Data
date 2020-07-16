@@ -101,9 +101,19 @@ class HardTableView: UIScrollView {
 
     
     public func scrollToRow(index: Int, position: UITableView.ScrollPosition, animated: Bool) {
-        guard cells.indices.contains(index) else { return }
-
-        scrollToCell(cell: cells[index], position: position, animated: animated)
+        let nearestCell: Cell?
+        
+        if cells.indices.contains(index) {
+            nearestCell = cells[index]
+        } else if index < cells.indices.startIndex {
+            nearestCell = cells.first
+        } else {
+            nearestCell = cells.last
+        }
+        
+        guard let cell = nearestCell else { return }
+        
+        scrollToCell(cell: cell, position: position, animated: animated)
     }
     
     public func scrollToCell(cell: Cell, position: UITableView.ScrollPosition, animated: Bool) {
@@ -117,9 +127,9 @@ class HardTableView: UIScrollView {
         case .top:
             finalOffset = destinationOffset
         case .bottom:
-            finalOffset = max(destinationOffset - visibleHeight, 0)
+            finalOffset = max(destinationOffset - visibleHeight + cell.height + 100, 0)
         case .middle:
-            finalOffset = max(destinationOffset - (visibleHeight/2), 0)
+            finalOffset = max(destinationOffset - (visibleHeight/2) + cell.height/2, 0)
         default:
             let currentOffset = contentOffset.y
             
@@ -139,8 +149,7 @@ class HardTableView: UIScrollView {
         let minimumY = contentOffset.y
         let maximumY = minimumY + frame.size.height
         
-        
-        guard let firstVisibleCell = cumulativeHeight.filter({ $0.value >= minimumY }).min(by: { $0.value < $1.value })?.key ?? cells.first,
+        guard let firstVisibleCell = cumulativeHeight.filter({ $0.value + $0.key.height >= minimumY }).min(by: { $0.value < $1.value })?.key ?? cells.first,
             let firstInvisibleCell = cumulativeHeight.filter({ $0.value >= maximumY }).min(by: { $0.value < $1.value })?.key ?? cells.last,
             let firstIndex = cells.firstIndex(of: firstVisibleCell),
             let firstInvisibleIndex = cells.firstIndex(of: firstInvisibleCell)
