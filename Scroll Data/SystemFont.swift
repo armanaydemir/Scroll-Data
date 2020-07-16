@@ -72,3 +72,13 @@ class SystemFont {
     }
     
 }
+
+
+extension UIFont {
+    
+    func withTextStyle(_ textStyle: UIFont.TextStyle) -> UIFont? {
+        let style = UIFont.preferredFont(forTextStyle: textStyle)
+        guard let des = self.fontDescriptor.withSymbolicTraits(style.fontDescriptor.symbolicTraits) else { return nil }
+        return UIFont.init(descriptor: des, size: style.pointSize)
+    }
+}

@@ -17,9 +17,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     let subFont = SystemFont.init(fontName: "Times New Roman")?.getFont(withTextStyle: .subheadline) ?? UIFont.preferredFont(forTextStyle: .subheadline)
     let headFont = SystemFont.init(fontName: "Times New Roman")?.getFont(withTextStyle: .headline) ?? UIFont.preferredFont(forTextStyle: .headline)
     var link = ""
-    let UDID = UIDevice.current.identifierForVendor!.uuidString
-    let url = "157.245.227.103"
-//    let url = "localhost"
+    
     @IBOutlet weak var loadIndicator: UIActivityIndicatorView!
     
     @IBOutlet weak var table: UITableView!
@@ -48,7 +46,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             return
         }
         loadIndicator.startAnimating() //POST 
-        Networking.request(headers:nil, method: "GET", fullEndpoint: "http://"+url+":22364/sessions", body: ["UDID":"FCD0FA4A_26EF_4B21_85F8_EADFB8871559"], completion: { data, response, error in
+        Networking.request(headers:nil, method: "GET", fullEndpoint: serverURL+"/sessions", body: ["UDID":"FCD0FA4A_26EF_4B21_85F8_EADFB8871559"], completion: { data, response, error in
             if let dataExists = data, error == nil {
                 do {
                     if let articles = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<[String : Any]> {
@@ -134,8 +132,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let vc = segue.destination
-        if let destination:ArticleViewController = vc as? ArticleViewController {
-            destination.articleLink = self.link
+        if let destination: ArticleViewController = vc as? ArticleViewController {
+            destination.mode = .replay(viewModel: SessionReplayViewModel(articleLink: self.link))
             guard let a = UIApplication.shared.delegate as? AppDelegate else {return}
             a.autoRotate = false
             a.orientation = UIDevice.current.orientation

@@ -9,18 +9,18 @@
 import UIKit
 
 @objc class ArticleViewController: UIViewController {
-    let replay = true
     
-    var vm: ArticleViewModel! = nil
-    var articleLink: String?
+    enum Mode {
+        case read(viewModel: ReadArticleViewModel)
+        case replay(viewModel: SessionReplayViewModel)
+    }
+    
+    var mode: Mode?
     
     let timePerCheck = 0.00001
     var timer: Timer? = nil
     
-    var image = UIImage.init(named: "test")
-    
-    var font: UIFont = UIFont.init(name: "Times New Roman", size: UIFont.systemFontSize) ?? UIFont.systemFont(ofSize: UIFont.systemFontSize)
-    let titleFont = SystemFont.init(fontName: "Times New Roman")?.getFont(withTextStyle: .title1) ?? UIFont.preferredFont(forTextStyle: .title1)
+    let defaultFont: UIFont = UIFont.init(name: "Times New Roman", size: UIFont.systemFontSize)!
     
     @IBOutlet weak var spinner: UIActivityIndicatorView!
     @IBOutlet weak var hardTableView: HardTableView!
@@ -30,53 +30,54 @@ import UIKit
         
         //NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
         
-        vm = ArticleViewModel.init(articleLink: self.articleLink!)
         spinner.hidesWhenStopped = true
         spinner.startAnimating()
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        
-        vm.fetchText(completion: { result in
-            switch result {
-            case .success(let sessionReplay):
-                self.useSessionReplay(sessionReplay: sessionReplay)
-            case .failure(let error):
-                print(error)
+        switch mode {
+        case .read:
+            //set up reading mode
+
+            DispatchQueue.main.async {
+                self.repeatingCheck()
             }
-            
-        })
+        case .replay(let viewModel):
+            setupReplayMode(viewModel: viewModel)
+        case .none:
+            print("Article mode not initialized correctly")
+        }
     }
     
-    func useSessionReplay(sessionReplay: SessionReplayResponse) {
-        DispatchQueue.main.async {
-            
-            self.view.layoutIfNeeded()
-            
-//            self.font =  self.findSessionFontSize(table: table, c: contentList, data: data) ?? UIFont.preferredFont(forTextStyle: .body)
-            
-            self.spinner?.stopAnimating()
-            self.loadHardTableView(content: sessionReplay.content, maxVisibleLines: sessionReplay.visibleLines)
-            if(self.replay){
-                DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-                    self.startAutoScrolling(session: sessionReplay.session)
-                }
-            }else{
-                DispatchQueue.main.asyncAfter(deadline: .now()){
-                    self.repeatingCheck()
-                }
+    func setupReplayMode(viewModel: SessionReplayViewModel) {
+        viewModel.fetchSessionReplay { result in
+            switch result {
+            case .success(let sessionReplay):
+                DispatchQueue.main.async {
+                    self.spinner.stopAnimating()
+                    self.loadHardTableView(content: sessionReplay.content, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: false)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        self.startAutoScrolling(session: sessionReplay.session)
+                    }                    }
+            case .failure(let error):
+                print(error)
             }
         }
     }
     
-    func loadHardTableView(content: [Content], maxVisibleLines: Int) {
+    func loadHardTableView(content: [Content], maxVisibleLines: Int, includeSubmitButton: Bool) {
         
         let maxVisibleLines = maxVisibleLines
         
-        let normalLineLabelHeight: CGFloat = hardTableView.frame.size.height / CGFloat(maxVisibleLines)
-        let titleLabelHeight: CGFloat = hardTableView.frame.size.height
+        let tableHeight = hardTableView.frame.size.height
+        let tableWidth = hardTableView.frame.size.width
         
-//        let isIpad = UIDevice.current.model.lowercased().contains("ipad")
+        let normalLineLabelHeight: CGFloat = tableHeight  / CGFloat(maxVisibleLines)
+        let titleLabelHeight: CGFloat = tableHeight
+        
+        let minimumMargin: CGFloat = 8
+        let textWidth = min(tableHeight / 2, tableWidth - 2 * minimumMargin)
+        let font = fittedFont(baseFont: defaultFont, cellHeight: normalLineLabelHeight, maxWidth: textWidth, content: content)
         
         let cells: [HardTableView.Cell] = content.enumerated().map { index, content in
             
@@ -92,11 +93,11 @@ import UIKit
             switch index {
             case 0:
                 label.numberOfLines = 0
-                label.font = self.titleFont
+                label.font = defaultFont.withTextStyle(.title1)!
                 label.textAlignment = .center
                 cellHeight = titleLabelHeight
             default:
-                label.font = UIFont.systemFont(ofSize: normalLineLabelHeight)
+                label.font = font
                 label.textAlignment = .justified
                 cellHeight = normalLineLabelHeight
             }
@@ -104,8 +105,8 @@ import UIKit
             containerView.addSubview(label)
             
             NSLayoutConstraint.activate([
-                label.leadingAnchor.constraint(equalTo: containerView.readableContentGuide.leadingAnchor),
-                label.trailingAnchor.constraint(equalTo: containerView.readableContentGuide.trailingAnchor),
+                label.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: (tableWidth - textWidth) / 2),
+                label.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
                 label.topAnchor.constraint(equalTo: containerView.topAnchor),
                 label.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
             ])
@@ -118,34 +119,42 @@ import UIKit
 //
 //            }
             
-            return HardTableView.Cell(view: label, height: cellHeight)
+            return HardTableView.Cell(view: containerView, height: cellHeight)
             
         }
         
-        let submitButton = UIButton(type: .system)
-        submitButton.setTitle("Submit Reading", for: .normal)
-        submitButton.translatesAutoresizingMaskIntoConstraints = false
         
-        let containerView = UIView()
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(submitButton)
+        let finalCells: [HardTableView.Cell]
         
-        let buttonSpacing: CGFloat = 8
-        
-        NSLayoutConstraint.activate([
-            submitButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            submitButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-            submitButton.topAnchor.constraint(lessThanOrEqualTo: containerView.topAnchor, constant: buttonSpacing),
-            submitButton.bottomAnchor.constraint(lessThanOrEqualTo: containerView.bottomAnchor, constant: buttonSpacing)
-        ])
-        
-        let buttonCell = HardTableView.Cell(view: containerView, height: 44 + 2 * buttonSpacing)
-        
+        if includeSubmitButton {
+            let submitButton = UIButton(type: .system)
+            submitButton.setTitle("Submit Reading", for: .normal)
+            submitButton.translatesAutoresizingMaskIntoConstraints = false
+            
+            let containerView = UIView()
+            containerView.translatesAutoresizingMaskIntoConstraints = false
+            containerView.addSubview(submitButton)
+            
+            let buttonSpacing: CGFloat = 8
+            let buttonHeight: CGFloat = 44
+            
+            NSLayoutConstraint.activate([
+                submitButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+                submitButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+                submitButton.topAnchor.constraint(lessThanOrEqualTo: containerView.topAnchor, constant: buttonSpacing),
+                submitButton.bottomAnchor.constraint(lessThanOrEqualTo: containerView.bottomAnchor, constant: buttonSpacing),
+                submitButton.heightAnchor.constraint(equalToConstant: buttonHeight)
+            ])
+            
+            let buttonCell = HardTableView.Cell(view: containerView, height: buttonHeight + 2 * buttonSpacing)
+            
+            finalCells = cells + [buttonCell]
+        } else {
+            finalCells = cells
+        }
 
-        hardTableView.cells = cells + [buttonCell]
+        hardTableView.cells = finalCells
         hardTableView.backgroundColor = UIColor.purple
-        
-        hardTableView.layoutIfNeeded()
     }
     
     func startAutoScrolling(session: Session) {
@@ -157,10 +166,7 @@ import UIKit
                 print("\(pageState.firstLine), \(pageState.relativeStartTime * totalDuration), \(pageState.relativeDuration * totalDuration), \(pageState.contentOffset)")
 
                 UIView.addKeyframe(withRelativeStartTime: pageState.relativeStartTime, relativeDuration: pageState.relativeDuration) {
-                    
                     self.hardTableView.scrollToRow(index: pageState.firstLine, position: .top, animated: false)
-//                    self.hardTableView.contentOffset = CGPoint(x: CGFloat(0), y: pageState.contentOffset)
-                    
                     print("visible cells: \(self.hardTableView.visibleIndices())")
                 }
             }
@@ -187,54 +193,28 @@ import UIKit
         _ = navigationController?.popViewController(animated: true)
     }
     
+    
+    func fittedFont(baseFont: UIFont, cellHeight: CGFloat, maxWidth: CGFloat, content: [Content]) -> UIFont {
+        
+        var fontSize = cellHeight - 3 //avoid cut off
+        var attributes = [ NSAttributedString.Key.font : baseFont.withSize(fontSize) ]
 
-    
-//    @objc func willResignActive(_ notification: Notification) {
-//        _ = navigationController?.popViewController(animated: true)
-//    }
-}
-
-extension ArticleViewController {
-    
-    
-//    func convert(paragraphs: [String], font: UIFont) -> [Content] {
-//        var cells = [Content].init()
-//        var p = 0
-//        var word_count = 0
-//        var char_count = 0
-//        let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: font]
-//        cells.append(Content.init(text: paragraphs[0], paragraph: p, firstWordIndex: word_count, firstCharacterIndex: char_count, spacer: false))
-//        p+=1
-//        for section in paragraphs.dropFirst(){
-//            var words = section.split(separator: " ").map({substring in
-//                return String.init(substring)
-//            })
-//
-//            while(!words.isEmpty){
-//                var cell = [String]()
-//                var temp = [words[0]]
-//                while(!words.isEmpty && cellFit(string: temp.joined(separator: " "), attributes: attributes)){
-//                    cell.append(words.removeFirst())
-//                    if let w = words.first{
-//                        temp = cell
-//                        temp.append(w)
-//                    }
-//                }
-//                word_count += cell.count
-//                let current_text = cell.joined(separator: " ")
-//                char_count += current_text.count
-//                cells.append(Content.init(text: current_text, paragraph: p, firstWordIndex: word_count, firstCharacterIndex: char_count, spacer: false))
-//
-//            }
-//            p += 1
-//            cells.append(Content.init(text: "", paragraph: p, firstWordIndex: word_count, firstCharacterIndex: char_count, spacer: true))
-//        }
-//        return cells
-//    }
-    
-    func viewableAreaHeight(showOnBottom: Bool) -> CGFloat {
-        var viewableHeight = UIScreen.main.bounds.height - self.view.safeAreaInsets.top
-        if !showOnBottom { viewableHeight = viewableHeight - self.view.safeAreaInsets.bottom }
-        return viewableHeight
+        //get content with largest width, can use arbitrary font
+        let longestLine = content.dropFirst().sorted { first, second in
+            let firstWidth = (first.text as NSString).size(withAttributes: attributes).width
+            let secondWidth = (second.text as NSString).size(withAttributes: attributes).width
+            
+            return firstWidth > secondWidth
+        }.first
+        
+        guard let longestLineText = longestLine?.text as NSString? else { return baseFont.withSize(fontSize) }
+        
+        while (longestLineText.size(withAttributes: attributes).width >= maxWidth) {
+            fontSize = fontSize - 1
+            attributes = [ NSAttributedString.Key.font : baseFont.withSize(fontSize) ]
+        }
+        
+        return baseFont.withSize(fontSize)
     }
 }
+
