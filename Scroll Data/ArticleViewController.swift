@@ -96,7 +96,7 @@ import UIKit
                 label.textAlignment = .center
                 cellHeight = titleLabelHeight
             default:
-                label.font = self.font
+                label.font = UIFont.systemFont(ofSize: normalLineLabelHeight)
                 label.textAlignment = .justified
                 cellHeight = normalLineLabelHeight
             }
