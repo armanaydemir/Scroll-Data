@@ -90,6 +90,7 @@ import UIKit
 
         let normalLineLabelHeight: CGFloat = tableHeight  / CGFloat(maxVisibleLines)
         let titleLabelHeight: CGFloat = tableHeight
+        let spacingLineLabelHeight: CGFloat = normalLineLabelHeight / CGFloat(4.0)
         
         let readableTextAspectRatio: CGFloat = 2
 
@@ -98,39 +99,40 @@ import UIKit
         let font = fittedFont(baseFont: baseFont, cellHeight: normalLineLabelHeight, maxWidth: textWidth, content: content)
 
         let cells: [HardTableView.Cell] = content.enumerated().map { index, content in
-           
-           let containerView = UIView()
-           containerView.translatesAutoresizingMaskIntoConstraints = false
+            let containerView = UIView()
+            containerView.translatesAutoresizingMaskIntoConstraints = false
 
-           let label = UILabel(frame: CGRect.zero)
-           label.text = content.text
-           label.translatesAutoresizingMaskIntoConstraints = false
-           
-           let cellHeight: CGFloat
-           
-           let isTitle = index == 0
-           
-           if isTitle {
+            let label = UILabel(frame: CGRect.zero)
+            label.text = content.text
+            label.translatesAutoresizingMaskIntoConstraints = false
+
+            let cellHeight: CGFloat
+            let isTitle = index == 0
+            let isSpacer = content.text == ""
+
+            if isTitle {
                label.numberOfLines = 0
                label.font = baseFont.withTextStyle(.title1)!
                label.textAlignment = .center
                cellHeight = titleLabelHeight
-           } else {
-               label.font = font
-               label.textAlignment = .justified
-               cellHeight = normalLineLabelHeight
-           }
-           
-           containerView.addSubview(label)
-           
-           NSLayoutConstraint.activate([
+            } else if isSpacer{
+               cellHeight = spacingLineLabelHeight
+            } else {
+                label.font = font
+                label.textAlignment = .justified
+                cellHeight = normalLineLabelHeight
+            }
+
+            containerView.addSubview(label)
+
+            NSLayoutConstraint.activate([
                label.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: (tableWidth - textWidth) / 2),
                label.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
                label.topAnchor.constraint(equalTo: containerView.topAnchor),
                label.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
-           ])
-           
-           return HardTableView.Cell(view: containerView, height: cellHeight)
+            ])
+
+            return HardTableView.Cell(view: containerView, height: cellHeight)
         }
 
         return cells
