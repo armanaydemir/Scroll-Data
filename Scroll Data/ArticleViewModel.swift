@@ -10,7 +10,7 @@ import UIKit
 
 class SessionReplayViewModel: NSObject {
     
-    var articleLink: String
+    let articleLink: String
 
     init(articleLink: String) {
         self.articleLink = articleLink
@@ -18,11 +18,11 @@ class SessionReplayViewModel: NSObject {
     
     func fetchSessionReplay(completion: @escaping ((_ result: Result<SessionReplayResponse, Error>) -> Void))  {
         let data: [String:Any] = [
-            "article_link":self.articleLink ?? "",
+            "article_link": self.articleLink,
             "UDID": UDID,
-            //"startTime":self.startTime*timeOffset,
             "type": AppDelegate.deviceType() ?? "",
-            "version":appVersion]
+            "version": appVersion
+        ]
         
         Networking.request(headers: nil, method: "POST", fullEndpoint: serverURL+"/session_replay", body: data, completion: { data, response, error in
             if let dataExists = data, error == nil {
@@ -46,8 +46,8 @@ class ReadArticleViewModel {
     let timeOffset:Double = 100000000
     var startTime = CFAbsoluteTimeGetCurrent()
     var last_sent = CFAbsoluteTimeGetCurrent()
-    var deviceType: String?
     var session_id: String?
+    
     var articleLink: String
     
     var recent_first: Int?
@@ -63,11 +63,12 @@ class ReadArticleViewModel {
     
     func fetchText(completion: @escaping ((_ result: Result<SessionReplayResponse, Error>) -> Void))  {
         let data: [String:Any] = [
-            "article_link":self.articleLink,
+            "article_link": self.articleLink,
             "UDID": UDID,
             "startTime":self.startTime*timeOffset,
-            "type":self.deviceType ?? "",
-            "version":appVersion]
+            "type": AppDelegate.deviceType() ?? "",
+            "version":appVersion
+        ]
         
         Networking.request(headers: nil, method: "POST", fullEndpoint: serverURL+"/session_replay", body: data, completion: { data, response, error in
             if let dataExists = data, error == nil {
@@ -109,6 +110,8 @@ class ReadArticleViewModel {
             self.last_sent = cur
             self.recent_last = last_index
             self.recent_first = first_index
+            
+            print(data)
         }
     }
     

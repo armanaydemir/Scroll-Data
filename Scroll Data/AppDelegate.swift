@@ -16,6 +16,8 @@ let serverURL = "http://157.245.227.103:22364"
 
 let UDID = UIDevice.current.identifierForVendor?.uuidString ?? "unknown"
 
+let defaultFont: UIFont = UIFont.init(name: "Times New Roman", size: UIFont.systemFontSize)!
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

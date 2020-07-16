@@ -17,13 +17,11 @@ import UIKit
     
     var mode: Mode?
     
-    let timePerCheck = 0.00001
-    var timer: Timer? = nil
-    
-    let defaultFont: UIFont = UIFont.init(name: "Times New Roman", size: UIFont.systemFontSize)!
-    
     @IBOutlet weak var spinner: UIActivityIndicatorView!
     @IBOutlet weak var hardTableView: HardTableView!
+    
+    private var lastVisibleIndices = 0..<0
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,20 +34,32 @@ import UIKit
     
     override func viewDidAppear(_ animated: Bool) {
         switch mode {
-        case .read:
-            //set up reading mode
-
-            DispatchQueue.main.async {
-                self.repeatingCheck()
-            }
+        case .read(let viewModel):
+            setUpReadMode(viewModel: viewModel)
         case .replay(let viewModel):
-            setupReplayMode(viewModel: viewModel)
+            setUpReplayMode(viewModel: viewModel)
         case .none:
             print("Article mode not initialized correctly")
         }
     }
     
-    func setupReplayMode(viewModel: SessionReplayViewModel) {
+    func setUpReadMode(viewModel: ReadArticleViewModel) {
+        viewModel.fetchText { result in
+            switch result {
+            case .success(let sessionReplay):
+                DispatchQueue.main.async {
+                    self.spinner.stopAnimating()
+                    self.loadHardTableView(content: sessionReplay.content, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: true)
+                    self.hardTableView.delegate = self
+                    self.lastVisibleIndices = self.hardTableView.visibleIndices()
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
+    func setUpReplayMode(viewModel: SessionReplayViewModel) {
         viewModel.fetchSessionReplay { result in
             switch result {
             case .success(let sessionReplay):
@@ -90,13 +100,14 @@ import UIKit
             
             let cellHeight: CGFloat
             
-            switch index {
-            case 0:
+            let isTitle = index == 0
+            
+            if isTitle {
                 label.numberOfLines = 0
                 label.font = defaultFont.withTextStyle(.title1)!
                 label.textAlignment = .center
                 cellHeight = titleLabelHeight
-            default:
+            } else {
                 label.font = font
                 label.textAlignment = .justified
                 cellHeight = normalLineLabelHeight
@@ -110,51 +121,43 @@ import UIKit
                 label.topAnchor.constraint(equalTo: containerView.topAnchor),
                 label.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
             ])
-//            if isIpad {
-//                NSLayoutConstraint.activate([
-//                    label.leadingAnchor.constraint(equalTo: containerView.readableContentGuide.leadingAnchor),
-//                    label.trailingAnchor.constraint(equalTo: containerView.readableContentGuide.trailingAnchor),
-//                ])
-//            } else {
-//
-//            }
             
             return HardTableView.Cell(view: containerView, height: cellHeight)
-            
         }
-        
         
         let finalCells: [HardTableView.Cell]
         
         if includeSubmitButton {
-            let submitButton = UIButton(type: .system)
-            submitButton.setTitle("Submit Reading", for: .normal)
-            submitButton.translatesAutoresizingMaskIntoConstraints = false
-            
-            let containerView = UIView()
-            containerView.translatesAutoresizingMaskIntoConstraints = false
-            containerView.addSubview(submitButton)
-            
-            let buttonSpacing: CGFloat = 8
-            let buttonHeight: CGFloat = 44
-            
-            NSLayoutConstraint.activate([
-                submitButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-                submitButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-                submitButton.topAnchor.constraint(lessThanOrEqualTo: containerView.topAnchor, constant: buttonSpacing),
-                submitButton.bottomAnchor.constraint(lessThanOrEqualTo: containerView.bottomAnchor, constant: buttonSpacing),
-                submitButton.heightAnchor.constraint(equalToConstant: buttonHeight)
-            ])
-            
-            let buttonCell = HardTableView.Cell(view: containerView, height: buttonHeight + 2 * buttonSpacing)
-            
-            finalCells = cells + [buttonCell]
+            finalCells = cells + [ createSubmitButtonCell() ]
         } else {
             finalCells = cells
         }
 
         hardTableView.cells = finalCells
         hardTableView.backgroundColor = UIColor.purple
+    }
+    
+    func createSubmitButtonCell() -> HardTableView.Cell {
+        let submitButton = UIButton(type: .system)
+         submitButton.setTitle("Submit Reading", for: .normal)
+         submitButton.translatesAutoresizingMaskIntoConstraints = false
+         
+         let containerView = UIView()
+         containerView.translatesAutoresizingMaskIntoConstraints = false
+         containerView.addSubview(submitButton)
+         
+         let buttonSpacing: CGFloat = 8
+         let buttonHeight: CGFloat = 44
+         
+         NSLayoutConstraint.activate([
+             submitButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+             submitButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+             submitButton.topAnchor.constraint(lessThanOrEqualTo: containerView.topAnchor, constant: buttonSpacing),
+             submitButton.bottomAnchor.constraint(lessThanOrEqualTo: containerView.bottomAnchor, constant: buttonSpacing),
+             submitButton.heightAnchor.constraint(equalToConstant: buttonHeight)
+         ])
+         
+         return HardTableView.Cell(view: containerView, height: buttonHeight + 2 * buttonSpacing)
     }
     
     func startAutoScrolling(session: Session) {
@@ -177,16 +180,6 @@ import UIKit
                                 options: [.beginFromCurrentState],
                                 animations: keyFrames,
                                 completion: nil)
-    }
-    
-    func repeatingCheck() {
-        DispatchQueue.main.asyncAfter(deadline: .now()) {
-            self.timer = Timer.init(timeInterval: self.timePerCheck, repeats: true, block: { _ in
-                print(self.hardTableView.visibleIndices())
-            })
-            RunLoop.main.add(self.timer!, forMode: RunLoop.Mode.common)
-            self.spinner?.stopAnimating()
-        }
     }
     
     @objc func submitData() {
@@ -218,3 +211,22 @@ import UIKit
     }
 }
 
+
+extension ArticleViewController: UIScrollViewDelegate {
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        switch mode {
+        case .read(let vm):
+            let currentVisibleIndices = hardTableView.visibleIndices()
+            if lastVisibleIndices != currentVisibleIndices {
+                print("\(hardTableView.visibleIndices())")
+                lastVisibleIndices = currentVisibleIndices
+            }
+            
+            vm.submitData(content_offset: scrollView.contentOffset.y, first_index: currentVisibleIndices.startIndex, last_index: currentVisibleIndices.endIndex - 1)
+        default: break
+        }
+
+    }
+}

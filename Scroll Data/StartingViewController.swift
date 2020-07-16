@@ -133,7 +133,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let vc = segue.destination
         if let destination: ArticleViewController = vc as? ArticleViewController {
-            destination.mode = .replay(viewModel: SessionReplayViewModel(articleLink: self.link))
+            destination.mode = .read(viewModel: ReadArticleViewModel(articleLink: self.link))
             guard let a = UIApplication.shared.delegate as? AppDelegate else {return}
             a.autoRotate = false
             a.orientation = UIDevice.current.orientation
