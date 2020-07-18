@@ -65,9 +65,9 @@ import UIKit
             switch result {
             case .success(let sessionReplay):
                 DispatchQueue.main.async {
-                    self.spinner.stopAnimating()
                     self.loadHardTableView(content: sessionReplay.content, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: false)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    DispatchQueue.main.asyncAfter(deadline: .now()+1) {
+                        self.spinner.stopAnimating()
                         self.startAutoScrolling(session: sessionReplay.session)
                     }                    }
             case .failure(let error):
@@ -187,7 +187,11 @@ import UIKit
                                 delay: 0,
                                 options: [.beginFromCurrentState],
                                 animations: keyFrames,
-                                completion: nil)
+                                completion: completedScrollingAnimation)
+    }
+    
+    func completedScrollingAnimation(completed: Bool) {
+        _ = navigationController?.popViewController(animated: true)
     }
     
     
@@ -231,6 +235,5 @@ extension ArticleViewController: UIScrollViewDelegate {
             vm.submitData(content_offset: scrollView.contentOffset.y, first_index: currentVisibleIndices.startIndex, last_index: currentVisibleIndices.endIndex - 1)
         default: break
         }
-
     }
 }

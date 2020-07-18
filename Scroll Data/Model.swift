@@ -175,15 +175,15 @@ struct SessionReplayResponse {
         
         let session = try Session(data: (data[sessionDataKey] as? [Any]))
 
-        let visibleLines: Int
-        if let v = data[visibleLinesKey] as? Int {
+        let visibleLines: Double
+        if let v = data[visibleLinesKey] as? Double {
             visibleLines = v
         } else {
-            visibleLines = defaultVisibleLines
+            visibleLines = Double(defaultVisibleLines)
             print("No visible lines count sent from server, using default of \(visibleLines)")
         }
         
-        self.visibleLines = visibleLines
+        self.visibleLines = Int(visibleLines)
         self.content = content
         self.session = session
     }
