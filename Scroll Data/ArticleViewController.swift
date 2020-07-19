@@ -170,28 +170,30 @@ import UIKit
     func startAutoScrolling(session: Session) {
         let totalDuration = session.endTime - session.startTime
         
-        let keyFrames: (() -> Void) = {
-            session.relativePageStates.sorted { $0.relativeStartTime < $1.relativeStartTime }.forEach { pageState in
-                
-                print("\(pageState.firstLine), \(pageState.lastLine), \(pageState.relativeStartTime * totalDuration), \(pageState.relativeDuration * totalDuration), \(pageState.contentOffset)")
+        let tableWidth = hardTableView.bounds.width
+        let tableHeight = hardTableView.bounds.height
+        
+        let stateTuples: [(state: RelativePageState, bounds: CGRect)] = session.relativePageStates.compactMap { pageState in
+            
+            print("\(pageState.firstLine), \(pageState.lastLine), \(pageState.relativeStartTime * totalDuration), \(pageState.relativeDuration * totalDuration), \(pageState.contentOffset)")
+            
+            guard let contentOffset = self.hardTableView.contentOffset(forIndex: pageState.lastLine, position: UITableView.ScrollPosition.bottom)
+                else { return nil }
 
-                UIView.addKeyframe(withRelativeStartTime: pageState.relativeStartTime, relativeDuration: pageState.relativeDuration) {
-                    
-                    self.hardTableView.scrollToRow(index: pageState.lastLine, position: .bottom, animated: false)
-                    print("visible cells: \(self.hardTableView.visibleIndices())")
-                }
-            }
+            let rect = CGRect(x: contentOffset.x, y: contentOffset.y, width: tableWidth, height: tableHeight)
+            return (state: pageState, bounds: rect)
         }
         
-        UIView.animateKeyframes(withDuration: totalDuration,
-                                delay: 0,
-                                options: [.beginFromCurrentState],
-                                animations: keyFrames,
-                                completion: completedScrollingAnimation)
-    }
-    
-    func completedScrollingAnimation(completed: Bool) {
-        _ = navigationController?.popViewController(animated: true)
+        let animation = CAKeyframeAnimation(keyPath: "bounds")
+        animation.values = stateTuples.map { $0.bounds }
+        animation.keyTimes = stateTuples.map { NSNumber(value: $0.state.relativeStartTime) }
+        animation.calculationMode = .linear
+        animation.duration = totalDuration
+        animation.isCumulative = true
+        animation.fillMode = .forwards
+        animation.isRemovedOnCompletion = false
+
+        self.hardTableView.layer.add(animation, forKey: nil)
     }
     
     

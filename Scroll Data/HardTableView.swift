@@ -98,9 +98,8 @@ class HardTableView: UIScrollView {
         
         layoutIfNeeded()
     }
-
     
-    public func scrollToRow(index: Int, position: UITableView.ScrollPosition, animated: Bool) {
+    private func nearestCell(forIndex index: Int) -> Cell? {
         let nearestCell: Cell?
         
         if cells.indices.contains(index) {
@@ -111,13 +110,28 @@ class HardTableView: UIScrollView {
             nearestCell = cells.last
         }
         
-        guard let cell = nearestCell else { return }
+        return nearestCell
+    }
+
+    public func scrollToRow(index: Int, position: UITableView.ScrollPosition, animated: Bool) {
+        guard let cell = nearestCell(forIndex: index) else { return }
         
         scrollToCell(cell: cell, position: position, animated: animated)
     }
     
     public func scrollToCell(cell: Cell, position: UITableView.ScrollPosition, animated: Bool) {
-        guard let destinationOffset = cumulativeHeight[cell] else { return }
+        guard let offset = contentOffset(forCell: cell, position: position) else { return }
+        
+        setContentOffset(offset, animated: animated)
+    }
+    
+    public func contentOffset(forIndex index: Int, position: UITableView.ScrollPosition) -> CGPoint? {
+        guard let cell = nearestCell(forIndex: index) else { return nil }
+        return contentOffset(forCell: cell, position: position)
+    }
+    
+    public func contentOffset(forCell cell: Cell, position: UITableView.ScrollPosition) -> CGPoint? {
+        guard let destinationOffset = cumulativeHeight[cell] else { return nil }
         
         let visibleHeight = frame.size.height
         
@@ -127,7 +141,7 @@ class HardTableView: UIScrollView {
         case .top:
             finalOffset = destinationOffset
         case .bottom:
-            finalOffset = max(destinationOffset - visibleHeight + cell.height + 100, 0)
+            finalOffset = max(destinationOffset - visibleHeight + cell.height, 0)
         case .middle:
             finalOffset = max(destinationOffset - (visibleHeight/2) + cell.height/2, 0)
         default:
@@ -142,7 +156,7 @@ class HardTableView: UIScrollView {
             }
         }
         
-        setContentOffset(CGPoint(x: 0, y: finalOffset), animated: animated)
+        return CGPoint(x: 0, y: finalOffset)
     }
     
     public func visibleIndices() -> Range<Int> {
