@@ -11,6 +11,7 @@
 		226A57E0215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 226A57DE215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib */; };
 		229B641824B6D66000BA76C7 /* HardTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229B641724B6D66000BA76C7 /* HardTableView.swift */; };
 		229B641A24B6EC9100BA76C7 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229B641924B6EC9100BA76C7 /* Model.swift */; };
+		93A96E5B24C645DF003903F6 /* v037.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = 93A96E5A24C645DF003903F6 /* v037.mobileprovision */; };
 		99931E132127EE31006CAC45 /* StartingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99931E122127EE31006CAC45 /* StartingViewController.swift */; };
 		99AE430121A6763600E42415 /* ScrollDataArticleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99AE430021A6763600E42415 /* ScrollDataArticleTests.swift */; };
 		99DF267D21ACD188007D6788 /* SystemFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF267C21ACD188007D6788 /* SystemFont.swift */; };
@@ -46,7 +47,7 @@
 		226A57DE215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TitleSubtitleTableViewCell.xib; sourceTree = "<group>"; };
 		229B641724B6D66000BA76C7 /* HardTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardTableView.swift; sourceTree = "<group>"; };
 		229B641924B6EC9100BA76C7 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
-		93B029B723BD52140089DE49 /* v024.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; name = v024.mobileprovision; path = ../../../v024.mobileprovision; sourceTree = "<group>"; };
+		93A96E5A24C645DF003903F6 /* v037.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; path = v037.mobileprovision; sourceTree = "<group>"; };
 		99931E122127EE31006CAC45 /* StartingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartingViewController.swift; sourceTree = "<group>"; };
 		99AE42FE21A6763600E42415 /* ScrollDataArticleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScrollDataArticleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		99AE430021A6763600E42415 /* ScrollDataArticleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollDataArticleTests.swift; sourceTree = "<group>"; };
@@ -126,7 +127,7 @@
 		F169BDD51EA696CB00C528C7 /* Scroll Data */ = {
 			isa = PBXGroup;
 			children = (
-				93B029B723BD52140089DE49 /* v024.mobileprovision */,
+				93A96E5A24C645DF003903F6 /* v037.mobileprovision */,
 				99DF267E21ACD3DA007D6788 /* AppDelegate.swift */,
 				F15A535B2070748200C2F7B6 /* ArticleViewController.swift */,
 				99DF26A621ACEAF7007D6788 /* ArticleViewModel.swift */,
@@ -283,6 +284,7 @@
 				F169BDE61EA696CB00C528C7 /* LaunchScreen.storyboard in Resources */,
 				F169BDE31EA696CB00C528C7 /* Assets.xcassets in Resources */,
 				226A57E0215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib in Resources */,
+				93A96E5B24C645DF003903F6 /* v037.mobileprovision in Resources */,
 				F169BDE11EA696CB00C528C7 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

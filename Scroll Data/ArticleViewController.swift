@@ -176,11 +176,19 @@ import UIKit
             
             print("\(pageState.firstLine), \(pageState.lastLine), \(pageState.relativeStartTime * totalDuration), \(pageState.relativeDuration * totalDuration), \(pageState.contentOffset)")
             
-            guard let contentOffset = self.hardTableView.contentOffset(forIndex: pageState.lastLine, position: UITableView.ScrollPosition.bottom)
-                else { return nil }
+            if(pageState.lastLine > self.hardTableView.cells.count - 2){
+                guard let contentOffset = self.hardTableView.contentOffset(forIndex: pageState.firstLine, position: UITableView.ScrollPosition.top)
+                               else { return nil }
+                let rect = CGRect(x: contentOffset.x, y: contentOffset.y, width: tableWidth, height: tableHeight)
+                return (state: pageState, bounds: rect)
+            }else{
+                guard let contentOffset = self.hardTableView.contentOffset(forIndex: pageState.lastLine, position: UITableView.ScrollPosition.bottom)
+                               else { return nil }
+                let rect = CGRect(x: contentOffset.x, y: contentOffset.y, width: tableWidth, height: tableHeight)
+                return (state: pageState, bounds: rect)
+            }
+           
 
-            let rect = CGRect(x: contentOffset.x, y: contentOffset.y, width: tableWidth, height: tableHeight)
-            return (state: pageState, bounds: rect)
         }
         
         let animation = CAKeyframeAnimation(keyPath: "bounds")
