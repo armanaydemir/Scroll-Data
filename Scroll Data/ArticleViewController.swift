@@ -65,7 +65,7 @@ import UIKit
             switch result {
             case .success(let sessionReplay):
                 DispatchQueue.main.async {
-                    self.loadHardTableView(content: sessionReplay.content, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: false)
+                    self.loadHardTableView(content: sessionReplay.content, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: true)
                     DispatchQueue.main.asyncAfter(deadline: .now()+1) {
                         self.spinner.stopAnimating()
                         self.startAutoScrolling(session: sessionReplay.session)
@@ -148,14 +148,13 @@ import UIKit
         containerView.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(submitButton)
 
-        let buttonSpacing: CGFloat = 8
-        let buttonHeight: CGFloat = 44
+        let buttonSpacing: CGFloat = 44
+        let buttonHeight: CGFloat = 64
 
         NSLayoutConstraint.activate([
             submitButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
             submitButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             submitButton.topAnchor.constraint(lessThanOrEqualTo: containerView.topAnchor, constant: buttonSpacing),
-            submitButton.bottomAnchor.constraint(lessThanOrEqualTo: containerView.bottomAnchor, constant: buttonSpacing),
             submitButton.heightAnchor.constraint(equalToConstant: buttonHeight)
         ])
 
