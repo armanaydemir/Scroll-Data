@@ -87,6 +87,7 @@ class ReadArticleViewModel {
 
     func submitData(content_offset:CGFloat, first_index:Int, last_index:Int){
         if (self.recent_first == nil || first_index != recent_first || last_index != recent_last) {
+            
             let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
             
             let data: [String: Any] = [
@@ -101,11 +102,11 @@ class ReadArticleViewModel {
                 "previous_last_cell":self.recent_last ?? "",
                 "content_offset":content_offset ]
             
-//            Networking.request(headers: nil, method: "POST", fullEndpoint: serverURL+"/submit_data", body: data, completion:  {
-//                data, response, error in
-//
-//                if let e = error {print(e)}
-//            })
+            Networking.request(headers: nil, method: "POST", fullEndpoint: serverURL+"/submit_data", body: data) {
+                data, response, error in
+
+                if let e = error { print(e) }
+            }
             
             self.last_sent = cur
             self.recent_last = last_index
@@ -115,7 +116,7 @@ class ReadArticleViewModel {
         }
     }
     
-    func closeArticle(content: Array<Dictionary<String, Any>>, wordIndicies: Array<Int>, characterIndicies: Array<Int>, complete:Bool){
+    func closeArticle(complete: Bool) {
         guard let a = UIApplication.shared.delegate as? AppDelegate else {return}
         let data: [String: Any] = [
             "UDID": UDID,
@@ -124,17 +125,14 @@ class ReadArticleViewModel {
             "time": CFAbsoluteTimeGetCurrent()*timeOffset,
             "session_id": self.session_id ?? "",
             "complete": complete,
-            "word_splits": wordIndicies,
-            "character_splits": characterIndicies,
-            "content": content,
             "portrait": a.orientation.isPortrait
         ]
         
         print(data)
         
-//        Networking.request(headers: nil, method: "POST", fullEndpoint: serverURL+"/close_article", body: data, completion:  { data, response, error in
-//            if let e = error {print(e)}
-//        })
+        Networking.request(headers: nil, method: "POST", fullEndpoint: serverURL+"/close_article", body: data) { data, response, error in
+            if let e = error { print(e) }
+        }
     }
 }
 

@@ -162,7 +162,14 @@ import UIKit
     }
     
     @objc func submitData(_ sender: UIButton) {
-        //TODO: close article through view model
+        
+        switch self.mode {
+        case .read(let vm):
+            vm.closeArticle(complete: true)
+        default:
+            break
+        }
+        
         _ = navigationController?.popViewController(animated: true)
     }
     
