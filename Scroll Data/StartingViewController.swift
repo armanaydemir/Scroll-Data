@@ -153,26 +153,50 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     @objc private func refreshData(_ sender: Any) {
-        fetchData()
+        switch tableMode {
+        case .articles:
+            fetchData()
+        case .sessions:
+            fetchSessions()
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.articles.count
+        switch tableMode {
+        case .articles:
+            return self.articles.count
+        case .sessions:
+            return self.sessions.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let title: String
+        let subtitle: String
+        
+//        switch tableMode {
+//        case .articles:
+            title = self.articles[indexPath.item].title
+            subtitle = self.articles[indexPath.item].abstract ?? ""
+//        case .sessions:
+//        }
+        
         let attributes = [NSAttributedString.Key.font: baseFont.withTextStyle(.headline)!]
         let sub_at = [NSAttributedString.Key.font: baseFont.withTextStyle(.subheadline)!]
         let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
         if let cell: TitleSubtitleTableViewCell = cell as? TitleSubtitleTableViewCell {
-            cell.title.attributedText = NSAttributedString.init(string:  self.articles[indexPath.item].title, attributes: attributes)
-            cell.subtitle.attributedText = NSAttributedString.init(string: self.articles[indexPath.item].abstract ?? "", attributes: sub_at)
+            cell.title.attributedText = NSAttributedString.init(string:  title, attributes: attributes)
+            cell.subtitle.attributedText = NSAttributedString.init(string: subtitle, attributes: sub_at)
         }
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.link = self.articles[indexPath.item].url
+        switch tableMode {
+        case .articles, .sessions:
+            self.link = self.articles[indexPath.item].url
+        }
+        
         self.performSegue(withIdentifier: "startReading", sender: self)
     }
     
