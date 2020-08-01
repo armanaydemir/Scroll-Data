@@ -48,10 +48,10 @@ import UIKit
     func setUpReadMode(viewModel: ReadArticleViewModel) {
         viewModel.fetchText { result in
             switch result {
-            case .success(let sessionReplay):
+            case .success(let article):
                 DispatchQueue.main.async {
                     self.spinner.stopAnimating()
-                    self.loadHardTableView(content: sessionReplay.content, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: true)
+                    self.loadHardTableView(content: article.content, maxVisibleLines: article.visibleLines, includeSubmitButton: true)
                     self.scrollViewDidScroll(self.hardTableView)
                 }
             case .failure(let error):
@@ -65,7 +65,7 @@ import UIKit
             switch result {
             case .success(let sessionReplay):
                 DispatchQueue.main.async {
-                    self.loadHardTableView(content: sessionReplay.content, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: true)
+                    self.loadHardTableView(content: sessionReplay.content.map { $0.text }, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: true)
                     DispatchQueue.main.asyncAfter(deadline: .now()+1) {
                         self.spinner.stopAnimating()
                         self.startAutoScrolling(session: sessionReplay.session)
@@ -76,7 +76,7 @@ import UIKit
         }
     }
     
-    func loadHardTableView(content: [Content], maxVisibleLines: Int, includeSubmitButton: Bool) {
+    func loadHardTableView(content: [String], maxVisibleLines: Int, includeSubmitButton: Bool) {
 
         let contentCells = createContentCells(content: content, maxVisibleLines: maxVisibleLines)
         let buttonCell = [ createSubmitButtonCell() ]
@@ -84,7 +84,7 @@ import UIKit
         hardTableView.cells = includeSubmitButton ? contentCells + buttonCell : contentCells
     }
     
-    func createContentCells(content: [Content], maxVisibleLines: Int) -> [HardTableView.Cell] {
+    func createContentCells(content: [String], maxVisibleLines: Int) -> [HardTableView.Cell] {
         let tableHeight = hardTableView.frame.size.height
         let tableWidth = hardTableView.frame.size.width
 
@@ -103,12 +103,12 @@ import UIKit
             containerView.translatesAutoresizingMaskIntoConstraints = false
 
             let label = UILabel(frame: CGRect.zero)
-            label.text = content.text
+            label.text = content
             label.translatesAutoresizingMaskIntoConstraints = false
 
             let cellHeight: CGFloat
             let isTitle = index == 0
-            let isSpacer = content.text == ""
+            let isSpacer = content == ""
 
             if isTitle {
                label.numberOfLines = 0
@@ -204,20 +204,20 @@ import UIKit
     }
     
     
-    func fittedFont(baseFont: UIFont, cellHeight: CGFloat, maxWidth: CGFloat, content: [Content]) -> UIFont {
+    func fittedFont(baseFont: UIFont, cellHeight: CGFloat, maxWidth: CGFloat, content: [String]) -> UIFont {
         
         var fontSize = cellHeight - 3 //avoid cut off
         var attributes = [ NSAttributedString.Key.font : baseFont.withSize(fontSize) ]
 
         //get content with largest width, can use arbitrary font
         let longestLine = content.dropFirst().sorted { first, second in
-            let firstWidth = (first.text as NSString).size(withAttributes: attributes).width
-            let secondWidth = (second.text as NSString).size(withAttributes: attributes).width
+            let firstWidth = (first as NSString).size(withAttributes: attributes).width
+            let secondWidth = (second as NSString).size(withAttributes: attributes).width
             
             return firstWidth > secondWidth
         }.first
         
-        guard let longestLineText = longestLine?.text as NSString? else { return baseFont.withSize(fontSize) }
+        guard let longestLineText = longestLine as NSString? else { return baseFont.withSize(fontSize) }
         
         while (longestLineText.size(withAttributes: attributes).width >= maxWidth) {
             fontSize = fontSize - 1

@@ -232,6 +232,71 @@ struct Content: Codable {
     }
 }
 
+struct Article {
+    
+    enum Key: String {
+        case content
+        case visible_lines
+    }
+    
+    let content: [String]
+    let visibleLines: Int
+    let info: ArticleBlurb
+    
+    init(data: Any?) throws {
+        guard let data = data as? [String : Any],
+                   let content = data[Key.content.rawValue] as? [String]
+                   else { throw ModelError.errorParsingJSON }
+               
+        self.content = content
+        self.visibleLines = data[Key.visible_lines.rawValue] as? Int ?? defaultVisibleLines
+        self.info = try ArticleBlurb(data: data)
+    }
+    
+}
+
+
+struct ArticleBlurb {
+    
+    enum Key: String {
+        case title
+        case abstract
+        case url
+        case short_url
+        case created_date
+        case date_written
+        case published_date
+        case byline
+    }
+    
+    let title: String
+    let abstract: String?
+    let url: String
+    let shortURL: String?
+    let createdDate: String?
+    let dateWritten: String?
+    let publishedDate: String?
+    let byline: String?
+    
+    init(data: Any?) throws {
+        guard let data = data as? [String : Any],
+            let title = data[Key.title.rawValue] as? String,
+            let url = data[Key.url.rawValue] as? String
+            else { throw ModelError.errorParsingJSON }
+        
+        self.title = title
+        self.url = url
+        
+        self.abstract = data[Key.abstract.rawValue] as? String
+        self.shortURL = data[Key.short_url.rawValue] as? String
+        self.createdDate = data[Key.created_date.rawValue] as? String
+        self.dateWritten = data[Key.date_written.rawValue] as? String
+        self.publishedDate = data[Key.published_date.rawValue] as? String
+        self.byline = data[Key.byline.rawValue] as? String
+    }
+}
+
+
 
 public enum ModelError: Error {
     case errorParsingJSON

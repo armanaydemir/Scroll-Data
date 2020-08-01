@@ -11,9 +11,8 @@ import UIKit
 class StartingViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     private let refreshControl = UIRefreshControl()
     
-    var articles: Array<[String : Any]> = []
-    var titles: Array<String> = []
-    var subtitles: Array<String> = []
+    var articles: [ArticleBlurb] = []
+    
     var last_refresh: Date?
     
     var link = ""
@@ -29,7 +28,11 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             print("couldn't connect starting vc outlets! bad things coming.....")
             return
         }
-        self.navigationItem.title = "Articles"
+        
+        let segmentedControl = UISegmentedControl.init(items: ["Articles", "Sessions"])
+        segmentedControl.selectedSegmentIndex = 0
+        navigationItem.titleView = segmentedControl
+        
         table.isHidden = true;
         table.accessibilityIdentifier = "startingTable"
         table.dataSource = self
@@ -40,38 +43,22 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         table.register(UINib.init(nibName: "TitleSubtitleTableViewCell", bundle: nil), forCellReuseIdentifier: "default")
         table.rowHeight = UITableView.automaticDimension
     }
+    
+    
     private func fetchData() {
         guard let table = self.table, let loadIndicator = self.loadIndicator else {
             print("couldn't connect starting vc outlets! bad things coming.....")
             return
         }
         loadIndicator.startAnimating() //POST 
-        Networking.request(headers:nil, method: "GET", fullEndpoint: serverURL+"/sessions", body: ["UDID":"FCD0FA4A_26EF_4B21_85F8_EADFB8871559"], completion: { data, response, error in
+        Networking.request(headers:nil, method: "GET", fullEndpoint: serverURL+"/articles", body: nil, completion: { data, response, error in
             if let dataExists = data, error == nil {
                 do {
-                    if let articles = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<[String : Any]> {
-                        self.articles = articles
-                        //print(articles)
-                        self.titles = articles.map {
-                            if let title = $0["article_title"] as? String {
-                                return title
-                            } else {
-                                print("title incorrect format")
-                                return ""
-                            }
-                        } //be careful, title must be string
-                        self.subtitles = articles.map {
-                            if let title = $0["type"] as? String, let version =  $0["version"] as? String {
-                                return title + "    " + version
-                            } else {
-                                print("abstract incorrect format")
-                                return ""
-                            }
-                        }
-                    } else {
-                        throw NSError(domain: "invalid json", code: 1, userInfo: nil)
-                    }
-                }catch let err{
+                    guard let list = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? [Any]
+                        else { throw NSError(domain: "invalid json", code: 1, userInfo: nil) }
+                    
+                    self.articles = list.compactMap({ try? ArticleBlurb(data: $0) })
+                } catch let err {
                     print(data ?? "nil data")
                     print(err)
                     print("invalidddd")
@@ -97,7 +84,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.titles.count
+        return self.articles.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -105,21 +92,15 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         let sub_at = [NSAttributedString.Key.font: baseFont.withTextStyle(.subheadline)!]
         let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
         if let cell: TitleSubtitleTableViewCell = cell as? TitleSubtitleTableViewCell {
-            cell.title.attributedText = NSAttributedString.init(string:  self.titles[indexPath.item], attributes: attributes)
-            cell.subtitle.attributedText = NSAttributedString.init(string: self.subtitles[indexPath.item], attributes: sub_at)
+            cell.title.attributedText = NSAttributedString.init(string:  self.articles[indexPath.item].title, attributes: attributes)
+            cell.subtitle.attributedText = NSAttributedString.init(string: self.articles[indexPath.item].abstract ?? "", attributes: sub_at)
         }
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-            self.link = self.articles[indexPath.item]["_id"] as! String
-            self.performSegue(withIdentifier: "startReading", sender: self)
-    }
-
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        self.link = self.articles[indexPath.item].url
+        self.performSegue(withIdentifier: "startReading", sender: self)
     }
     
 
@@ -133,8 +114,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let vc = segue.destination
         if let destination: ArticleViewController = vc as? ArticleViewController {
-//            destination.mode = .read(viewModel: ReadArticleViewModel(articleLink: self.link))
-            destination.mode = .replay(viewModel: SessionReplayViewModel(articleLink: self.link))
+            destination.mode = .read(viewModel: ReadArticleViewModel(articleLink: self.link))
+//            destination.mode = .replay(viewModel: SessionReplayViewModel(articleLink: self.link))
 
             guard let a = UIApplication.shared.delegate as? AppDelegate else {return}
             a.autoRotate = false

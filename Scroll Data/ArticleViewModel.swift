@@ -61,7 +61,7 @@ class ReadArticleViewModel {
         
     }
     
-    func fetchText(completion: @escaping ((_ result: Result<SessionReplayResponse, Error>) -> Void))  {
+    func fetchText(completion: @escaping ((_ result: Result<Article, Error>) -> Void))  {
         let data: [String:Any] = [
             "article_link": self.articleLink,
             "UDID": UDID,
@@ -70,12 +70,12 @@ class ReadArticleViewModel {
             "version":appVersion
         ]
         
-        Networking.request(headers: nil, method: "POST", fullEndpoint: serverURL+"/session_replay", body: data, completion: { data, response, error in
+        Networking.request(headers: nil, method: "POST", fullEndpoint: serverURL+"/open_article", body: data, completion: { data, response, error in
             if let dataExists = data, error == nil {
                 do {
                     let data = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments)
-                    let sessionReplay = try SessionReplayResponse(data: data)
-                    completion(.success(sessionReplay))
+                    let article = try Article(data: data)
+                    completion(.success(article))
                 } catch {
                     completion(.failure(error))
                 }
