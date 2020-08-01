@@ -20,6 +20,10 @@ import UIKit
     @IBOutlet weak var spinner: UIActivityIndicatorView!
     @IBOutlet weak var hardTableView: HardTableView!
     
+    @IBOutlet weak var loadingBarView: UIView!
+    @IBOutlet weak var loadingBarWidth: NSLayoutConstraint!
+    
+    
     private var lastVisibleIndices = 0..<0
 
     
@@ -30,6 +34,8 @@ import UIKit
         
         spinner.hidesWhenStopped = true
         spinner.startAnimating()
+        
+        loadingBarView.isHidden = true
         
         self.hardTableView.delegate = self
     }
@@ -65,7 +71,7 @@ import UIKit
             switch result {
             case .success(let sessionReplay):
                 DispatchQueue.main.async {
-                    self.loadHardTableView(content: sessionReplay.content.map { $0.text }, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: true)
+                    self.loadHardTableView(content: sessionReplay.content.map { $0.text }, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: false)
                     DispatchQueue.main.asyncAfter(deadline: .now()+1) {
                         self.spinner.stopAnimating()
                         self.startAutoScrolling(session: sessionReplay.session)
@@ -79,9 +85,9 @@ import UIKit
     func loadHardTableView(content: [String], maxVisibleLines: Int, includeSubmitButton: Bool) {
 
         let contentCells = createContentCells(content: content, maxVisibleLines: maxVisibleLines)
-        let buttonCell = [ createSubmitButtonCell() ]
+        let buttonCell = [ createSubmitButtonCell(emptyPlaceholder: !includeSubmitButton) ]
 
-        hardTableView.cells = includeSubmitButton ? contentCells + buttonCell : contentCells
+        hardTableView.cells = contentCells + buttonCell
     }
     
     func createContentCells(content: [String], maxVisibleLines: Int) -> [HardTableView.Cell] {
@@ -138,27 +144,33 @@ import UIKit
         return cells
     }
     
-    func createSubmitButtonCell() -> HardTableView.Cell {
-        let submitButton = UIButton(type: .system)
-        submitButton.setTitle("Submit Reading", for: .normal)
-        submitButton.translatesAutoresizingMaskIntoConstraints = false
-        submitButton.addTarget(self, action: #selector(self.submitData(_:)), for: .touchUpInside)
-
-        let containerView = UIView()
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(submitButton)
-
+    func createSubmitButtonCell(emptyPlaceholder: Bool = false) -> HardTableView.Cell {
+        
         let buttonSpacing: CGFloat = 44
         let buttonHeight: CGFloat = 64
+        let totalHeight: CGFloat = buttonHeight + 2 * buttonSpacing
+        
+        if emptyPlaceholder {
+            return HardTableView.Cell(view: UIView(), height: totalHeight)
+        } else {
+            let submitButton = UIButton(type: .system)
+            submitButton.setTitle("Submit Reading", for: .normal)
+            submitButton.translatesAutoresizingMaskIntoConstraints = false
+            submitButton.addTarget(self, action: #selector(self.submitData(_:)), for: .touchUpInside)
 
-        NSLayoutConstraint.activate([
-            submitButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            submitButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-            submitButton.topAnchor.constraint(lessThanOrEqualTo: containerView.topAnchor, constant: buttonSpacing),
-            submitButton.heightAnchor.constraint(equalToConstant: buttonHeight)
-        ])
+            let containerView = UIView()
+            containerView.translatesAutoresizingMaskIntoConstraints = false
+            containerView.addSubview(submitButton)
 
-        return HardTableView.Cell(view: containerView, height: buttonHeight + 2 * buttonSpacing)
+            NSLayoutConstraint.activate([
+               submitButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+               submitButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+               submitButton.topAnchor.constraint(lessThanOrEqualTo: containerView.topAnchor, constant: buttonSpacing),
+               submitButton.heightAnchor.constraint(equalToConstant: buttonHeight)
+            ])
+
+            return HardTableView.Cell(view: containerView, height: totalHeight)
+        }
     }
     
     @objc func submitData(_ sender: UIButton) {
@@ -173,12 +185,22 @@ import UIKit
         _ = navigationController?.popViewController(animated: true)
     }
     
+    private func animateLoadingBar(totalDuration: TimeInterval) {
+        loadingBarWidth.constant = view.bounds.width
+        UIView.animate(withDuration: totalDuration) {
+            self.loadingBarView.layoutIfNeeded()
+        }
+    }
+    
     func startAutoScrolling(session: Session) {
         let totalDuration = session.endTime - session.startTime
         
         let tableWidth = hardTableView.bounds.width
         let tableHeight = hardTableView.bounds.height
         
+        animateLoadingBar(totalDuration: totalDuration)
+        
+
         let stateTuples: [(state: RelativePageState, bounds: CGRect)] = session.relativePageStates.compactMap { pageState in
             
             print("\(pageState.firstLine), \(pageState.lastLine), \(pageState.relativeStartTime * totalDuration), \(pageState.relativeDuration * totalDuration), \(pageState.contentOffset)")
@@ -194,8 +216,6 @@ import UIKit
                 let rect = CGRect(x: contentOffset.x, y: contentOffset.y, width: tableWidth, height: tableHeight)
                 return (state: pageState, bounds: rect)
             }
-           
-
         }
         
         let animation = CAKeyframeAnimation(keyPath: "bounds")

@@ -76,8 +76,16 @@
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="utz-ww-zxe">
+                                <rect key="frame" x="0.0" y="50" width="0.0" height="1"/>
+                                <color key="backgroundColor" systemColor="systemBlueColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" id="Gpz-iG-Nkk"/>
+                                    <constraint firstAttribute="height" constant="1" id="JMO-Ra-9kM"/>
+                                </constraints>
+                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2d6-TB-O24" customClass="HardTableView" customModule="Replay_Scroll_Data" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="50" width="1024" height="1316"/>
+                                <rect key="frame" x="0.0" y="51" width="1024" height="1315"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </view>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="y80-SR-T2z">
@@ -87,18 +95,22 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="utz-ww-zxe" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="5ke-oe-PCM"/>
                             <constraint firstAttribute="bottom" secondItem="2d6-TB-O24" secondAttribute="bottom" id="70W-Ph-OlD"/>
                             <constraint firstItem="2d6-TB-O24" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="DMx-pu-Tj1"/>
                             <constraint firstItem="y80-SR-T2z" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="QmK-zz-dmB"/>
-                            <constraint firstItem="2d6-TB-O24" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="aQc-EC-PoE"/>
                             <constraint firstAttribute="trailing" secondItem="2d6-TB-O24" secondAttribute="trailing" id="bAT-Pw-dTu"/>
+                            <constraint firstItem="2d6-TB-O24" firstAttribute="top" secondItem="utz-ww-zxe" secondAttribute="bottom" id="dul-Pm-a2G"/>
                             <constraint firstItem="y80-SR-T2z" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="jNb-8U-rAY"/>
+                            <constraint firstItem="utz-ww-zxe" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="zdF-Ct-HUp"/>
                         </constraints>
                     </view>
                     <toolbarItems/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="hardTableView" destination="2d6-TB-O24" id="4NM-W6-XB3"/>
+                        <outlet property="loadingBarView" destination="utz-ww-zxe" id="C5e-Jq-rSS"/>
+                        <outlet property="loadingBarWidth" destination="Gpz-iG-Nkk" id="LLq-bD-KU9"/>
                         <outlet property="spinner" destination="y80-SR-T2z" id="u7m-WR-EOU"/>
                     </connections>
                 </viewController>
