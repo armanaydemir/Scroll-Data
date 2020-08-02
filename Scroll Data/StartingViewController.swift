@@ -13,6 +13,17 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     enum TableMode: Int {
         case articles = 0
         case sessions = 1
+        
+        func name() -> String {
+            switch self {
+            case .articles: return "Articles"
+            case .sessions: return "Sessions"
+            }
+        }
+    }
+    
+    struct Settings {
+        let showSessions: Bool
     }
     
     private var tableMode: TableMode = .articles {
@@ -57,21 +68,36 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             return
         }
         
-        let segmentedControl = UISegmentedControl.init(items: ["Articles", "Sessions"])
-        segmentedControl.selectedSegmentIndex = self.tableMode.rawValue
-        segmentedControl.addTarget(self, action: #selector(switchedTable(segmentedControl:)), for: .valueChanged)
-        navigationItem.titleView = segmentedControl
-        
+        loadIndicator.startAnimating()
         table.isHidden = true;
         table.accessibilityIdentifier = "startingTable"
         table.dataSource = self
         table.delegate = self
         table.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
-        self.fetchData()
-        table.register(UINib.init(nibName: "TitleSubtitleTableViewCell", bundle: nil), forCellReuseIdentifier: "default")
-        table.rowHeight = UITableView.automaticDimension
+        
+        checkSettings { settings in
+            
+            if settings.showSessions {
+                let segmentedControl = UISegmentedControl.init(items: [TableMode.articles.name(), TableMode.sessions.name()])
+                segmentedControl.selectedSegmentIndex = self.tableMode.rawValue
+                segmentedControl.addTarget(self, action: #selector(switchedTable(segmentedControl:)), for: .valueChanged)
+                navigationItem.titleView = segmentedControl
+            } else {
+                navigationItem.title = tableMode.name()
+            }
+            
+            self.fetchData()
+            table.register(UINib.init(nibName: "TitleSubtitleTableViewCell", bundle: nil), forCellReuseIdentifier: "default")
+            table.rowHeight = UITableView.automaticDimension
+        }
+
     }
+    
+    private func checkSettings(completion: (_ settings: Settings) -> Void) {
+        completion(Settings(showSessions: true))
+    }
+    
     
     @objc private func switchedTable(segmentedControl: UISegmentedControl) {
         switch segmentedControl.selectedSegmentIndex {
@@ -123,7 +149,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             print("couldn't connect starting vc outlets! bad things coming.....")
             return
         }
-        loadIndicator.startAnimating() //POST 
+        
         Networking.request(headers:nil, method: "GET", fullEndpoint: serverURL+"/articles", body: nil, completion: { data, response, error in
             if let dataExists = data, error == nil {
                 do {
