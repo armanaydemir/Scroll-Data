@@ -77,15 +77,15 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="utz-ww-zxe">
-                                <rect key="frame" x="0.0" y="50" width="0.0" height="1"/>
+                                <rect key="frame" x="0.0" y="50" width="0.0" height="30"/>
                                 <color key="backgroundColor" systemColor="systemBlueColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" id="Gpz-iG-Nkk"/>
-                                    <constraint firstAttribute="height" constant="1" id="JMO-Ra-9kM"/>
+                                    <constraint firstAttribute="height" constant="30" id="JMO-Ra-9kM"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2d6-TB-O24" customClass="HardTableView" customModule="Replay_Scroll_Data" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="51" width="1024" height="1315"/>
+                                <rect key="frame" x="0.0" y="80" width="1024" height="1286"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </view>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="y80-SR-T2z">

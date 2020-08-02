@@ -69,10 +69,11 @@ import UIKit
             switch result {
             case .success(let sessionReplay):
                 DispatchQueue.main.async {
-                    self.loadHardTableView(content: sessionReplay.article.content, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: true)
+                    self.loadHardTableView(content: sessionReplay.article.content, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: false)
                     DispatchQueue.main.asyncAfter(deadline: .now()+1) {
                         self.spinner.stopAnimating()
                         self.startAutoScrolling(session: sessionReplay.session)
+                        print(sessionReplay.article.content.count)
                     }                    }
             case .failure(let error):
                 print(error)
@@ -148,27 +149,25 @@ import UIKit
         let buttonHeight: CGFloat = 64
         let totalHeight: CGFloat = buttonHeight + 2 * buttonSpacing
         
-        if emptyPlaceholder {
-            return HardTableView.Cell(view: UIView(), height: totalHeight)
-        } else {
-            let submitButton = UIButton(type: .system)
-            submitButton.setTitle("Submit Reading", for: .normal)
-            submitButton.translatesAutoresizingMaskIntoConstraints = false
-            submitButton.addTarget(self, action: #selector(self.submitData(_:)), for: .touchUpInside)
+        let submitButton = UIButton(type: .system)
+        submitButton.setTitle("Submit Reading", for: .normal)
+        submitButton.translatesAutoresizingMaskIntoConstraints = false
+        submitButton.addTarget(self, action: #selector(self.submitData(_:)), for: .touchUpInside)
+        
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(submitButton)
 
-            let containerView = UIView()
-            containerView.translatesAutoresizingMaskIntoConstraints = false
-            containerView.addSubview(submitButton)
+        NSLayoutConstraint.activate([
+           submitButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+           submitButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+           submitButton.topAnchor.constraint(lessThanOrEqualTo: containerView.topAnchor, constant: buttonSpacing),
+           submitButton.heightAnchor.constraint(equalToConstant: buttonHeight)
+        ])
+        
+        submitButton.isHidden = emptyPlaceholder
 
-            NSLayoutConstraint.activate([
-               submitButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-               submitButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-               submitButton.topAnchor.constraint(lessThanOrEqualTo: containerView.topAnchor, constant: buttonSpacing),
-               submitButton.heightAnchor.constraint(equalToConstant: buttonHeight)
-            ])
-
-            return HardTableView.Cell(view: containerView, height: totalHeight)
-        }
+        return HardTableView.Cell(view: containerView, height: totalHeight)
     }
     
     @objc func submitData(_ sender: UIButton) {
@@ -184,6 +183,7 @@ import UIKit
     }
     
     private func animateLoadingBar(totalDuration: TimeInterval) {
+        loadingBarView.isHidden = true
         loadingBarWidth.constant = view.bounds.width
         UIView.animate(withDuration: totalDuration) {
             self.loadingBarView.layoutIfNeeded()
@@ -195,22 +195,21 @@ import UIKit
         
         let tableWidth = hardTableView.bounds.width
         let tableHeight = hardTableView.bounds.height
-        
-        animateLoadingBar(totalDuration: totalDuration)
-        
 
         let stateTuples: [(state: RelativePageState, bounds: CGRect)] = session.relativePageStates.compactMap { pageState in
             
             print("\(pageState.firstLine), \(pageState.lastLine), \(pageState.relativeStartTime * totalDuration), \(pageState.relativeDuration * totalDuration), \(pageState.contentOffset)")
             
-            if(pageState.lastLine > self.hardTableView.cells.count - 2){
+            if(pageState.lastLine > self.hardTableView.cells.count){
                 guard let contentOffset = self.hardTableView.contentOffset(forIndex: pageState.firstLine, position: UITableView.ScrollPosition.top)
-                               else { return nil }
+                    else { return nil }
+                
                 let rect = CGRect(x: contentOffset.x, y: contentOffset.y, width: tableWidth, height: tableHeight)
                 return (state: pageState, bounds: rect)
-            }else{
+            } else {
                 guard let contentOffset = self.hardTableView.contentOffset(forIndex: pageState.lastLine, position: UITableView.ScrollPosition.bottom)
-                               else { return nil }
+                    else { return nil }
+                
                 let rect = CGRect(x: contentOffset.x, y: contentOffset.y, width: tableWidth, height: tableHeight)
                 return (state: pageState, bounds: rect)
             }

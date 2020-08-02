@@ -293,7 +293,7 @@ struct ArticleResponse {
     init(data: Any?) throws {
         guard let data = data as? [String : Any],
             let sessionID = data[Key.sessionID.rawValue] as? String
-                   else { throw ModelError.errorParsingJSON }
+            else { throw ModelError.errorParsingJSON }
         
         self.visibleLines = data[Key.max_lines.rawValue] as? Int ?? defaultVisibleLines
         self.sessionID = sessionID
