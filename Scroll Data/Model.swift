@@ -366,6 +366,31 @@ struct ArticleBlurb {
 }
 
 
+struct Settings {
+    
+    private let defaultShowSessions = false
+    
+    enum Key: String {
+        case showReplays
+    }
+    
+    let showSessions: Bool
+    
+    init(data: Any) {
+        if let data = data as? [String : Any],
+            let showSessions = data[Key.showReplays.rawValue] as? Bool {
+            self.showSessions = showSessions
+        } else {
+            self.showSessions = defaultShowSessions
+        }
+    }
+    
+    init() {
+        self.showSessions = defaultShowSessions
+    }
+}
+
+
 
 public enum ModelError: Error {
     case errorParsingJSON

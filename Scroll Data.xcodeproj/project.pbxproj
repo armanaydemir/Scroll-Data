@@ -131,17 +131,16 @@
 				99DF267E21ACD3DA007D6788 /* AppDelegate.swift */,
 				F15A535B2070748200C2F7B6 /* ArticleViewController.swift */,
 				99DF26A621ACEAF7007D6788 /* ArticleViewModel.swift */,
-				99DF267C21ACD188007D6788 /* SystemFont.swift */,
-				F169BDDF1EA696CB00C528C7 /* Main.storyboard */,
 				99931E122127EE31006CAC45 /* StartingViewController.swift */,
-				F169BDE21EA696CB00C528C7 /* Assets.xcassets */,
-				F169BDE41EA696CB00C528C7 /* LaunchScreen.storyboard */,
-				F169BDE71EA696CB00C528C7 /* Info.plist */,
-				F169BDD61EA696CB00C528C7 /* Supporting Files */,
 				226A57DD215B1E2E0029D798 /* TitleSubtitleTableViewCell.swift */,
 				226A57DE215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib */,
 				229B641724B6D66000BA76C7 /* HardTableView.swift */,
 				229B641924B6EC9100BA76C7 /* Model.swift */,
+				F169BDDF1EA696CB00C528C7 /* Main.storyboard */,
+				F169BDE41EA696CB00C528C7 /* LaunchScreen.storyboard */,
+				F169BDE21EA696CB00C528C7 /* Assets.xcassets */,
+				F169BDE71EA696CB00C528C7 /* Info.plist */,
+				F169BDD61EA696CB00C528C7 /* Supporting Files */,
 			);
 			path = "Scroll Data";
 			sourceTree = "<group>";
@@ -149,6 +148,7 @@
 		F169BDD61EA696CB00C528C7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				99DF267C21ACD188007D6788 /* SystemFont.swift */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -538,7 +538,7 @@
 				INFOPLIST_FILE = "Scroll Data/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.3.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "Arman-Aydemir.Replay-Scroll-Data";
 				PRODUCT_NAME = Reader;
 				PROVISIONING_PROFILE = "";
@@ -562,7 +562,7 @@
 				INFOPLIST_FILE = "Scroll Data/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.3.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "Arman-Aydemir.Replay-Scroll-Data";
 				PRODUCT_NAME = Reader;
 				PROVISIONING_PROFILE = "";

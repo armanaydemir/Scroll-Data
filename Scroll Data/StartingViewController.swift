@@ -22,10 +22,6 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         }
     }
     
-    struct Settings {
-        let showSessions: Bool
-    }
-    
     private var tableMode: TableMode = .articles {
         didSet {
             switch tableMode {
@@ -77,26 +73,37 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
         
         checkSettings { settings in
-            
-            if settings.showSessions {
-                let segmentedControl = UISegmentedControl.init(items: [TableMode.articles.name(), TableMode.sessions.name()])
-                segmentedControl.selectedSegmentIndex = self.tableMode.rawValue
-                segmentedControl.addTarget(self, action: #selector(switchedTable(segmentedControl:)), for: .valueChanged)
-                navigationItem.titleView = segmentedControl
-            } else {
-                navigationItem.title = tableMode.name()
+            DispatchQueue.main.async {
+                if settings.showSessions {
+                    let segmentedControl = UISegmentedControl.init(items: [TableMode.articles.name(), TableMode.sessions.name()])
+                    segmentedControl.selectedSegmentIndex = self.tableMode.rawValue
+                    segmentedControl.addTarget(self, action: #selector(self.switchedTable(segmentedControl:)), for: .valueChanged)
+                    self.navigationItem.titleView = segmentedControl
+                } else {
+                    self.navigationItem.title = self.tableMode.name()
+                }
+                
+                self.fetchData()
+                table.register(UINib.init(nibName: "TitleSubtitleTableViewCell", bundle: nil), forCellReuseIdentifier: "default")
+                table.rowHeight = UITableView.automaticDimension
             }
-            
-            self.fetchData()
-            table.register(UINib.init(nibName: "TitleSubtitleTableViewCell", bundle: nil), forCellReuseIdentifier: "default")
-            table.rowHeight = UITableView.automaticDimension
         }
 
     }
     
-    private func checkSettings(completion: (_ settings: Settings) -> Void) {
+    private func checkSettings(completion: @escaping (_ settings: Settings) -> Void) {
         //should get settings from server
-        completion(Settings(showSessions: true))
+        Networking.request(headers: nil, method: "GET", fullEndpoint: serverURL + "/settings", body: nil) { data, response, error in
+            if let dataExists = data, error == nil {
+                do {
+                    let json = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments)
+                    let settings = Settings(data: json)
+                    completion(settings)
+                } catch {
+                    completion(Settings())
+                }
+            }
+        }
     }
     
     
