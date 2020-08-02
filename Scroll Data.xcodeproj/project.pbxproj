@@ -58,7 +58,7 @@
 		F15A41951FCA7C9F0040F11D /* Scroll Data-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Scroll Data-Bridging-Header.h"; sourceTree = "<group>"; };
 		F15A41961FCA7CA00040F11D /* request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = request.swift; sourceTree = "<group>"; };
 		F15A535B2070748200C2F7B6 /* ArticleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleViewController.swift; sourceTree = "<group>"; };
-		F169BDD31EA696CB00C528C7 /* Replay Scroll Data.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Replay Scroll Data.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F169BDD31EA696CB00C528C7 /* Reader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F169BDE01EA696CB00C528C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		F169BDE21EA696CB00C528C7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F169BDE51EA696CB00C528C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -117,7 +117,7 @@
 		F169BDD41EA696CB00C528C7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F169BDD31EA696CB00C528C7 /* Replay Scroll Data.app */,
+				F169BDD31EA696CB00C528C7 /* Reader.app */,
 				F169BDEC1EA696CB00C528C7 /* Scroll DataTests.xctest */,
 				99AE42FE21A6763600E42415 /* ScrollDataArticleTests.xctest */,
 			);
@@ -197,7 +197,7 @@
 			);
 			name = "Scroll Data";
 			productName = "Scroll Data";
-			productReference = F169BDD31EA696CB00C528C7 /* Replay Scroll Data.app */;
+			productReference = F169BDD31EA696CB00C528C7 /* Reader.app */;
 			productType = "com.apple.product-type.application";
 		};
 		F169BDEB1EA696CB00C528C7 /* Scroll DataTests */ = {
@@ -538,8 +538,9 @@
 				INFOPLIST_FILE = "Scroll Data/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "Arman-Aydemir.Replay-Scroll-Data";
-				PRODUCT_NAME = "Replay Scroll Data";
+				PRODUCT_NAME = Reader;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Scroll Data-Bridging-Header.h";
@@ -561,8 +562,9 @@
 				INFOPLIST_FILE = "Scroll Data/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "Arman-Aydemir.Replay-Scroll-Data";
-				PRODUCT_NAME = "Replay Scroll Data";
+				PRODUCT_NAME = Reader;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Scroll Data-Bridging-Header.h";
