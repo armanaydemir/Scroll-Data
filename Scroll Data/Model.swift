@@ -34,9 +34,11 @@ struct SessionBlurb {
         case startTime
         case type
         case version
+        case article_data
     }
     
     let id: String
+    let article: ArticleBlurb
 
     let udid: String?
     let articleID: String?
@@ -51,6 +53,7 @@ struct SessionBlurb {
             else { throw ModelError.errorParsingJSON }
         
         self.id = id
+        self.article = try ArticleBlurb(data: data[Key.article_data.rawValue])
         
         self.udid = data[Key.UDID.rawValue] as? String
         self.articleID = data[Key.article_id.rawValue] as? String

@@ -70,8 +70,17 @@ import UIKit
             case .success(let sessionReplay):
                 DispatchQueue.main.async {
                     self.loadHardTableView(content: sessionReplay.article.content, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: false)
+                    
+                    let timeLabel = UILabel()
+                    let totalDuration = sessionReplay.session.endTime - sessionReplay.session.startTime
+                    timeLabel.text = "Session Time: \(Int(totalDuration.rounded(FloatingPointRoundingRule.toNearestOrAwayFromZero)))s"
+                    self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: timeLabel)
+                    self.spinner.stopAnimating()
+                    
                     DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-                        self.spinner.stopAnimating()
+                        //not animating loading bar for now, not working yet
+                        //animateLoadingBar(totalDuration: totalDuration)
+                        
                         self.startAutoScrolling(session: sessionReplay.session)
                         print(sessionReplay.article.content.count)
                     }                    }

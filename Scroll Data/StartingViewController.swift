@@ -95,6 +95,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     private func checkSettings(completion: (_ settings: Settings) -> Void) {
+        //should get settings from server
         completion(Settings(showSessions: true))
     }
     
@@ -207,8 +208,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             subtitle = article.abstract ?? ""
         case .sessions:
             let session = self.sessions[indexPath.item]
-            title = session.id
-            subtitle = (session.deviceType ?? "") + " - " + (session.readerVersion ?? "")
+            title = session.article.title
+            subtitle = "\(session.id) -  \(session.deviceType ?? "") - \(session.readerVersion ?? "")"
         }
         
         let attributes = [NSAttributedString.Key.font: baseFont.withTextStyle(.headline)!]
