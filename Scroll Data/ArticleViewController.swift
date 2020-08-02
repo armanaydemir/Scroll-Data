@@ -23,9 +23,7 @@ import UIKit
     @IBOutlet weak var loadingBarView: UIView!
     @IBOutlet weak var loadingBarWidth: NSLayoutConstraint!
     
-    
     private var lastVisibleIndices = 0..<0
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,10 +52,10 @@ import UIKit
     func setUpReadMode(viewModel: ReadArticleViewModel) {
         viewModel.fetchText { result in
             switch result {
-            case .success(let article):
+            case .success(let articleResponse):
                 DispatchQueue.main.async {
                     self.spinner.stopAnimating()
-                    self.loadHardTableView(content: article.content, maxVisibleLines: article.visibleLines, includeSubmitButton: true)
+                    self.loadHardTableView(content: articleResponse.article.content, maxVisibleLines: articleResponse.visibleLines, includeSubmitButton: true)
                     self.scrollViewDidScroll(self.hardTableView)
                 }
             case .failure(let error):
@@ -71,7 +69,7 @@ import UIKit
             switch result {
             case .success(let sessionReplay):
                 DispatchQueue.main.async {
-                    self.loadHardTableView(content: sessionReplay.content.map { $0.text }, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: false)
+                    self.loadHardTableView(content: sessionReplay.article.content, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: true)
                     DispatchQueue.main.asyncAfter(deadline: .now()+1) {
                         self.spinner.stopAnimating()
                         self.startAutoScrolling(session: sessionReplay.session)

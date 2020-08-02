@@ -23,6 +23,44 @@ private let contentOffsetKey = "content_offset"
 private let linesPerPageKey = "visible_lines"
 
 
+struct SessionBlurb {
+    
+    enum Key: String {
+        case UDID
+        case _id
+        case article_id
+        case completed
+        case endTime
+        case startTime
+        case type
+        case version
+    }
+    
+    let id: String
+
+    let udid: String?
+    let articleID: String?
+    let startTime: Int?
+    let endTime: Int?
+    let deviceType: String?
+    let readerVersion: String?
+    
+    init(data: Any?) throws {
+        guard let data = data as? [String : Any],
+            let id = data[Key._id.rawValue] as? String
+            else { throw ModelError.errorParsingJSON }
+        
+        self.id = id
+        
+        self.udid = data[Key.UDID.rawValue] as? String
+        self.articleID = data[Key.article_id.rawValue] as? String
+        self.startTime = data[Key.startTime.rawValue] as? Int
+        self.endTime = data[Key.endTime.rawValue] as? Int
+        self.deviceType = data[Key.type.rawValue] as? String
+        self.readerVersion = data[Key.version.rawValue] as? String
+    }
+}
+
 public struct Session {
     public let absolutePageStates: [AbsolutePageState]
     public let linesPerPage: Int
@@ -159,24 +197,30 @@ private let firstCharacterIndexKey = "first_character_index"
 private let spacerKey = "spacer"
 
 private let contentKey = "content"
-private let visibleLinesKey = "max_lines"
 
 private let defaultVisibleLines = 28
 
 struct SessionReplayResponse {
+    
+    enum Key: String {
+        case session_data
+        case article_data
+        case max_lines
+    }
+    
     let session: Session
-    let content: [Content]
+    let article: Article
     let visibleLines: Int
     
     init(data: Any?) throws {
-        guard let data = data as? [String : Any],
-            let content = try (data[contentKey] as? [Any])?.compactMap({ try Content(data: $0) })
+        guard let data = data as? [String : Any]
             else { throw ModelError.errorParsingJSON }
         
-        let session = try Session(data: (data[sessionDataKey] as? [Any]))
+        self.article = try Article(data: data[Key.article_data.rawValue])
+        self.session = try Session(data: (data[Key.session_data.rawValue] as? [Any]))
 
         let visibleLines: Double
-        if let v = data[visibleLinesKey] as? Double {
+        if let v = data[Key.max_lines.rawValue] as? Double {
             visibleLines = v
         } else {
             visibleLines = Double(defaultVisibleLines)
@@ -184,8 +228,6 @@ struct SessionReplayResponse {
         }
         
         self.visibleLines = Int(visibleLines)
-        self.content = content
-        self.session = session
     }
 }
 
@@ -232,27 +274,51 @@ struct Content: Codable {
     }
 }
 
+
+
+
+
+struct ArticleResponse {
+    
+    enum Key: String {
+        case article_data
+        case max_lines
+        case sessionID
+    }
+    
+    let visibleLines: Int
+    let sessionID: String
+    let article: Article
+    
+    init(data: Any?) throws {
+        guard let data = data as? [String : Any],
+            let sessionID = data[Key.sessionID.rawValue] as? String
+                   else { throw ModelError.errorParsingJSON }
+        
+        self.visibleLines = data[Key.max_lines.rawValue] as? Int ?? defaultVisibleLines
+        self.sessionID = sessionID
+        self.article = try Article(data: data[Key.article_data.rawValue])
+    }
+}
+
+
 struct Article {
     
     enum Key: String {
         case content
-        case visible_lines
     }
     
     let content: [String]
-    let visibleLines: Int
     let info: ArticleBlurb
     
     init(data: Any?) throws {
         guard let data = data as? [String : Any],
-                   let content = data[Key.content.rawValue] as? [String]
-                   else { throw ModelError.errorParsingJSON }
+            let content = data[Key.content.rawValue] as? [String]
+            else { throw ModelError.errorParsingJSON }
                
         self.content = content
-        self.visibleLines = data[Key.visible_lines.rawValue] as? Int ?? defaultVisibleLines
         self.info = try ArticleBlurb(data: data)
     }
-    
 }
 
 

@@ -10,15 +10,15 @@ import UIKit
 
 class SessionReplayViewModel: NSObject {
     
-    let articleLink: String
+    let sessionID: String
 
-    init(articleLink: String) {
-        self.articleLink = articleLink
+    init(sessionID: String) {
+        self.sessionID = sessionID
     }
     
     func fetchSessionReplay(completion: @escaping ((_ result: Result<SessionReplayResponse, Error>) -> Void))  {
         let data: [String:Any] = [
-            "article_link": self.articleLink,
+            "article_link": self.sessionID,
             "UDID": UDID,
             "type": AppDelegate.deviceType() ?? "",
             "version": appVersion
@@ -46,22 +46,19 @@ class ReadArticleViewModel {
     let timeOffset:Double = 100000000
     var startTime = CFAbsoluteTimeGetCurrent()
     var last_sent = CFAbsoluteTimeGetCurrent()
-    var session_id: String?
-    
-    var articleLink: String
     
     var recent_first: Int?
     var recent_last: Int?
     
+    let articleLink: String
     
-    var lines: Array<String>?
+    var articleResponse: ArticleResponse?
     
     init(articleLink: String) {
         self.articleLink = articleLink
-        
     }
     
-    func fetchText(completion: @escaping ((_ result: Result<Article, Error>) -> Void))  {
+    func fetchText(completion: @escaping ((_ result: Result<ArticleResponse, Error>) -> Void))  {
         let data: [String:Any] = [
             "article_link": self.articleLink,
             "UDID": UDID,
@@ -74,8 +71,9 @@ class ReadArticleViewModel {
             if let dataExists = data, error == nil {
                 do {
                     let data = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments)
-                    let article = try Article(data: data)
-                    completion(.success(article))
+                    let articleResponse = try ArticleResponse(data: data)
+                    self.articleResponse = articleResponse
+                    completion(.success(articleResponse))
                 } catch {
                     completion(.failure(error))
                 }
@@ -117,13 +115,16 @@ class ReadArticleViewModel {
     }
     
     func closeArticle(complete: Bool) {
-        guard let a = UIApplication.shared.delegate as? AppDelegate else {return}
+        guard let a = UIApplication.shared.delegate as? AppDelegate,
+            let articleResponse = self.articleResponse
+            else { return }
+        
         let data: [String: Any] = [
             "UDID": UDID,
             "startTime": self.startTime*timeOffset,
-            "article": self.articleLink,
+            "article": articleResponse.article.info.url,
             "time": CFAbsoluteTimeGetCurrent()*timeOffset,
-            "session_id": self.session_id ?? "",
+            "session_id": articleResponse.sessionID,
             "complete": complete,
             "portrait": a.orientation.isPortrait
         ]

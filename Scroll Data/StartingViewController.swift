@@ -48,7 +48,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     private let refreshControl = UIRefreshControl()
     
     var articles: [ArticleBlurb] = []
-    var sessions: [Session] = []
+    var sessions: [SessionBlurb] = []
     
     var last_refresh: Date?
     
@@ -122,7 +122,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
                      guard let list = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? [Any]
                          else { throw NSError(domain: "invalid json", code: 1, userInfo: nil) }
                      print("sessions: \(list)")
-//                     self.sessions = list.compactMap({ try? Session(data: $0) })
+                     self.sessions = list.compactMap({ try? SessionBlurb(data: $0) })
                  } catch let err {
                      print(data ?? "nil data")
                      print(err)
@@ -200,12 +200,16 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         let title: String
         let subtitle: String
         
-//        switch tableMode {
-//        case .articles:
-            title = self.articles[indexPath.item].title
-            subtitle = self.articles[indexPath.item].abstract ?? ""
-//        case .sessions:
-//        }
+        switch tableMode {
+        case .articles:
+            let article = self.articles[indexPath.item]
+            title = article.title
+            subtitle = article.abstract ?? ""
+        case .sessions:
+            let session = self.sessions[indexPath.item]
+            title = session.id
+            subtitle = (session.deviceType ?? "") + " - " + (session.readerVersion ?? "")
+        }
         
         let attributes = [NSAttributedString.Key.font: baseFont.withTextStyle(.headline)!]
         let sub_at = [NSAttributedString.Key.font: baseFont.withTextStyle(.subheadline)!]
@@ -219,8 +223,10 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch tableMode {
-        case .articles, .sessions:
+        case .articles:
             self.link = self.articles[indexPath.item].url
+        case .sessions:
+            self.link = self.sessions[indexPath.item].id
         }
         
         self.performSegue(withIdentifier: "startReading", sender: self)
@@ -237,8 +243,12 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let vc = segue.destination
         if let destination: ArticleViewController = vc as? ArticleViewController {
-            destination.mode = .read(viewModel: ReadArticleViewModel(articleLink: self.link))
-//            destination.mode = .replay(viewModel: SessionReplayViewModel(articleLink: self.link))
+            switch tableMode {
+            case .articles:
+                destination.mode = .read(viewModel: ReadArticleViewModel(articleLink: self.link))
+            case .sessions:
+                destination.mode = .replay(viewModel: SessionReplayViewModel(sessionID: self.link))
+            }
 
             guard let a = UIApplication.shared.delegate as? AppDelegate else {return}
             a.autoRotate = false
