@@ -16,27 +16,22 @@ class SessionReplayViewModel: NSObject {
         self.sessionID = sessionID
     }
     
-    func fetchSessionReplay(completion: @escaping ((_ result: Result<SessionReplayResponse, Error>) -> Void))  {
-        let data: [String:Any] = [
-            "article_link": self.sessionID,
-            "UDID": UDID,
-            "type": AppDelegate.deviceType() ?? "",
-            "version": appVersion
-        ]
-        
-        Networking.request(headers: nil, method: "POST", fullEndpoint: serverURL+"/session_replay", body: data, completion: { data, response, error in
-            if let dataExists = data, error == nil {
-                do {
-                    let data = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments)
-                    let sessionReplay = try SessionReplayResponse(data: data)
-                    completion(.success(sessionReplay))
-                } catch {
-                    completion(.failure(error))
-                }
-            } else {
-                completion(.failure(ServerError.serverDisconnected))
-            }
-        })
+    func fetchSessionReplay(completion: @escaping ((_ result: Result<SessionReplayResponse, Error>) -> Void))  {        
+        Server.Request
+            .openSession(sessionID: self.sessionID, UDID: UDID, type: AppDelegate.deviceType(), version: appVersion)
+            .startRequest   { data, response, error in
+                                if let dataExists = data, error == nil {
+                                    do {
+                                        let data = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments)
+                                        let sessionReplay = try SessionReplayResponse(data: data)
+                                        completion(.success(sessionReplay))
+                                    } catch {
+                                        completion(.failure(error))
+                                    }
+                                } else {
+                                    completion(.failure(ServerError.serverDisconnected))
+                                }
+                            }
     }
 }
 
@@ -44,6 +39,7 @@ class ReadArticleViewModel {
     
     
     let timeOffset:Double = 100000000
+
     var startTime = CFAbsoluteTimeGetCurrent()
     var last_sent = CFAbsoluteTimeGetCurrent()
     
@@ -52,35 +48,35 @@ class ReadArticleViewModel {
     
     let articleLink: String
     
-    var articleResponse: ArticleResponse?
+    var articleResponse: OpenArticle?
     
     init(articleLink: String) {
         self.articleLink = articleLink
     }
     
-    func fetchText(completion: @escaping ((_ result: Result<ArticleResponse, Error>) -> Void))  {
-        let data: [String:Any] = [
-            "article_link": self.articleLink,
-            "UDID": UDID,
-            "startTime":self.startTime*timeOffset,
-            "type": AppDelegate.deviceType() ?? "",
-            "version":appVersion
-        ]
+    func fetchText(completion: @escaping ((_ result: Result<OpenArticle, Error>) -> Void))  {
         
-        Networking.request(headers: nil, method: "POST", fullEndpoint: serverURL+"/open_article", body: data, completion: { data, response, error in
-            if let dataExists = data, error == nil {
-                do {
-                    let data = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments)
-                    let articleResponse = try ArticleResponse(data: data)
-                    self.articleResponse = articleResponse
-                    completion(.success(articleResponse))
-                } catch {
-                    completion(.failure(error))
+        Server.Request
+            .openArticle(articleID: self.articleLink,
+                         UDID: UDID,
+                         startTime: self.startTime*timeOffset,
+                         type: AppDelegate.deviceType(),
+                         version: appVersion)
+            .log()
+            .startRequest { data, response, error in
+                if let dataExists = data, error == nil {
+                    do {
+                        let data = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments)
+                        let articleResponse = try OpenArticle(data: data)
+                        self.articleResponse = articleResponse
+                        completion(.success(articleResponse))
+                    } catch {
+                        completion(.failure(error))
+                    }
+                } else {
+                    completion(.failure(ServerError.serverDisconnected))
                 }
-            } else {
-                completion(.failure(ServerError.serverDisconnected))
             }
-        })
     }
 
     func submitData(content_offset:CGFloat, first_index:Int, last_index:Int){
@@ -88,29 +84,22 @@ class ReadArticleViewModel {
             
             let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
             
-            let data: [String: Any] = [
-                "UDID": UDID,
-                "article":self.articleLink,
-                "startTime":self.startTime*timeOffset,
-                "appeared":self.last_sent*timeOffset,
-                "time": cur*timeOffset,
-                "first_cell":first_index,
-                "last_cell":last_index,
-                "previous_first_cell":self.recent_first ?? "",
-                "previous_last_cell":self.recent_last ?? "",
-                "content_offset":content_offset ]
-            
-            Networking.request(headers: nil, method: "POST", fullEndpoint: serverURL+"/submit_data", body: data) {
-                data, response, error in
-
-                if let e = error { print(e) }
-            }
+            Server.Request
+                .submitReadingData(articleID: self.articleLink,
+                                   UDID: UDID,
+                                   startTime: self.startTime*timeOffset,
+                                   appeared: self.last_sent*timeOffset,
+                                   time: cur*timeOffset,
+                                   firstCell: first_index,
+                                   lastCell: last_index,
+                                   contentOffset: content_offset,
+                                   previousFirstCell: self.recent_first,
+                                   previousLastCell: self.recent_last)
+                .startRequest { data, response, error in if let e = error { print(e) } }
             
             self.last_sent = cur
             self.recent_last = last_index
             self.recent_first = first_index
-            
-            print(data)
         }
     }
     
@@ -119,21 +108,15 @@ class ReadArticleViewModel {
             let articleResponse = self.articleResponse
             else { return }
         
-        let data: [String: Any] = [
-            "UDID": UDID,
-            "startTime": self.startTime*timeOffset,
-            "article": articleResponse.article.info.url,
-            "time": CFAbsoluteTimeGetCurrent()*timeOffset,
-            "session_id": articleResponse.sessionID,
-            "complete": complete,
-            "portrait": a.orientation.isPortrait
-        ]
-        
-        print(data)
-        
-        Networking.request(headers: nil, method: "POST", fullEndpoint: serverURL+"/close_article", body: data) { data, response, error in
-            if let e = error { print(e) }
-        }
+        Server.Request
+            .closeArticle(articleID: articleResponse.article.info.url,
+                          UDID: UDID,
+                          startTime: self.startTime*timeOffset,
+                          time: CFAbsoluteTimeGetCurrent()*timeOffset,
+                          sessionID: articleResponse.sessionID,
+                          complete: complete,
+                          isPortrait: a.orientation.isPortrait)
+            .startRequest { data, response, error in if let e = error { print(e) } }
     }
 }
 

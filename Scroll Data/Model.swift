@@ -281,7 +281,7 @@ struct Content: Codable {
 
 
 
-struct ArticleResponse {
+struct OpenArticle {
     
     enum Key: String {
         case article_data

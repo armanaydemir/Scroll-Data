@@ -11,12 +11,10 @@ import UIKit
 
 let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "unknown"
 
-let serverURL = "http://157.245.227.103:22364"
-//let serverURL = "http://localhost:22364"
-
 let UDID = UIDevice.current.identifierForVendor?.uuidString ?? "unknown"
 
 let baseFont: UIFont = UIFont.init(name: "Times New Roman", size: UIFont.systemFontSize)!
+
 
 
 @UIApplicationMain
@@ -45,15 +43,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    class func deviceType() -> String? {
+    class func deviceType() -> String {
         var systemInfo = utsname()
         uname(&systemInfo)
         
-        return Mirror(reflecting: systemInfo.machine).children.reduce("") { identifier, element in
-            guard let value = element.value as? Int8, value != 0 else { return identifier }
-            return (identifier ?? "") + String(UnicodeScalar(UInt8(value)))
+        let deviceType = Mirror(reflecting: systemInfo.machine).children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8,
+                value != 0
+                else { return identifier }
+            
+            return (identifier) + String(UnicodeScalar(UInt8(value)))
         }
         
+        return deviceType
     }
         
 }

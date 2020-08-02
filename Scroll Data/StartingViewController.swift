@@ -92,8 +92,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     private func checkSettings(completion: @escaping (_ settings: Settings) -> Void) {
-        //should get settings from server
-        Networking.request(headers: nil, method: "GET", fullEndpoint: serverURL + "/settings", body: nil) { data, response, error in
+        Server.Request.settings.startRequest { data, response, error in
             if let dataExists = data, error == nil {
                 do {
                     let json = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments)
@@ -122,55 +121,20 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         guard let table = self.table, let loadIndicator = self.loadIndicator else {
              print("couldn't connect starting vc outlets! bad things coming.....")
              return
-         }
-         loadIndicator.startAnimating() //POST
-         Networking.request(headers:nil, method: "GET", fullEndpoint: serverURL+"/sessions", body: nil, completion: { data, response, error in
-             if let dataExists = data, error == nil {
-                 do {
-                     guard let list = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? [Any]
-                         else { throw NSError(domain: "invalid json", code: 1, userInfo: nil) }
-                     print("sessions: \(list)")
-                     self.sessions = list.compactMap({ try? SessionBlurb(data: $0) })
-                 } catch let err {
-                     print(data ?? "nil data")
-                     print(err)
-                     print("invalidddd")
-                 }
-             }else{
-                 print("server disconnect, gotta do somethin here")
-                 //self.text[0] = "problem connecting to server";
-             }
-             
-             DispatchQueue.main.async{
-                 let attributes = [NSAttributedString.Key.font: baseFont.withTextStyle(.subheadline)!]
-                 self.refreshControl.attributedTitle = NSAttributedString(string: (Date().description), attributes: attributes)
-                 loadIndicator.stopAnimating()
-                 table.reloadData()
-                 table.isHidden = false
-                 self.refreshControl.endRefreshing()
-             }
-         })
-    }
-    
-    private func fetchData() {
-        guard let table = self.table, let loadIndicator = self.loadIndicator else {
-            print("couldn't connect starting vc outlets! bad things coming.....")
-            return
         }
         
-        Networking.request(headers:nil, method: "GET", fullEndpoint: serverURL+"/articles", body: nil, completion: { data, response, error in
+        loadIndicator.startAnimating() //POST
+        
+        Server.Request.sessions.startRequest { data, response, error in
             if let dataExists = data, error == nil {
                 do {
                     guard let list = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? [Any]
                         else { throw NSError(domain: "invalid json", code: 1, userInfo: nil) }
-                    
-                    self.articles = list.compactMap({ try? ArticleBlurb(data: $0) })
+                    self.sessions = list.compactMap({ try? SessionBlurb(data: $0) })
                 } catch let err {
-                    print(data ?? "nil data")
                     print(err)
-                    print("invalidddd")
                 }
-            }else{
+            } else {
                 print("server disconnect, gotta do somethin here")
                 //self.text[0] = "problem connecting to server";
             }
@@ -183,7 +147,39 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
                 table.isHidden = false
                 self.refreshControl.endRefreshing()
             }
-        })
+        }
+    }
+    
+    private func fetchData() {
+        guard let table = self.table, let loadIndicator = self.loadIndicator else {
+            print("couldn't connect starting vc outlets! bad things coming.....")
+            return
+        }
+        
+        Server.Request.articles.startRequest { data, response, error in
+            if let dataExists = data, error == nil {
+                do {
+                    guard let list = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? [Any]
+                        else { throw NSError(domain: "invalid json", code: 1, userInfo: nil) }
+                    
+                    self.articles = list.compactMap({ try? ArticleBlurb(data: $0) })
+                } catch let err {
+                    print(err)
+                }
+            } else {
+                print("server disconnect, gotta do somethin here")
+                //self.text[0] = "problem connecting to server";
+            }
+            
+            DispatchQueue.main.async{
+                let attributes = [NSAttributedString.Key.font: baseFont.withTextStyle(.subheadline)!]
+                self.refreshControl.attributedTitle = NSAttributedString(string: (Date().description), attributes: attributes)
+                loadIndicator.stopAnimating()
+                table.reloadData()
+                table.isHidden = false
+                self.refreshControl.endRefreshing()
+            }
+        }
     }
     
     @objc private func refreshData(_ sender: Any) {

@@ -72,8 +72,9 @@ import UIKit
                     self.loadHardTableView(content: sessionReplay.article.content, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: false)
                     
                     let timeLabel = UILabel()
+                    timeLabel.font = UIFont.systemFont(ofSize: 12)
                     let totalDuration = sessionReplay.session.endTime - sessionReplay.session.startTime
-                    timeLabel.text = "Session Time: \(Int(totalDuration.rounded(FloatingPointRoundingRule.toNearestOrAwayFromZero)))s"
+                    timeLabel.text = "Session Length: \(Int(totalDuration.rounded(FloatingPointRoundingRule.toNearestOrAwayFromZero)))s"
                     self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: timeLabel)
                     self.spinner.stopAnimating()
                     
@@ -83,7 +84,8 @@ import UIKit
                         
                         self.startAutoScrolling(session: sessionReplay.session)
                         print(sessionReplay.article.content.count)
-                    }                    }
+                    }    
+                }
             case .failure(let error):
                 print(error)
             }
