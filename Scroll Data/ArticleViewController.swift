@@ -104,7 +104,7 @@ import UIKit
     func loadHardTableView(content: [String], maxVisibleLines: Int, includeSubmitButton: Bool) {
 
         let contentCells = createContentCells(content: content, maxVisibleLines: maxVisibleLines)
-        let buttonCell = [ createSubmitButtonCell(emptyPlaceholder: !includeSubmitButton) ]
+        let buttonCell = [ createSubmitButtonCell(totalHeight: hardTableView.bounds.height, emptyPlaceholder: !includeSubmitButton) ]
 
         hardTableView.cells = contentCells + buttonCell
     }
@@ -163,11 +163,11 @@ import UIKit
         return cells
     }
     
-    func createSubmitButtonCell(emptyPlaceholder: Bool = false) -> HardTableView.Cell {
+    func createSubmitButtonCell(totalHeight: CGFloat, emptyPlaceholder: Bool = false) -> HardTableView.Cell {
         
-        let buttonSpacing: CGFloat = 44
+        let buttonTopSpacing: CGFloat = 44
         let buttonHeight: CGFloat = 64
-        let totalHeight: CGFloat = buttonHeight + 2 * buttonSpacing
+        let buttonBottomSpacing: CGFloat = totalHeight - buttonTopSpacing - buttonHeight
         
         let submitButton = UIButton(type: .system)
         submitButton.setTitle("Submit Reading", for: .normal)
@@ -180,12 +180,12 @@ import UIKit
 
         NSLayoutConstraint.activate([
            submitButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-           submitButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-           submitButton.topAnchor.constraint(lessThanOrEqualTo: containerView.topAnchor, constant: buttonSpacing),
+           submitButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: buttonTopSpacing),
+           submitButton.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -1*buttonBottomSpacing),
            submitButton.heightAnchor.constraint(equalToConstant: buttonHeight)
         ])
         
-        submitButton.isHidden = emptyPlaceholder
+        submitButton.isEnabled = !emptyPlaceholder
 
         return HardTableView.Cell(view: containerView, height: totalHeight)
     }
