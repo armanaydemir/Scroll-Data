@@ -28,8 +28,6 @@ import UIKit
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
-        
         spinner.hidesWhenStopped = true
         spinner.startAnimating()
         
@@ -49,7 +47,18 @@ import UIKit
         }
     }
     
+    @objc func logEvent(notification: Notification) {
+        if let mode = self.mode, case Mode.read(let vm) = mode {
+            vm.logEvent(notification: notification)
+        }
+    }
+    
     func setUpReadMode(viewModel: ReadArticleViewModel) {
+        NotificationCenter.default.addObserver(self, selector: #selector(logEvent(notification:)), name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(logEvent(notification:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(logEvent(notification:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(logEvent(notification:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+
         viewModel.fetchText { result in
             switch result {
             case .success(let articleResponse):

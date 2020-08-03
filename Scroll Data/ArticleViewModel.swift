@@ -146,6 +146,21 @@ class ReadArticleViewModel {
                 if case .failure(let e) = result { print(e) }
             }
     }
+    
+    @objc func logEvent(notification: Notification) {
+        switch notification.name {
+        case UIApplication.willResignActiveNotification:
+            print("Event - will resign active")
+        case UIApplication.didBecomeActiveNotification:
+            print("Event - did become active")
+        case UIApplication.didEnterBackgroundNotification:
+            print("Event - did enter background")
+        case UIApplication.willEnterForegroundNotification:
+            print("Event - will enter foreground")
+        default:
+            print("unknown notification")
+        }
+    }
 }
 
 
