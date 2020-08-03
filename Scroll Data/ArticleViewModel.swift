@@ -31,9 +31,6 @@ class ReadArticleViewModel {
     var startTime = CFAbsoluteTimeGetCurrent()
     var last_sent = CFAbsoluteTimeGetCurrent()
     
-    var recent_first: Int?
-    var recent_last: Int?
-    
     let articleLink: String
     
     var articleResponse: OpenArticle?
@@ -54,33 +51,27 @@ class ReadArticleViewModel {
             .startRequest(completion: completion)
     }
 
-    func submitData(content_offset:CGFloat, first_index:Int, last_index:Int){
-        if (self.recent_first == nil || first_index != recent_first || last_index != recent_last) {
-            
-            let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
-            
-            Server.Request
-                .submitReadingData(articleID: self.articleLink,
-                                   UDID: UDID,
-                                   startTime: self.startTime*timeOffset,
-                                   appeared: self.last_sent*timeOffset,
-                                   time: cur*timeOffset,
-                                   firstCell: first_index,
-                                   lastCell: last_index,
-                                   contentOffset: content_offset,
-                                   previousFirstCell: self.recent_first,
-                                   previousLastCell: self.recent_last)
-                .startRequest { (result : Result<GenericResponse, Swift.Error>) in
-                    if case .failure = result {
-                        //print(e)
-                        //suppressing error for now because empty json being returned from server
-                    }
+    func submitData(content_offset: CGFloat, first_index: CGFloat, last_index: CGFloat){
+        let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
+        
+        Server.Request
+            .submitReadingData(articleID: self.articleLink,
+                               UDID: UDID,
+                               startTime: self.startTime*timeOffset,
+                               appeared: self.last_sent*timeOffset,
+                               time: cur*timeOffset,
+                               firstCell: first_index,
+                               lastCell: last_index,
+                               contentOffset: content_offset)
+            .log()
+            .startRequest { (result : Result<GenericResponse, Swift.Error>) in
+                if case .failure = result {
+                    //print(e)
+                    //suppressing error for now because empty json being returned from server
                 }
-            
-            self.last_sent = cur
-            self.recent_last = last_index
-            self.recent_first = first_index
-        }
+            }
+        
+        self.last_sent = cur
     }
     
     func closeArticle(complete: Bool) {

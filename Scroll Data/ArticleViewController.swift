@@ -23,7 +23,7 @@ import UIKit
     @IBOutlet weak var loadingBarView: UIView!
     @IBOutlet weak var loadingBarWidth: NSLayoutConstraint!
     
-    private var lastVisibleIndices = 0..<0
+    private var lastVisibleIndices: Range<CGFloat> = 0..<0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -276,7 +276,7 @@ extension ArticleViewController: UIScrollViewDelegate {
                 lastVisibleIndices = currentVisibleIndices
             }
             
-            vm.submitData(content_offset: scrollView.contentOffset.y, first_index: currentVisibleIndices.startIndex, last_index: currentVisibleIndices.endIndex - 1)
+            vm.submitData(content_offset: scrollView.contentOffset.y, first_index: currentVisibleIndices.lowerBound, last_index: currentVisibleIndices.upperBound)
         default: break
         }
     }

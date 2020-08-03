@@ -23,7 +23,14 @@ struct Server {
         case articles
         case sessions
         case openArticle(articleID: String, UDID: String, startTime: Double, type: String, version: String)
-        case submitReadingData(articleID: String, UDID: String, startTime: Double, appeared: Double, time: Double, firstCell: Int, lastCell: Int, contentOffset: CGFloat, previousFirstCell: Int?, previousLastCell: Int?)
+        case submitReadingData(articleID: String,
+            UDID: String,
+            startTime: Double,
+            appeared: Double,
+            time: Double,
+            firstCell: CGFloat,
+            lastCell: CGFloat,
+            contentOffset: CGFloat)
         case closeArticle(articleID: String, UDID: String, startTime: Double, time: Double, sessionID: String, complete: Bool, isPortrait: Bool)
         case openSession(sessionID: String, UDID: String, type: String, version: String)
         
@@ -97,7 +104,7 @@ struct Server {
                     "type": type,
                     "version": version
                 ]
-            case .submitReadingData(articleID: let articleID, UDID: let UDID, startTime: let startTime, appeared: let appeared, time: let time, firstCell: let firstCell, lastCell: let lastCell, contentOffset: let contentOffset, previousFirstCell: let previousFirstCell, previousLastCell: let previousLastCell):
+            case .submitReadingData(articleID: let articleID, UDID: let UDID, startTime: let startTime, appeared: let appeared, time: let time, firstCell: let firstCell, lastCell: let lastCell, contentOffset: let contentOffset):
                 params = [  "UDID": UDID,
                             "article": articleID,
                             "startTime": startTime,
@@ -105,8 +112,6 @@ struct Server {
                             "time": time,
                             "first_cell": firstCell,
                             "last_cell": lastCell,
-                            "previous_first_cell": previousFirstCell ?? "",
-                            "previous_last_cell": previousLastCell ?? "",
                             "content_offset": contentOffset ]
                 
             case .closeArticle(articleID: let articleID, UDID: let UDID, startTime: let startTime, time: let time, sessionID: let sessionID, complete: let complete, isPortrait: let isPortrait):

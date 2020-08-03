@@ -159,16 +159,41 @@ class HardTableView: UIScrollView {
         return CGPoint(x: 0, y: finalOffset)
     }
     
-    public func visibleIndices() -> Range<Int> {
+    public func visibleIndices() -> Range<CGFloat> {
         let minimumY = contentOffset.y
         let maximumY = minimumY + frame.size.height
         
-        guard let firstVisibleCell = cumulativeHeight.filter({ $0.value + $0.key.height >= minimumY }).min(by: { $0.value < $1.value })?.key ?? cells.first,
-            let firstInvisibleCell = cumulativeHeight.filter({ $0.value >= maximumY }).min(by: { $0.value < $1.value })?.key ?? cells.last,
-            let firstIndex = cells.firstIndex(of: firstVisibleCell),
-            let firstInvisibleIndex = cells.firstIndex(of: firstInvisibleCell)
+        guard let firstVisibleCellObject = cumulativeHeight.filter({ $0.value + $0.key.height >= minimumY }).min(by: { $0.value < $1.value }),
+            let lastVisibleCellObject = cumulativeHeight.filter({ $0.value < maximumY }).max(by: { $0.value < $1.value }),
+            let firstVisibleIndex = cells.firstIndex(of: firstVisibleCellObject.key),
+            let lastVisibleIndex = cells.firstIndex(of: lastVisibleCellObject.key)
             else { return 0..<0 }
         
-        return firstIndex..<firstInvisibleIndex
+        let firstVisibleCell = firstVisibleCellObject.key
+        let lastVisibleCell = lastVisibleCellObject.key
+        
+        let firstCellTop = firstVisibleCellObject.value
+        let lastCellTop = lastVisibleCellObject.value
+        
+        let firstIndexVisiblePortion = (minimumY - firstCellTop) / firstVisibleCell.height
+        let lastIndexVisiblePortion = (maximumY - lastCellTop) / lastVisibleCell.height
+        
+        let top: CGFloat
+        if firstIndexVisiblePortion < 0 {
+            //scroll position is above top of first cell
+            top = CGFloat(firstVisibleIndex)
+        } else {
+            top = CGFloat(firstVisibleIndex) + firstIndexVisiblePortion
+        }
+        
+        let bottom: CGFloat
+        if lastIndexVisiblePortion > 1 {
+            //scroll position is below bottom of last cell
+            bottom = CGFloat(lastVisibleIndex) + 1
+        } else {
+            bottom = CGFloat(lastVisibleIndex) + lastIndexVisiblePortion
+        }
+        
+        return top..<bottom
     }
 }
