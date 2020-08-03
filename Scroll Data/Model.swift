@@ -23,7 +23,7 @@ private let contentOffsetKey = "content_offset"
 private let linesPerPageKey = "visible_lines"
 
 
-struct SessionBlurb {
+struct SessionBlurb: JSONParseable {
     
     enum Key: String {
         case UDID
@@ -64,7 +64,7 @@ struct SessionBlurb {
     }
 }
 
-public struct Session {
+public struct Session: JSONParseable {
     public let absolutePageStates: [AbsolutePageState]
     public let linesPerPage: Int
 
@@ -72,7 +72,7 @@ public struct Session {
     public let endTime: TimeInterval
     public let relativePageStates: [RelativePageState]
     
-    public init(data: [Any]?) throws {
+    public init(data: Any?) throws {
         guard let sessionData = data as? [[String : Any]],
             let unconvertedStartTime = sessionData.first?[startTimeKey] as? Int,
             let unconvertedEndTime = sessionData.last?[appearedTimeKey] as? Int
@@ -203,7 +203,7 @@ private let contentKey = "content"
 
 private let defaultVisibleLines = 28
 
-struct SessionReplayResponse {
+struct SessionReplayResponse: JSONParseable {
     
     enum Key: String {
         case session_data
@@ -234,7 +234,7 @@ struct SessionReplayResponse {
     }
 }
 
-struct Content: Codable {
+struct Content: Codable, JSONParseable {
     let text: String
     let paragraph: Int
     let firstWordIndex: Int
@@ -281,7 +281,7 @@ struct Content: Codable {
 
 
 
-struct OpenArticle {
+struct OpenArticle: JSONParseable {
     
     enum Key: String {
         case article_data
@@ -305,7 +305,7 @@ struct OpenArticle {
 }
 
 
-struct Article {
+struct Article: JSONParseable {
     
     enum Key: String {
         case content
@@ -325,7 +325,7 @@ struct Article {
 }
 
 
-struct ArticleBlurb {
+struct ArticleBlurb: JSONParseable {
     
     enum Key: String {
         case title
@@ -366,7 +366,7 @@ struct ArticleBlurb {
 }
 
 
-struct Settings {
+struct Settings: JSONParseable {
     
     private let defaultShowSessions = false
     
@@ -376,7 +376,7 @@ struct Settings {
     
     let showSessions: Bool
     
-    init(data: Any) {
+    init(data: Any?) {
         if let data = data as? [String : Any],
             let showSessions = data[Key.showReplays.rawValue] as? Bool {
             self.showSessions = showSessions

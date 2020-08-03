@@ -27,8 +27,25 @@ struct Server {
         case closeArticle(articleID: String, UDID: String, startTime: Double, time: Double, sessionID: String, complete: Bool, isPortrait: Bool)
         case openSession(sessionID: String, UDID: String, type: String, version: String)
         
-        func startRequest(completion: @escaping Networking.RequestCompletion) {
-            Networking.request(headers: Server.headers(), method: self.type().rawValue, fullEndpoint: self.endpoint(), body: self.parameters(), completion: completion)
+        typealias Completion<T: JSONParseable> = (Result<T, Swift.Error>) -> Void
+        
+        func startRequest<T: JSONParseable>(completion: @escaping Completion<T>) {
+            Networking.request(headers: Server.headers(), method: self.type().rawValue, fullEndpoint: self.endpoint(), body: self.parameters()) { data, response, error in
+                
+                if let error = error {
+                    completion(.failure(error))
+                } else if let data = data, error == nil {
+                    do {
+                        let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+                        let object = try T(data: json)
+                        completion(.success(object))
+                    } catch let err {
+                        completion(.failure(err))
+                    }
+                } else {
+                    completion(.failure(Error.unknown))
+                }
+            }
         }
         
         func log() -> Request {
@@ -117,12 +134,36 @@ struct Server {
     static func headers() -> [String : String] {
         let headers: [String : String] = [ "X-APP-VERSION" : appVersion,
                                            "X-UDID" : UDID,
-                                           "X-DEVICE-TYPE" : AppDelegate.deviceType() ?? "",
+                                           "X-DEVICE-TYPE" : AppDelegate.deviceType(),
                                            "X-OS-VERSION" : UIDevice.current.systemVersion,
                                            "X-OS-NAME" : UIDevice.current.systemName]
         
         return headers
     }
+    
+    enum Error: String, Swift.Error {
+        case unknown
+    }
+}
+
+struct GenericResponse: JSONParseable {
+    let json: Any?
+    
+    init(data: Any?) throws {
+        self.json = data
+    }
+}
+
+protocol JSONParseable {
+    init(data: Any?) throws
 }
 
 
+extension Array: JSONParseable where Element: JSONParseable {
+    init(data: Any?) throws {
+        guard let data = data as? [Any]
+            else { throw ModelError.errorParsingJSON }
+        
+        self = data.compactMap { try? Element.init(data: $0) }
+    }
+}

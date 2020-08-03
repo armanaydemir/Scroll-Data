@@ -19,19 +19,7 @@ class SessionReplayViewModel: NSObject {
     func fetchSessionReplay(completion: @escaping ((_ result: Result<SessionReplayResponse, Error>) -> Void))  {        
         Server.Request
             .openSession(sessionID: self.sessionID, UDID: UDID, type: AppDelegate.deviceType(), version: appVersion)
-            .startRequest   { data, response, error in
-                                if let dataExists = data, error == nil {
-                                    do {
-                                        let data = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments)
-                                        let sessionReplay = try SessionReplayResponse(data: data)
-                                        completion(.success(sessionReplay))
-                                    } catch {
-                                        completion(.failure(error))
-                                    }
-                                } else {
-                                    completion(.failure(ServerError.serverDisconnected))
-                                }
-                            }
+            .startRequest(completion: completion)
     }
 }
 
@@ -63,20 +51,7 @@ class ReadArticleViewModel {
                          type: AppDelegate.deviceType(),
                          version: appVersion)
             .log()
-            .startRequest { data, response, error in
-                if let dataExists = data, error == nil {
-                    do {
-                        let data = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments)
-                        let articleResponse = try OpenArticle(data: data)
-                        self.articleResponse = articleResponse
-                        completion(.success(articleResponse))
-                    } catch {
-                        completion(.failure(error))
-                    }
-                } else {
-                    completion(.failure(ServerError.serverDisconnected))
-                }
-            }
+            .startRequest(completion: completion)
     }
 
     func submitData(content_offset:CGFloat, first_index:Int, last_index:Int){
@@ -95,7 +70,12 @@ class ReadArticleViewModel {
                                    contentOffset: content_offset,
                                    previousFirstCell: self.recent_first,
                                    previousLastCell: self.recent_last)
-                .startRequest { data, response, error in if let e = error { print(e) } }
+                .startRequest { (result : Result<GenericResponse, Swift.Error>) in
+                    if case .failure = result {
+                        //print(e)
+                        //suppressing error for now because empty json being returned from server
+                    }
+                }
             
             self.last_sent = cur
             self.recent_last = last_index
@@ -116,7 +96,9 @@ class ReadArticleViewModel {
                           sessionID: articleResponse.sessionID,
                           complete: complete,
                           isPortrait: a.orientation.isPortrait)
-            .startRequest { data, response, error in if let e = error { print(e) } }
+            .startRequest { (result : Result<GenericResponse, Swift.Error>) in
+                if case .failure(let e) = result { print(e) }
+            }
     }
 }
 
