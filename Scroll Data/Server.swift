@@ -33,6 +33,11 @@ struct Server {
             contentOffset: CGFloat)
         case closeArticle(articleID: String, UDID: String, startTime: Double, time: Double, sessionID: String, complete: Bool, isPortrait: Bool)
         case openSession(sessionID: String, UDID: String, type: String, version: String)
+        case submitEvent(articleID: String,
+            UDID: String,
+            startTime: Double,
+            time: Double,
+            eventType: String)
         
         typealias Completion<T: JSONParseable> = (Result<T, Swift.Error>) -> Void
         
@@ -77,6 +82,8 @@ struct Server {
                 endpoint = "close_article"
             case .openSession:
                 endpoint = "session_replay"
+            case .submitEvent:
+                endpoint = "submit_event"
             }
             return serverURL + endpoint
         }
@@ -85,7 +92,7 @@ struct Server {
             switch self {
             case .settings, .articles, .sessions:
                 return .get
-            case .openArticle, .openSession, .submitReadingData, .closeArticle:
+            case .openArticle, .openSession, .submitReadingData, .closeArticle, .submitEvent:
                 return .post
             }
         }
@@ -130,6 +137,13 @@ struct Server {
                      "type": type,
                      "version": version
                  ]
+            case .submitEvent(let articleID, let UDID, let startTime, let time, let eventType):
+                params = [  "UDID": UDID,
+                            "article": articleID,
+                            "startTime": startTime,
+                            "time": time,
+                            "event_type": eventType ]
+                
             }
             
             return params

@@ -148,18 +148,35 @@ class ReadArticleViewModel {
     }
     
     @objc func logEvent(notification: Notification) {
+        
+        let eventType: String
+        
         switch notification.name {
         case UIApplication.willResignActiveNotification:
-            print("Event - will resign active")
+            eventType = "obstructed"
         case UIApplication.didBecomeActiveNotification:
-            print("Event - did become active")
+            eventType = "visible"
         case UIApplication.didEnterBackgroundNotification:
-            print("Event - did enter background")
+            eventType = "background"
         case UIApplication.willEnterForegroundNotification:
-            print("Event - will enter foreground")
+            eventType = "foreground"
         default:
             print("unknown notification")
+            return
         }
+        
+        Server.Request
+            .submitEvent(articleID: self.articleLink,
+                         UDID: UDID,
+                         startTime: self.startTime,
+                         time: CFAbsoluteTimeGetCurrent()*timeOffset,
+                         eventType: eventType)
+            .log()
+            .startRequest { (result: Result<GenericResponse, Error>) in
+                    if case .failure(let error) = result {
+                        print(error)
+                    }
+                }
     }
 }
 
