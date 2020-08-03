@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="67l-c2-P28">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="67l-c2-P28">
     <device id="ipad12_9" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Starting View Controller-->
         <scene sceneID="QCc-eC-Dzc">
             <objects>
-                <viewController id="mbO-Jk-rj2" customClass="StartingViewController" customModule="Scroll_Data" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="mbO-Jk-rj2" customClass="StartingViewController" customModule="Replay_Scroll_Data" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="aRf-OE-Oox"/>
                         <viewControllerLayoutGuide type="bottom" id="22z-Ve-phJ"/>
@@ -67,7 +67,7 @@
         <!--Article View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ArticleViewController" customModule="Scroll_Data" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ArticleViewController" customModule="Replay_Scroll_Data" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -76,10 +76,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="k8p-iG-GI0">
-                                <rect key="frame" x="0.0" y="50" width="1024" height="1316"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            </tableView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="utz-ww-zxe">
+                                <rect key="frame" x="0.0" y="50" width="0.0" height="1"/>
+                                <color key="backgroundColor" systemColor="systemBlueColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" id="Gpz-iG-Nkk"/>
+                                    <constraint firstAttribute="height" constant="1" id="JMO-Ra-9kM"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2d6-TB-O24" customClass="HardTableView" customModule="Replay_Scroll_Data" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="51" width="1024" height="1315"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            </view>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="y80-SR-T2z">
                                 <rect key="frame" x="493.5" y="664.5" width="37" height="37"/>
                                 <color key="color" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -87,24 +95,28 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="utz-ww-zxe" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="5ke-oe-PCM"/>
+                            <constraint firstAttribute="bottom" secondItem="2d6-TB-O24" secondAttribute="bottom" id="70W-Ph-OlD"/>
+                            <constraint firstItem="2d6-TB-O24" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="DMx-pu-Tj1"/>
                             <constraint firstItem="y80-SR-T2z" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="QmK-zz-dmB"/>
-                            <constraint firstAttribute="bottom" secondItem="k8p-iG-GI0" secondAttribute="bottom" id="YKW-Po-Pnk"/>
+                            <constraint firstAttribute="trailing" secondItem="2d6-TB-O24" secondAttribute="trailing" id="bAT-Pw-dTu"/>
+                            <constraint firstItem="2d6-TB-O24" firstAttribute="top" secondItem="utz-ww-zxe" secondAttribute="bottom" id="dul-Pm-a2G"/>
                             <constraint firstItem="y80-SR-T2z" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="jNb-8U-rAY"/>
-                            <constraint firstItem="k8p-iG-GI0" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" priority="750" id="os8-rr-UUL"/>
-                            <constraint firstItem="k8p-iG-GI0" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="uxx-pJ-gr9"/>
-                            <constraint firstItem="k8p-iG-GI0" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ygy-pQ-lWb"/>
+                            <constraint firstItem="utz-ww-zxe" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="zdF-Ct-HUp"/>
                         </constraints>
                     </view>
                     <toolbarItems/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="hardTableView" destination="2d6-TB-O24" id="4NM-W6-XB3"/>
+                        <outlet property="loadingBarView" destination="utz-ww-zxe" id="C5e-Jq-rSS"/>
+                        <outlet property="loadingBarWidth" destination="Gpz-iG-Nkk" id="LLq-bD-KU9"/>
                         <outlet property="spinner" destination="y80-SR-T2z" id="u7m-WR-EOU"/>
-                        <outlet property="table" destination="k8p-iG-GI0" id="ADc-Rt-bsU"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="276" y="221"/>
+            <point key="canvasLocation" x="275.9765625" y="220.93704245973643"/>
         </scene>
     </scenes>
 </document>

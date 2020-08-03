@@ -8,86 +8,74 @@
 
 import UIKit
 
-class ArticleViewModel: NSObject {
+class SessionReplayViewModel: NSObject {
     
-    let version = "v0.3.1"
-    let UDID = UIDevice.current.identifierForVendor!.uuidString
+    let sessionID: String
+
+    init(sessionID: String) {
+        self.sessionID = sessionID
+    }
+    
+    func fetchSessionReplay(completion: @escaping ((_ result: Result<SessionReplayResponse, Error>) -> Void))  {        
+        Server.Request
+            .openSession(sessionID: self.sessionID, UDID: UDID, type: AppDelegate.deviceType(), version: appVersion)
+            .startRequest(completion: completion)
+    }
+}
+
+class ReadArticleViewModel {
+    
+    
     let timeOffset:Double = 100000000
+
     var startTime = CFAbsoluteTimeGetCurrent()
     var last_sent = CFAbsoluteTimeGetCurrent()
-    var deviceType: String?
-    var session_id: String?
-    var articleLink: String?
     
     var recent_first: Int?
     var recent_last: Int?
-    let url = "157.245.227.103"
-    //let url = "localhost"
     
-    var lines: Array<String>?
+    let articleLink: String
     
+    var articleResponse: OpenArticle?
     
     init(articleLink: String) {
         self.articleLink = articleLink
-        var systemInfo = utsname()
-        uname(&systemInfo)
-        let machineMirror = Mirror(reflecting: systemInfo.machine)
-        self.deviceType = machineMirror.children.reduce("") { identifier, element in
-            guard let value = element.value as? Int8 , value != 0 else { return identifier }
-            return identifier! + String(UnicodeScalar(UInt8(value)))
-        }
     }
     
-    func fetchText(completion: @escaping (Array<String>?, String?) -> Void)  {
-        let data: [String:Any] = [
-            "article_link":self.articleLink ?? "",
-            "UDID":self.UDID,
-            "startTime":self.startTime*timeOffset,
-            "type":self.deviceType ?? "",
-            "version":self.version]
+    func fetchText(completion: @escaping ((_ result: Result<OpenArticle, Error>) -> Void))  {
         
-        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://"+url+":22364/open_article", body: data, completion: { data, response, error in
-            if let dataExists = data, error == nil {
-                do {
-                    if var paragraphs = try JSONSerialization.jsonObject(with: dataExists, options: .allowFragments) as? Array<String> {
-                        self.session_id = paragraphs[0]
-                        paragraphs.remove(at: 0)
-                        completion(paragraphs, nil)
-                    } else {
-                        completion(nil, "invalid json")
-                    }
-                }catch _{
-                    completion(nil, "invalid json")
-                }
-            }else{
-               completion(nil, "server disconnect")
-            }
-        })
+        Server.Request
+            .openArticle(articleID: self.articleLink,
+                         UDID: UDID,
+                         startTime: self.startTime*timeOffset,
+                         type: AppDelegate.deviceType(),
+                         version: appVersion)
+            .log()
+            .startRequest(completion: completion)
     }
-    
-    
-    
+
     func submitData(content_offset:CGFloat, first_index:Int, last_index:Int){
         if (self.recent_first == nil || first_index != recent_first || last_index != recent_last) {
+            
             let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
             
-            let data: [String: Any] = [
-                "UDID":self.UDID,
-                "article":self.articleLink ?? "",
-                "startTime":self.startTime*timeOffset,
-                "appeared":self.last_sent*timeOffset,
-                "time": cur*timeOffset,
-                "first_cell":first_index,
-                "last_cell":last_index,
-                "previous_first_cell":self.recent_first ?? "",
-                "previous_last_cell":self.recent_last ?? "",
-                "content_offset":content_offset ]
-            
-            Networking.request(headers: nil, method: "POST", fullEndpoint: "http://"+url+":22364/submit_data", body: data, completion:  {
-                data, response, error in
-                
-                if let e = error {print(e)}
-            })
+            Server.Request
+                .submitReadingData(articleID: self.articleLink,
+                                   UDID: UDID,
+                                   startTime: self.startTime*timeOffset,
+                                   appeared: self.last_sent*timeOffset,
+                                   time: cur*timeOffset,
+                                   firstCell: first_index,
+                                   lastCell: last_index,
+                                   contentOffset: content_offset,
+                                   previousFirstCell: self.recent_first,
+                                   previousLastCell: self.recent_last)
+                .startRequest { (result : Result<GenericResponse, Swift.Error>) in
+                    if case .failure = result {
+                        //print(e)
+                        //suppressing error for now because empty json being returned from server
+                    }
+                }
             
             self.last_sent = cur
             self.recent_last = last_index
@@ -95,23 +83,26 @@ class ArticleViewModel: NSObject {
         }
     }
     
-    func closeArticle(content: Array<Dictionary<String, Any>>, wordIndicies: Array<Int>, characterIndicies: Array<Int>, complete:Bool){
-        guard let a = UIApplication.shared.delegate as? AppDelegate else {return}
-        let data: [String: Any] = [
-            "UDID": self.UDID,
-            "startTime": self.startTime*timeOffset,
-            "article": self.articleLink ?? "",
-            "time": CFAbsoluteTimeGetCurrent()*timeOffset,
-            "session_id": self.session_id ?? "",
-            "complete": complete,
-            "word_splits": wordIndicies,
-            "character_splits": characterIndicies,
-            "content": content,
-            "portrait": a.orientation.isPortrait
-        ]
+    func closeArticle(complete: Bool) {
+        guard let a = UIApplication.shared.delegate as? AppDelegate,
+            let articleResponse = self.articleResponse
+            else { return }
         
-        Networking.request(headers: nil, method: "POST", fullEndpoint: "http://"+url+":22364/close_article", body: data, completion:  { data, response, error in
-            if let e = error {print(e)}
-        })
+        Server.Request
+            .closeArticle(articleID: articleResponse.article.info.url,
+                          UDID: UDID,
+                          startTime: self.startTime*timeOffset,
+                          time: CFAbsoluteTimeGetCurrent()*timeOffset,
+                          sessionID: articleResponse.sessionID,
+                          complete: complete,
+                          isPortrait: a.orientation.isPortrait)
+            .startRequest { (result : Result<GenericResponse, Swift.Error>) in
+                if case .failure(let e) = result { print(e) }
+            }
     }
+}
+
+
+enum ServerError: String, Error {
+    case serverDisconnected
 }

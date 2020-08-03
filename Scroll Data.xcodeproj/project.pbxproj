@@ -7,21 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		220567EB24D774610085E0B3 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220567EA24D774610085E0B3 /* Server.swift */; };
 		226A57DF215B1E2E0029D798 /* TitleSubtitleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226A57DD215B1E2E0029D798 /* TitleSubtitleTableViewCell.swift */; };
 		226A57E0215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 226A57DE215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib */; };
-		931C272E23E143EB00490434 /* v024.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = 931C272D23E143EB00490434 /* v024.mobileprovision */; };
-		931C272F23E143EB00490434 /* v024.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = 931C272D23E143EB00490434 /* v024.mobileprovision */; };
-		931C273023E143EB00490434 /* v024.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = 931C272D23E143EB00490434 /* v024.mobileprovision */; };
-		9930C4B221A4C0D3000C2420 /* TitleCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9930C4B021A4C0D3000C2420 /* TitleCellTableViewCell.swift */; };
-		9930C4B321A4C0D3000C2420 /* TitleCellTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9930C4B121A4C0D3000C2420 /* TitleCellTableViewCell.xib */; };
+		229B641824B6D66000BA76C7 /* HardTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229B641724B6D66000BA76C7 /* HardTableView.swift */; };
+		229B641A24B6EC9100BA76C7 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229B641924B6EC9100BA76C7 /* Model.swift */; };
+		93A96E5B24C645DF003903F6 /* v037.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = 93A96E5A24C645DF003903F6 /* v037.mobileprovision */; };
 		99931E132127EE31006CAC45 /* StartingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99931E122127EE31006CAC45 /* StartingViewController.swift */; };
 		99AE430121A6763600E42415 /* ScrollDataArticleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99AE430021A6763600E42415 /* ScrollDataArticleTests.swift */; };
 		99DF267D21ACD188007D6788 /* SystemFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF267C21ACD188007D6788 /* SystemFont.swift */; };
 		99DF267F21ACD3DA007D6788 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF267E21ACD3DA007D6788 /* AppDelegate.swift */; };
-		99DF26A021ACDDCA007D6788 /* ArticleTextTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF269E21ACDDCA007D6788 /* ArticleTextTableViewCell.swift */; };
-		99DF26A121ACDDCA007D6788 /* ArticleTextTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 99DF269F21ACDDCA007D6788 /* ArticleTextTableViewCell.xib */; };
-		99DF26A421ACE3CF007D6788 /* SubmitTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF26A221ACE3CF007D6788 /* SubmitTableViewCell.swift */; };
-		99DF26A521ACE3CF007D6788 /* SubmitTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 99DF26A321ACE3CF007D6788 /* SubmitTableViewCell.xib */; };
 		99DF26A721ACEAF7007D6788 /* ArticleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF26A621ACEAF7007D6788 /* ArticleViewModel.swift */; };
 		F15A41971FCA7CA00040F11D /* request.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15A41961FCA7CA00040F11D /* request.swift */; };
 		F15A535C2070748200C2F7B6 /* ArticleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15A535B2070748200C2F7B6 /* ArticleViewController.swift */; };
@@ -49,26 +44,23 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		220567EA24D774610085E0B3 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		226A57DD215B1E2E0029D798 /* TitleSubtitleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleSubtitleTableViewCell.swift; sourceTree = "<group>"; };
 		226A57DE215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TitleSubtitleTableViewCell.xib; sourceTree = "<group>"; };
-		931C272D23E143EB00490434 /* v024.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; path = v024.mobileprovision; sourceTree = "<group>"; };
-		9930C4B021A4C0D3000C2420 /* TitleCellTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitleCellTableViewCell.swift; sourceTree = "<group>"; };
-		9930C4B121A4C0D3000C2420 /* TitleCellTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TitleCellTableViewCell.xib; sourceTree = "<group>"; };
+		229B641724B6D66000BA76C7 /* HardTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardTableView.swift; sourceTree = "<group>"; };
+		229B641924B6EC9100BA76C7 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		93A96E5A24C645DF003903F6 /* v037.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; path = v037.mobileprovision; sourceTree = "<group>"; };
 		99931E122127EE31006CAC45 /* StartingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartingViewController.swift; sourceTree = "<group>"; };
 		99AE42FE21A6763600E42415 /* ScrollDataArticleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScrollDataArticleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		99AE430021A6763600E42415 /* ScrollDataArticleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollDataArticleTests.swift; sourceTree = "<group>"; };
 		99AE430221A6763600E42415 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		99DF267C21ACD188007D6788 /* SystemFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemFont.swift; sourceTree = "<group>"; };
 		99DF267E21ACD3DA007D6788 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		99DF269E21ACDDCA007D6788 /* ArticleTextTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleTextTableViewCell.swift; sourceTree = "<group>"; };
-		99DF269F21ACDDCA007D6788 /* ArticleTextTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleTextTableViewCell.xib; sourceTree = "<group>"; };
-		99DF26A221ACE3CF007D6788 /* SubmitTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitTableViewCell.swift; sourceTree = "<group>"; };
-		99DF26A321ACE3CF007D6788 /* SubmitTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SubmitTableViewCell.xib; sourceTree = "<group>"; };
 		99DF26A621ACEAF7007D6788 /* ArticleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleViewModel.swift; sourceTree = "<group>"; };
 		F15A41951FCA7C9F0040F11D /* Scroll Data-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Scroll Data-Bridging-Header.h"; sourceTree = "<group>"; };
 		F15A41961FCA7CA00040F11D /* request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = request.swift; sourceTree = "<group>"; };
 		F15A535B2070748200C2F7B6 /* ArticleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleViewController.swift; sourceTree = "<group>"; };
-		F169BDD31EA696CB00C528C7 /* Collection Scroll Data.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Collection Scroll Data.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F169BDD31EA696CB00C528C7 /* Reader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F169BDE01EA696CB00C528C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		F169BDE21EA696CB00C528C7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F169BDE51EA696CB00C528C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -127,7 +119,7 @@
 		F169BDD41EA696CB00C528C7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F169BDD31EA696CB00C528C7 /* Collection Scroll Data.app */,
+				F169BDD31EA696CB00C528C7 /* Reader.app */,
 				F169BDEC1EA696CB00C528C7 /* Scroll DataTests.xctest */,
 				99AE42FE21A6763600E42415 /* ScrollDataArticleTests.xctest */,
 			);
@@ -137,25 +129,21 @@
 		F169BDD51EA696CB00C528C7 /* Scroll Data */ = {
 			isa = PBXGroup;
 			children = (
-				931C272D23E143EB00490434 /* v024.mobileprovision */,
+				93A96E5A24C645DF003903F6 /* v037.mobileprovision */,
 				99DF267E21ACD3DA007D6788 /* AppDelegate.swift */,
 				F15A535B2070748200C2F7B6 /* ArticleViewController.swift */,
 				99DF26A621ACEAF7007D6788 /* ArticleViewModel.swift */,
-				99DF267C21ACD188007D6788 /* SystemFont.swift */,
-				99DF269E21ACDDCA007D6788 /* ArticleTextTableViewCell.swift */,
-				99DF269F21ACDDCA007D6788 /* ArticleTextTableViewCell.xib */,
-				F169BDDF1EA696CB00C528C7 /* Main.storyboard */,
-				9930C4B021A4C0D3000C2420 /* TitleCellTableViewCell.swift */,
-				9930C4B121A4C0D3000C2420 /* TitleCellTableViewCell.xib */,
-				99DF26A221ACE3CF007D6788 /* SubmitTableViewCell.swift */,
-				99DF26A321ACE3CF007D6788 /* SubmitTableViewCell.xib */,
 				99931E122127EE31006CAC45 /* StartingViewController.swift */,
-				F169BDE21EA696CB00C528C7 /* Assets.xcassets */,
-				F169BDE41EA696CB00C528C7 /* LaunchScreen.storyboard */,
-				F169BDE71EA696CB00C528C7 /* Info.plist */,
-				F169BDD61EA696CB00C528C7 /* Supporting Files */,
 				226A57DD215B1E2E0029D798 /* TitleSubtitleTableViewCell.swift */,
 				226A57DE215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib */,
+				229B641724B6D66000BA76C7 /* HardTableView.swift */,
+				229B641924B6EC9100BA76C7 /* Model.swift */,
+				F169BDDF1EA696CB00C528C7 /* Main.storyboard */,
+				F169BDE41EA696CB00C528C7 /* LaunchScreen.storyboard */,
+				F169BDE21EA696CB00C528C7 /* Assets.xcassets */,
+				F169BDE71EA696CB00C528C7 /* Info.plist */,
+				F169BDD61EA696CB00C528C7 /* Supporting Files */,
+				220567EA24D774610085E0B3 /* Server.swift */,
 			);
 			path = "Scroll Data";
 			sourceTree = "<group>";
@@ -163,6 +151,7 @@
 		F169BDD61EA696CB00C528C7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				99DF267C21ACD188007D6788 /* SystemFont.swift */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -211,7 +200,7 @@
 			);
 			name = "Scroll Data";
 			productName = "Scroll Data";
-			productReference = F169BDD31EA696CB00C528C7 /* Collection Scroll Data.app */;
+			productReference = F169BDD31EA696CB00C528C7 /* Reader.app */;
 			productType = "com.apple.product-type.application";
 		};
 		F169BDEB1EA696CB00C528C7 /* Scroll DataTests */ = {
@@ -288,7 +277,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				931C273023E143EB00490434 /* v024.mobileprovision in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -299,11 +287,8 @@
 				F169BDE61EA696CB00C528C7 /* LaunchScreen.storyboard in Resources */,
 				F169BDE31EA696CB00C528C7 /* Assets.xcassets in Resources */,
 				226A57E0215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib in Resources */,
-				9930C4B321A4C0D3000C2420 /* TitleCellTableViewCell.xib in Resources */,
-				99DF26A521ACE3CF007D6788 /* SubmitTableViewCell.xib in Resources */,
-				99DF26A121ACDDCA007D6788 /* ArticleTextTableViewCell.xib in Resources */,
+				93A96E5B24C645DF003903F6 /* v037.mobileprovision in Resources */,
 				F169BDE11EA696CB00C528C7 /* Main.storyboard in Resources */,
-				931C272E23E143EB00490434 /* v024.mobileprovision in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -311,7 +296,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				931C272F23E143EB00490434 /* v024.mobileprovision in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -330,14 +314,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				220567EB24D774610085E0B3 /* Server.swift in Sources */,
+				229B641824B6D66000BA76C7 /* HardTableView.swift in Sources */,
 				226A57DF215B1E2E0029D798 /* TitleSubtitleTableViewCell.swift in Sources */,
 				99DF267D21ACD188007D6788 /* SystemFont.swift in Sources */,
 				99931E132127EE31006CAC45 /* StartingViewController.swift in Sources */,
 				99DF26A721ACEAF7007D6788 /* ArticleViewModel.swift in Sources */,
-				99DF26A021ACDDCA007D6788 /* ArticleTextTableViewCell.swift in Sources */,
+				229B641A24B6EC9100BA76C7 /* Model.swift in Sources */,
 				F15A535C2070748200C2F7B6 /* ArticleViewController.swift in Sources */,
-				9930C4B221A4C0D3000C2420 /* TitleCellTableViewCell.swift in Sources */,
-				99DF26A421ACE3CF007D6788 /* SubmitTableViewCell.swift in Sources */,
 				F15A41971FCA7CA00040F11D /* request.swift in Sources */,
 				99DF267F21ACD3DA007D6788 /* AppDelegate.swift in Sources */,
 			);
@@ -487,7 +471,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "$(ARCHS_STANDARD) armv7s";
 			};
 			name = Debug;
 		};
@@ -543,7 +526,6 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = "$(ARCHS_STANDARD) armv7s";
 			};
 			name = Release;
 		};
@@ -554,19 +536,19 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = R76ADJ3JV7;
 				INFOPLIST_FILE = "Scroll Data/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "Arman-Aydemir.Collection-Scroll-Data";
-				PRODUCT_NAME = "Collection Scroll Data";
+				MARKETING_VERSION = 0.3.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "Arman-Aydemir.Replay-Scroll-Data";
+				PRODUCT_NAME = Reader;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Scroll Data-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "$(ARCHS_STANDARD) armv7s";
 			};
 			name = Debug;
 		};
@@ -577,18 +559,18 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = R76ADJ3JV7;
 				INFOPLIST_FILE = "Scroll Data/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "Arman-Aydemir.Collection-Scroll-Data";
-				PRODUCT_NAME = "Collection Scroll Data";
+				MARKETING_VERSION = 0.3.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "Arman-Aydemir.Replay-Scroll-Data";
+				PRODUCT_NAME = Reader;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Scroll Data-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "$(ARCHS_STANDARD) armv7s";
 			};
 			name = Release;
 		};
