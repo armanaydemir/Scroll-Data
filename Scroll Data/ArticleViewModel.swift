@@ -16,12 +16,67 @@ class SessionReplayViewModel: NSObject {
         self.sessionID = sessionID
     }
     
-    func fetchSessionReplay(completion: @escaping ((_ result: Result<SessionReplayResponse, Error>) -> Void))  {        
+    func fetchSessionReplay(completion: @escaping ((_ result: Result<PlayableSession, Error>) -> Void))  {
         Server.Request
             .openSession(sessionID: self.sessionID, UDID: UDID, type: AppDelegate.deviceType(), version: appVersion)
-            .startRequest(completion: completion)
+            .startRequest { (result: Result<Session, Swift.Error>) in
+                
+                switch result {
+                case .failure(let error):
+                    completion(.failure(error))
+                case .success(let session):
+                    let states = session.states
+                    
+                    guard let firstState = states.first,
+                        let lastState = states.last
+                        else { completion(.failure(ViewModelError.emptyData)); return  }
+                    
+                    let startTime = firstState.startTime
+                    let endTime = lastState.startTime
+                    let relativeStates = states.map { RelativePageState(absolutePageState: $0,
+                                                                        sessionStartTime: startTime,
+                                                                        totalSessionDuration: endTime - startTime) }
+
+                    let playableSession = PlayableSession(states: relativeStates, startTime: startTime, endTime: endTime, article: session.article, maxLines: session.maxLines)
+                    
+                    completion(.success(playableSession))
+                }
+            }
     }
 }
+
+public struct PlayableSession {
+    let states: [RelativePageState]
+    let startTime: TimeInterval
+    let endTime: TimeInterval
+    
+    let article: Article
+    let maxLines: Int
+}
+
+public struct RelativePageState {
+    public let relativeStartTime: Double
+    public let relativeDuration: Double
+    
+    public let contentOffset: CGFloat
+    
+    public let firstLine: CGFloat
+    public let lastLine: CGFloat
+
+    
+    public init(absolutePageState: AbsolutePageState, sessionStartTime: TimeInterval, totalSessionDuration: TimeInterval) {
+        self.contentOffset = absolutePageState.contentOffset
+        self.firstLine = absolutePageState.firstLine
+        self.lastLine = absolutePageState.lastLine
+        
+        let relativeStartTime = (absolutePageState.startTime - sessionStartTime) / totalSessionDuration
+        let relativeDuration = (absolutePageState.duration - absolutePageState.startTime) / totalSessionDuration
+        
+        self.relativeStartTime = relativeStartTime
+        self.relativeDuration = relativeDuration
+    }
+}
+
 
 class ReadArticleViewModel {
     
@@ -94,6 +149,6 @@ class ReadArticleViewModel {
 }
 
 
-enum ServerError: String, Error {
-    case serverDisconnected
+enum ViewModelError: String, Error {
+    case emptyData
 }

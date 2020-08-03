@@ -67,13 +67,13 @@ import UIKit
     func setUpReplayMode(viewModel: SessionReplayViewModel) {
         viewModel.fetchSessionReplay { result in
             switch result {
-            case .success(let sessionReplay):
+            case .success(let playableSession):
                 DispatchQueue.main.async {
-                    self.loadHardTableView(content: sessionReplay.article.content, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: false)
+                    self.loadHardTableView(content: playableSession.article.content, maxVisibleLines: playableSession.maxLines, includeSubmitButton: false)
                     
                     let timeLabel = UILabel()
                     timeLabel.font = UIFont.systemFont(ofSize: 12)
-                    let totalDuration = sessionReplay.session.endTime - sessionReplay.session.startTime
+                    let totalDuration = playableSession.endTime - playableSession.startTime
                     timeLabel.text = "Session Length: \(Int(totalDuration.rounded(FloatingPointRoundingRule.toNearestOrAwayFromZero)))s"
                     self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: timeLabel)
                     self.spinner.stopAnimating()
@@ -82,8 +82,8 @@ import UIKit
                         //not animating loading bar for now, not working yet
                         //animateLoadingBar(totalDuration: totalDuration)
                         
-                        self.startAutoScrolling(session: sessionReplay.session)
-                        print(sessionReplay.article.content.count)
+                        self.startAutoScrolling(session: playableSession)
+                        print(playableSession.article.content.count)
                     }    
                 }
             case .failure(let error):
@@ -201,29 +201,21 @@ import UIKit
         }
     }
     
-    func startAutoScrolling(session: Session) {
+    func startAutoScrolling(session: PlayableSession) {
         let totalDuration = session.endTime - session.startTime
         
         let tableWidth = hardTableView.bounds.width
         let tableHeight = hardTableView.bounds.height
 
-        let stateTuples: [(state: RelativePageState, bounds: CGRect)] = session.relativePageStates.compactMap { pageState in
+        let stateTuples: [(state: RelativePageState, bounds: CGRect)] = session.states.compactMap { pageState in
             
             print("\(pageState.firstLine), \(pageState.lastLine), \(pageState.relativeStartTime * totalDuration), \(pageState.relativeDuration * totalDuration), \(pageState.contentOffset)")
             
-//            if(pageState.lastLine > self.hardTableView.cells.count){
-//                guard let contentOffset = self.hardTableView.contentOffset(forFractionalIndex: pageState.firstLine, position: UITableView.ScrollPosition.top)
-//                    else { return nil }
-//
-//                let rect = CGRect(x: contentOffset.x, y: contentOffset.y, width: tableWidth, height: tableHeight)
-//                return (state: pageState, bounds: rect)
-//            } else {
-                guard let contentOffset = self.hardTableView.contentOffset(forFractionalIndex: pageState.lastLine, position: UITableView.ScrollPosition.bottom)
-                    else { return nil }
+            guard let contentOffset = self.hardTableView.contentOffset(forFractionalIndex: pageState.firstLine, position: UITableView.ScrollPosition.top)
+                else { return nil }
 
-                let rect = CGRect(x: contentOffset.x, y: contentOffset.y, width: tableWidth, height: tableHeight)
-                return (state: pageState, bounds: rect)
-//            }
+            let rect = CGRect(x: contentOffset.x, y: contentOffset.y, width: tableWidth, height: tableHeight)
+            return (state: pageState, bounds: rect)
         }
         
         let animation = CAKeyframeAnimation(keyPath: "bounds")
