@@ -30,7 +30,7 @@ import UIKit
         
         spinner.hidesWhenStopped = true
         spinner.startAnimating()
-        
+        hardTableView.isHidden = true
         loadingBarView.isHidden = true
         
         self.hardTableView.delegate = self
@@ -63,8 +63,11 @@ import UIKit
             switch result {
             case .success(let articleResponse):
                 DispatchQueue.main.async {
-                    self.spinner.stopAnimating()
                     self.loadHardTableView(content: articleResponse.article.content, maxVisibleLines: articleResponse.visibleLines, includeSubmitButton: true)
+                    
+                    self.spinner.stopAnimating()
+                    self.hardTableView.isHidden = false
+                    
                     self.scrollViewDidScroll(self.hardTableView)
                 }
             case .failure(let error):
@@ -86,7 +89,8 @@ import UIKit
                     timeLabel.text = "Session Length: \(Int(totalDuration.rounded(FloatingPointRoundingRule.toNearestOrAwayFromZero)))s"
                     self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: timeLabel)
                     self.spinner.stopAnimating()
-                    
+                    self.hardTableView.isHidden = false
+
                     DispatchQueue.main.asyncAfter(deadline: .now()+1) {
                         //not animating loading bar for now, not working yet
                         //animateLoadingBar(totalDuration: totalDuration)

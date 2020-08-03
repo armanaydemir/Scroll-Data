@@ -88,12 +88,11 @@
                                 <rect key="frame" x="0.0" y="50" width="1024" height="1316"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </view>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="y80-SR-T2z">
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="y80-SR-T2z">
                                 <rect key="frame" x="493.5" y="664.5" width="37" height="37"/>
-                                <color key="color" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </activityIndicatorView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="utz-ww-zxe" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="5ke-oe-PCM"/>
                             <constraint firstAttribute="bottom" secondItem="2d6-TB-O24" secondAttribute="bottom" id="70W-Ph-OlD"/>
