@@ -23,12 +23,10 @@ import UIKit
     @IBOutlet weak var loadingBarView: UIView!
     @IBOutlet weak var loadingBarWidth: NSLayoutConstraint!
     
-    private var lastVisibleIndices = 0..<0
+    private var lastVisibleIndices: Range<CGFloat> = 0..<0
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        //NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
         
         spinner.hidesWhenStopped = true
         spinner.startAnimating()
@@ -49,7 +47,18 @@ import UIKit
         }
     }
     
+    @objc func logEvent(notification: Notification) {
+        if let mode = self.mode, case Mode.read(let vm) = mode {
+            vm.logEvent(notification: notification)
+        }
+    }
+    
     func setUpReadMode(viewModel: ReadArticleViewModel) {
+        NotificationCenter.default.addObserver(self, selector: #selector(logEvent(notification:)), name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(logEvent(notification:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(logEvent(notification:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(logEvent(notification:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+
         viewModel.fetchText { result in
             switch result {
             case .success(let articleResponse):
@@ -67,13 +76,13 @@ import UIKit
     func setUpReplayMode(viewModel: SessionReplayViewModel) {
         viewModel.fetchSessionReplay { result in
             switch result {
-            case .success(let sessionReplay):
+            case .success(let playableSession):
                 DispatchQueue.main.async {
-                    self.loadHardTableView(content: sessionReplay.article.content, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: false)
+                    self.loadHardTableView(content: playableSession.article.content, maxVisibleLines: playableSession.maxLines, includeSubmitButton: false)
                     
                     let timeLabel = UILabel()
                     timeLabel.font = UIFont.systemFont(ofSize: 12)
-                    let totalDuration = sessionReplay.session.endTime - sessionReplay.session.startTime
+                    let totalDuration = playableSession.endTime - playableSession.startTime
                     timeLabel.text = "Session Length: \(Int(totalDuration.rounded(FloatingPointRoundingRule.toNearestOrAwayFromZero)))s"
                     self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: timeLabel)
                     self.spinner.stopAnimating()
@@ -82,8 +91,8 @@ import UIKit
                         //not animating loading bar for now, not working yet
                         //animateLoadingBar(totalDuration: totalDuration)
                         
-                        self.startAutoScrolling(session: sessionReplay.session)
-                        print(sessionReplay.article.content.count)
+                        self.startAutoScrolling(session: playableSession)
+                        print(playableSession.article.content.count)
                     }    
                 }
             case .failure(let error):
@@ -201,29 +210,21 @@ import UIKit
         }
     }
     
-    func startAutoScrolling(session: Session) {
+    func startAutoScrolling(session: PlayableSession) {
         let totalDuration = session.endTime - session.startTime
         
         let tableWidth = hardTableView.bounds.width
         let tableHeight = hardTableView.bounds.height
 
-        let stateTuples: [(state: RelativePageState, bounds: CGRect)] = session.relativePageStates.compactMap { pageState in
+        let stateTuples: [(state: RelativePageState, bounds: CGRect)] = session.states.compactMap { pageState in
             
             print("\(pageState.firstLine), \(pageState.lastLine), \(pageState.relativeStartTime * totalDuration), \(pageState.relativeDuration * totalDuration), \(pageState.contentOffset)")
             
-            if(pageState.lastLine > self.hardTableView.cells.count){
-                guard let contentOffset = self.hardTableView.contentOffset(forIndex: pageState.firstLine, position: UITableView.ScrollPosition.top)
-                    else { return nil }
-                
-                let rect = CGRect(x: contentOffset.x, y: contentOffset.y, width: tableWidth, height: tableHeight)
-                return (state: pageState, bounds: rect)
-            } else {
-                guard let contentOffset = self.hardTableView.contentOffset(forIndex: pageState.lastLine, position: UITableView.ScrollPosition.bottom)
-                    else { return nil }
-                
-                let rect = CGRect(x: contentOffset.x, y: contentOffset.y, width: tableWidth, height: tableHeight)
-                return (state: pageState, bounds: rect)
-            }
+            guard let contentOffset = self.hardTableView.contentOffset(forFractionalIndex: pageState.firstLine, position: UITableView.ScrollPosition.top)
+                else { return nil }
+
+            let rect = CGRect(x: contentOffset.x, y: contentOffset.y, width: tableWidth, height: tableHeight)
+            return (state: pageState, bounds: rect)
         }
         
         let animation = CAKeyframeAnimation(keyPath: "bounds")
@@ -276,7 +277,7 @@ extension ArticleViewController: UIScrollViewDelegate {
                 lastVisibleIndices = currentVisibleIndices
             }
             
-            vm.submitData(content_offset: scrollView.contentOffset.y, first_index: currentVisibleIndices.startIndex, last_index: currentVisibleIndices.endIndex - 1)
+            vm.submitData(content_offset: scrollView.contentOffset.y, first_index: currentVisibleIndices.lowerBound, last_index: currentVisibleIndices.upperBound)
         default: break
         }
     }
