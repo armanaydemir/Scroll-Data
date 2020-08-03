@@ -28,13 +28,13 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             case .articles:
                 table.reloadData()
                 if articles.isEmpty {
-                    fetchData()
+                    fetchData(fromEmpty: true)
                 }
                 
             case .sessions:
                 table.reloadData()
                 if sessions.isEmpty {
-                    fetchSessions()
+                    fetchSessions(fromEmpty: true)
                 }
             }
         }
@@ -79,8 +79,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
                     segmentedControl.addTarget(self, action: #selector(self.switchedTable(segmentedControl:)), for: .valueChanged)
                     self.navigationItem.titleView = segmentedControl
                     switch self.tableMode {
-                        case .articles: self.fetchData()
-                        case .sessions: self.fetchSessions()
+                        case .articles: self.fetchData(fromEmpty: true)
+                        case .sessions: self.fetchSessions(fromEmpty: true)
                     }
                 } else {
                     self.tableMode = .articles
@@ -118,14 +118,16 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         }
     }
     
-    private func fetchSessions() {
+    private func fetchSessions(fromEmpty: Bool) {
         guard let table = self.table, let loadIndicator = self.loadIndicator else {
              print("couldn't connect starting vc outlets! bad things coming.....")
              return
         }
         
-        self.table.isHidden = true
-        loadIndicator.startAnimating()
+        if fromEmpty {
+            self.table.isHidden = true
+            loadIndicator.startAnimating()
+        }
         
         Server.Request.sessions.log().startRequest { (result: Result<[SessionBlurb], Swift.Error>) in
             switch result {
@@ -145,14 +147,16 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         }
     }
     
-    private func fetchData() {
+    private func fetchData(fromEmpty: Bool) {
         guard let table = self.table, let loadIndicator = self.loadIndicator else {
             print("couldn't connect starting vc outlets! bad things coming.....")
             return
         }
         
-        self.table.isHidden = true
-        loadIndicator.startAnimating() //POST
+        if fromEmpty {
+            self.table.isHidden = true
+            loadIndicator.startAnimating() //POST
+        }
         
         Server.Request.articles.log().startRequest { (result: Result<[ArticleBlurb], Swift.Error>) in
             switch result {
@@ -175,9 +179,9 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     @objc private func refreshData(_ sender: Any) {
         switch tableMode {
         case .articles:
-            fetchData()
+            fetchData(fromEmpty: false)
         case .sessions:
-            fetchSessions()
+            fetchSessions(fromEmpty: false)
         }
     }
     

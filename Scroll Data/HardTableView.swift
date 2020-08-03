@@ -125,6 +125,18 @@ class HardTableView: UIScrollView {
         setContentOffset(offset, animated: animated)
     }
     
+    public func contentOffset(forFractionalIndex fractionalIndex: CGFloat, position: UITableView.ScrollPosition) -> CGPoint? {
+        let index = Int(floor(fractionalIndex))
+        
+        guard let cell = nearestCell(forIndex: index),
+            let point = contentOffset(forCell: cell, position: position)
+            else { return nil }
+
+        let remainder = fractionalIndex.truncatingRemainder(dividingBy: 1)
+        
+        return CGPoint(x: 0, y: point.y + remainder * cell.height)
+    }
+    
     public func contentOffset(forIndex index: Int, position: UITableView.ScrollPosition) -> CGPoint? {
         guard let cell = nearestCell(forIndex: index) else { return nil }
         return contentOffset(forCell: cell, position: position)
