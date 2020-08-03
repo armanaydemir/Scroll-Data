@@ -26,15 +26,14 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         didSet {
             switch tableMode {
             case .articles:
-                if articles.count > 0 {
-                    table.reloadData()
-                } else {
+                table.reloadData()
+                if articles.isEmpty {
                     fetchData()
                 }
+                
             case .sessions:
-                if sessions.count > 0 {
-                    table.reloadData()
-                } else {
+                table.reloadData()
+                if sessions.isEmpty {
                     fetchSessions()
                 }
             }
@@ -79,11 +78,15 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
                     segmentedControl.selectedSegmentIndex = self.tableMode.rawValue
                     segmentedControl.addTarget(self, action: #selector(self.switchedTable(segmentedControl:)), for: .valueChanged)
                     self.navigationItem.titleView = segmentedControl
+                    switch self.tableMode {
+                        case .articles: self.fetchData()
+                        case .sessions: self.fetchSessions()
+                    }
                 } else {
-                    self.navigationItem.title = self.tableMode.name()
+                    self.tableMode = .articles
+                    self.navigationItem.title = TableMode.articles.name()
                 }
                 
-                self.fetchData()
                 table.register(UINib.init(nibName: "TitleSubtitleTableViewCell", bundle: nil), forCellReuseIdentifier: "default")
                 table.rowHeight = UITableView.automaticDimension
             }
@@ -121,7 +124,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
              return
         }
         
-        loadIndicator.startAnimating() //POST
+        self.table.isHidden = true
+        loadIndicator.startAnimating()
         
         Server.Request.sessions.log().startRequest { (result: Result<[SessionBlurb], Swift.Error>) in
             switch result {
@@ -146,6 +150,9 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             print("couldn't connect starting vc outlets! bad things coming.....")
             return
         }
+        
+        self.table.isHidden = true
+        loadIndicator.startAnimating() //POST
         
         Server.Request.articles.log().startRequest { (result: Result<[ArticleBlurb], Swift.Error>) in
             switch result {

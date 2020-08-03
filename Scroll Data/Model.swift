@@ -13,15 +13,6 @@ import CoreGraphics
 //Server session model
 
 private let timeOffset = 100000000.0
-private let sessionDataKey = "session_data"
-private let appearedTimeKey = "appeared"
-private let startTimeKey = "startTime"
-private let lastCellKey = "last_cell"
-private let firstCellKey = "first_cell"
-private let timeKey = "time"
-private let contentOffsetKey = "content_offset"
-private let linesPerPageKey = "visible_lines"
-
 
 struct SessionBlurb: JSONParseable {
     
@@ -65,6 +56,12 @@ struct SessionBlurb: JSONParseable {
 }
 
 public struct Session: JSONParseable {
+    
+    enum Key: String {
+        case session_data
+        case visible_lines
+    }
+    
     public let absolutePageStates: [AbsolutePageState]
     public let linesPerPage: Int
 
@@ -73,23 +70,24 @@ public struct Session: JSONParseable {
     public let relativePageStates: [RelativePageState]
     
     public init(data: Any?) throws {
-        guard let sessionData = data as? [[String : Any]],
-            let unconvertedStartTime = sessionData.first?[startTimeKey] as? Int,
-            let unconvertedEndTime = sessionData.last?[appearedTimeKey] as? Int
+        guard let sessionData = data as? [[String : Any]]
             else { throw ModelError.errorParsingJSON }
         
-        let linesPerPage = sessionData.last?[linesPerPageKey] as? Int ?? 20 //TODO: remove temporary hardcoding
+        let linesPerPage = sessionData.last?[Key.visible_lines.rawValue] as? Int ?? defaultVisibleLines
+        let states: [AbsolutePageState] = try [AbsolutePageState].init(data: data)
         
-        let startTime = Double(unconvertedStartTime)/timeOffset
-        let endTime = Double(unconvertedEndTime)/timeOffset
+        guard let firstState = states.first,
+            let lastState = states.last
+            else { throw ModelError.requiredContentsEmpty }
         
-        let states = sessionData.compactMap { try? AbsolutePageState(data: $0) }
+        let startTime = firstState.startTime
+        let endTime = lastState.startTime
         
         self.startTime = startTime
         self.endTime = endTime
         self.absolutePageStates = states
-        self.relativePageStates = states.map { $0.convertToRelative(sessionStartTime: startTime, totalSessionDuration: endTime - startTime)}
         self.linesPerPage = linesPerPage
+        self.relativePageStates = states.map { $0.convertToRelative(sessionStartTime: startTime, totalSessionDuration: endTime - startTime)}
     }
     
     public init(startTime: TimeInterval, endTime: TimeInterval, absolutePageStates: [AbsolutePageState], linesPerPage: Int) {
@@ -102,12 +100,21 @@ public struct Session: JSONParseable {
     }
     
     public func toDictionary() -> [String : Any] {
-        return [ sessionDataKey : absolutePageStates.map { $0.toDictionary() },
-                 linesPerPageKey : linesPerPage ]
+        return [ Key.session_data.rawValue : absolutePageStates.map { $0.toDictionary() },
+                 Key.visible_lines.rawValue : linesPerPage ]
     }
 }
 
-public struct AbsolutePageState {
+public struct AbsolutePageState: JSONParseable {
+    
+    enum Key: String {
+        case appeared
+        case time
+        case content_offset
+        case first_cell
+        case last_cell
+    }
+    
     public let startTime: TimeInterval
     public let duration: TimeInterval
     
@@ -118,11 +125,11 @@ public struct AbsolutePageState {
     
     public init(data: Any?) throws {
         guard let data = data as? [String : Any],
-            let unconvertedAppearTime = data[appearedTimeKey] as? Int,
-            let firstCell = data[firstCellKey] as? Int,
-            let lastCell = data[lastCellKey] as? Int,
-            let unconvertedDuration = data[timeKey] as? Int,
-            let contentOffset = data[contentOffsetKey] as? CGFloat
+            let unconvertedAppearTime = data[Key.appeared.rawValue] as? Int,
+            let firstCell = data[Key.first_cell.rawValue] as? Int,
+            let lastCell = data[Key.last_cell.rawValue] as? Int,
+            let unconvertedDuration = data[Key.time.rawValue] as? Int,
+            let contentOffset = data[Key.content_offset.rawValue] as? CGFloat
             else { throw ModelError.errorParsingJSON }
         
         let appearTime = Double(unconvertedAppearTime) / timeOffset
@@ -147,11 +154,11 @@ public struct AbsolutePageState {
     }
     
     public func toDictionary() -> [String : Any] {
-        return [ appearedTimeKey : Int(startTime * timeOffset),
-                 timeKey : Int(duration * timeOffset),
-                 firstCellKey : firstLine,
-                 lastCellKey : lastLine,
-                 contentOffsetKey : contentOffset ]
+        return [ Key.appeared.rawValue : Int(startTime * timeOffset),
+                 Key.time.rawValue : Int(duration * timeOffset),
+                 Key.first_cell.rawValue : firstLine,
+                 Key.last_cell.rawValue : lastLine,
+                 Key.content_offset.rawValue : contentOffset ]
     }
     
     fileprivate func convertToRelative(sessionStartTime: TimeInterval, totalSessionDuration: TimeInterval) -> RelativePageState {
@@ -393,5 +400,6 @@ struct Settings: JSONParseable {
 
 
 public enum ModelError: Error {
+    case requiredContentsEmpty
     case errorParsingJSON
 }
