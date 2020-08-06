@@ -141,7 +141,7 @@ class ReadArticleViewModel {
                           time: CFAbsoluteTimeGetCurrent()*timeOffset,
                           sessionID: articleResponse.sessionID,
                           complete: complete,
-                          isPortrait: a.orientation.isPortrait)
+                          isPortrait: true)
             .startRequest { (result : Result<GenericResponse, Swift.Error>) in
                 if case .failure(let e) = result { print(e) }
             }
