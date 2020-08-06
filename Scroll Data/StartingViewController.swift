@@ -247,10 +247,6 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             case .sessions:
                 destination.mode = .replay(viewModel: SessionReplayViewModel(sessionID: self.link))
             }
-
-            guard let a = UIApplication.shared.delegate as? AppDelegate else {return}
-            a.autoRotate = false
-            a.orientation = UIDevice.current.orientation
         }
     }
 }
