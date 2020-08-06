@@ -35,6 +35,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
                 table.reloadData()
                 if sessions.isEmpty {
                     fetchSessions(fromEmpty: true)
+                } else {
+                    fetchSessions(fromEmpty: false)
                 }
             }
         }
@@ -206,7 +208,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         case .sessions:
             let session = self.sessions[indexPath.item]
             title = session.article.title
-            subtitle = "\(session.id) -  \(session.deviceType ?? "") - \(session.readerVersion ?? "")"
+            subtitle = "\(session.startTime?.asDateString() ?? "") - \(session.id) -  \(session.deviceType ?? "") - \(session.readerVersion ?? "")"
         }
         
         let attributes = [NSAttributedString.Key.font: baseFont.withTextStyle(.headline)!]
