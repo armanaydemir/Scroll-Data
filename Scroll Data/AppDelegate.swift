@@ -20,6 +20,7 @@ let baseFont: UIFont = UIFont.init(name: "Times New Roman", size: UIFont.systemF
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
+    var window: UIWindow?
     var deviceType: String?
     
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {

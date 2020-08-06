@@ -130,8 +130,7 @@ class ReadArticleViewModel {
     }
     
     func closeArticle(complete: Bool) {
-        guard let a = UIApplication.shared.delegate as? AppDelegate,
-            let articleResponse = self.articleResponse
+        guard let articleResponse = self.articleResponse
             else { return }
         
         Server.Request
