@@ -82,19 +82,25 @@ class ReadArticleViewModel {
     
     
     let timeOffset:Double = 100000000
+    let batchSize = 100
 
     var startTime = CFAbsoluteTimeGetCurrent()
     var last_sent = CFAbsoluteTimeGetCurrent()
     
     let articleLink: String
     
-    var articleResponse: OpenArticle?
+    var readingSession: ReadingSession?
+    var articleClosed = false
+    
+    var position: Int = 0
+    var statesInFlight: [AbsolutePageState] = []
+    var pendingStates: [AbsolutePageState] = []
     
     init(articleLink: String) {
         self.articleLink = articleLink
     }
     
-    func fetchText(completion: @escaping ((_ result: Result<OpenArticle, Error>) -> Void))  {
+    func fetchText(completion: @escaping ((_ result: Result<ReadingSession, Error>) -> Void))  {
         
         Server.Request
             .openArticle(articleID: self.articleLink,
@@ -108,30 +114,63 @@ class ReadArticleViewModel {
 
     func submitData(content_offset: CGFloat, first_index: CGFloat, last_index: CGFloat){
         let cur:CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
+
+        pendingStates.append(AbsolutePageState(startTime: self.last_sent, duration: cur, contentOffset: content_offset, firstLine: first_index, lastLine: last_index, position: position))
+        position = position + 1
         
-        Server.Request
-            .submitReadingData(articleID: self.articleLink,
-                               UDID: UDID,
-                               startTime: self.startTime*timeOffset,
-                               appeared: self.last_sent*timeOffset,
-                               time: cur*timeOffset,
-                               firstCell: first_index,
-                               lastCell: last_index,
-                               contentOffset: content_offset)
-            .log()
-            .startRequest { (result : Result<GenericResponse, Swift.Error>) in
-                if case .failure = result {
-                    //print(e)
-                    //suppressing error for now because empty json being returned from server
-                }
-            }
+        
+        
+        if pendingStates.count >= batchSize && statesInFlight.isEmpty {
+            sendBatch(Array(pendingStates.prefix(batchSize)))
+        }
+        
+
         
         self.last_sent = cur
     }
     
+    private func sendBatch(_ batch: [AbsolutePageState]) {
+        guard let readingSession = self.readingSession else { return }
+        
+        pendingStates.removeAll { batch.contains($0) }
+        statesInFlight.append(contentsOf: batch)
+        
+        Server.Request
+            .submitReadingDataBatch(articleID: self.articleLink,
+                                    UDID: UDID,
+                                    startTime: self.startTime*timeOffset,
+                                    sessionID: readingSession.sessionID,
+                                    batch: batch)
+            .log()
+            .startRequest { (result : Result<GenericResponse, Swift.Error>) in
+                switch result {
+                case .success:
+                    break
+                case .failure(let error):
+                    self.pendingStates.append(contentsOf: self.statesInFlight)
+                    print(error)
+                }
+                self.statesInFlight.removeAll(keepingCapacity: true)
+            }
+    }
+    
+    private func sendRemainingPendingStates() {
+        if !pendingStates.isEmpty {
+            sendBatch(pendingStates)
+        }
+    }
+    
+    func leavingArticle() {
+        sendRemainingPendingStates()
+    }
+    
     func closeArticle(complete: Bool) {
-        guard let articleResponse = self.articleResponse
+        guard let articleResponse = self.readingSession
             else { return }
+        
+        sendRemainingPendingStates()
+        
+        articleClosed = true
         
         Server.Request
             .closeArticle(articleID: articleResponse.article.info.url,

@@ -56,7 +56,7 @@ struct SessionBlurb: JSONParseable {
     }
 }
 
-public struct AbsolutePageState: JSONParseable {
+public struct AbsolutePageState: JSONParseable, Equatable, Hashable {
     
     enum Key: String {
         case appeared
@@ -64,7 +64,10 @@ public struct AbsolutePageState: JSONParseable {
         case content_offset
         case first_cell
         case last_cell
+        case position
     }
+    
+    public let position: Int?
     
     public let startTime: TimeInterval
     public let duration: TimeInterval
@@ -92,15 +95,31 @@ public struct AbsolutePageState: JSONParseable {
         self.contentOffset = contentOffset
         self.firstLine = firstCell
         self.lastLine = lastCell
+        
+        self.position = data[Key.position.rawValue] as? Int
     }
     
-    public init(startTime: TimeInterval, duration: TimeInterval, contentOffset: CGFloat, firstLine: CGFloat, lastLine: CGFloat) {
+    public init(startTime: TimeInterval, duration: TimeInterval, contentOffset: CGFloat, firstLine: CGFloat, lastLine: CGFloat, position: Int?) {
         self.startTime = startTime
         self.duration = duration
         
         self.contentOffset = contentOffset
         self.firstLine = firstLine
         self.lastLine = lastLine
+        self.position = position
+    }
+    
+    func toDictionary() -> [String : Any] {
+        return [ Key.appeared.rawValue : startTime.realTimeToConvertedTime(),
+                 Key.time.rawValue : duration.realTimeToConvertedTime(),
+                 Key.first_cell.rawValue : firstLine,
+                 Key.last_cell.rawValue : lastLine,
+                 Key.content_offset.rawValue : contentOffset,
+                 Key.position.rawValue : self.position ?? "" ]
+    }
+    
+    public static func < (lhs: AbsolutePageState, rhs: AbsolutePageState) -> Bool {
+        return lhs.startTime < rhs.startTime
     }
 }
 
@@ -136,7 +155,7 @@ struct Session: JSONParseable {
 }
 
 
-struct OpenArticle: JSONParseable {
+struct ReadingSession: JSONParseable {
     
     enum Key: String {
         case article_data
@@ -259,6 +278,11 @@ public enum ModelError: Error {
 
 
 extension TimeInterval {
+    
+    func realTimeToConvertedTime() -> Int {
+        return Int(self*timeOffset)
+    }
+    
     func asDate() -> Date {
         return Date(timeIntervalSinceReferenceDate: self)
     }
