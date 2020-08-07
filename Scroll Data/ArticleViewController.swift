@@ -130,7 +130,7 @@ import UIKit
         let tableWidth = hardTableView.frame.size.width
 
         let normalLineLabelHeight: CGFloat = tableHeight  / CGFloat(maxVisibleLines)
-        let spacingLineLabelHeight: CGFloat = normalLineLabelHeight / CGFloat(4.0)
+        let spacingLineLabelHeight: CGFloat = normalLineLabelHeight
         
         let readableTextAspectRatio: CGFloat = 2
 
