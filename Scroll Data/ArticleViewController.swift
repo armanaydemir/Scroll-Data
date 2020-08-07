@@ -140,11 +140,8 @@ import UIKit
             let isSpacer = content == ""
 
             if isTitle {
-               label.numberOfLines = 0
-               label.font = baseFont.withTextStyle(.title1)!
-               label.textAlignment = .center
-               cellHeight = titleLabelHeight
-            } else if isSpacer{
+               return createTitleCell(totalHeight: tableHeight, title: content)
+            } else if isSpacer {
                cellHeight = spacingLineLabelHeight
             } else {
                 label.font = font
@@ -165,6 +162,37 @@ import UIKit
         }
 
         return cells
+    }
+    
+    func createTitleCell(totalHeight: CGFloat, title: String) -> HardTableView.Cell {
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let label = UILabel(frame: CGRect.zero)
+        label.text = title
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = baseFont.withTextStyle(.title1)!
+        label.textAlignment = .center
+        label.numberOfLines = 0
+
+        
+        let caret = UIImageView()
+        caret.tintColor = UIColor.darkText
+        caret.image = UIImage(systemName: "chevron.down", withConfiguration: UIImage.SymbolConfiguration(scale: .large))
+        caret.translatesAutoresizingMaskIntoConstraints = false
+        
+        containerView.addSubview(label)
+        containerView.addSubview(caret)
+        
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            label.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: containerView.leadingAnchor, multiplier: 2),
+            caret.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            caret.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -32)
+        ])
+        
+        return HardTableView.Cell(view: containerView, height: totalHeight)
     }
     
     func createSubmitButtonCell(totalHeight: CGFloat, emptyPlaceholder: Bool = false) -> HardTableView.Cell {
