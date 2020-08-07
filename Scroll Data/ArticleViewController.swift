@@ -88,6 +88,9 @@ import UIKit
                     let totalDuration = playableSession.endTime - playableSession.startTime
                     timeLabel.text = "Session Length: \(Int(totalDuration.rounded(FloatingPointRoundingRule.toNearestOrAwayFromZero)))s"
                     self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: timeLabel)
+                    
+                    self.navigationItem.title = playableSession.startTime.asDateString()
+                    
                     self.spinner.stopAnimating()
                     self.hardTableView.isHidden = false
 
