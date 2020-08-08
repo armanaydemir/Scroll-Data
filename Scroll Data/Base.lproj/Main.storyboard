@@ -1,12 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="67l-c2-P28">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="67l-c2-P28">
     <device id="ipad12_9" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--Intro View Controller-->
+        <scene sceneID="z9m-xL-dyx">
+            <objects>
+                <viewController id="NUM-QV-RyO" customClass="IntroViewController" customModule="Reader" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="GcP-mt-gJz"/>
+                        <viewControllerLayoutGuide type="bottom" id="KfJ-pX-4Mc"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="coR-cb-NNJ">
+                        <rect key="frame" x="0.0" y="0.0" width="712" height="1006.9200564096436"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" spacing="32" translatesAutoresizingMaskIntoConstraints="NO" id="8d6-ni-HXp">
+                                <rect key="frame" x="196" y="363.5" width="320" height="279.5"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Welcome to Reader" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Xe-lt-eYO">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="21.5"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iyd-XV-Ap5">
+                                        <rect key="frame" x="0.0" y="53.5" width="320" height="84"/>
+                                        <string key="text">Reading articles in this app helps contribute data towards research involving reading cadence and scrolling behavior. If you are willing to receive possible follow-up communications, please enter your email below.</string>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="LC2-na-tgr">
+                                        <rect key="frame" x="0.0" y="169.5" width="320" height="34"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" textContentType="email"/>
+                                    </textField>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mtq-oe-I8M">
+                                        <rect key="frame" x="0.0" y="235.5" width="320" height="44"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="44" id="JGn-tY-IFY"/>
+                                        </constraints>
+                                        <state key="normal" title="OK"/>
+                                        <connections>
+                                            <action selector="okTapped:" destination="NUM-QV-RyO" eventType="touchUpInside" id="rcl-V5-dfQ"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="320" id="piI-P5-jVb"/>
+                                </constraints>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="8d6-ni-HXp" firstAttribute="centerX" secondItem="coR-cb-NNJ" secondAttribute="centerX" id="PnE-ME-30O"/>
+                            <constraint firstItem="8d6-ni-HXp" firstAttribute="centerY" secondItem="coR-cb-NNJ" secondAttribute="centerY" id="aNV-dT-tM5"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8SW-Zg-RZF" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1549" y="84"/>
+        </scene>
         <!--Starting View Controller-->
         <scene sceneID="QCc-eC-Dzc">
             <objects>
@@ -42,6 +101,7 @@
                         <outlet property="loadIndicator" destination="GD0-jN-B0g" id="Qe5-vR-DdF"/>
                         <outlet property="table" destination="ZxO-p4-z4r" id="ufa-8X-OgO"/>
                         <segue destination="BYZ-38-t0r" kind="show" identifier="startReading" id="Yfa-VD-xhn"/>
+                        <segue destination="NUM-QV-RyO" kind="presentation" identifier="intro" id="eSn-9t-3I3"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QdG-nT-2Hg" userLabel="First Responder" sceneMemberID="firstResponder"/>

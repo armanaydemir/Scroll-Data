@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		220567EB24D774610085E0B3 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220567EA24D774610085E0B3 /* Server.swift */; };
+		2225B93324DCE4750023B649 /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2225B93224DCE4750023B649 /* IntroViewController.swift */; };
 		226A57DF215B1E2E0029D798 /* TitleSubtitleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226A57DD215B1E2E0029D798 /* TitleSubtitleTableViewCell.swift */; };
 		226A57E0215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 226A57DE215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib */; };
 		229B641824B6D66000BA76C7 /* HardTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229B641724B6D66000BA76C7 /* HardTableView.swift */; };
@@ -45,6 +46,7 @@
 
 /* Begin PBXFileReference section */
 		220567EA24D774610085E0B3 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
+		2225B93224DCE4750023B649 /* IntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
 		226A57DD215B1E2E0029D798 /* TitleSubtitleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleSubtitleTableViewCell.swift; sourceTree = "<group>"; };
 		226A57DE215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TitleSubtitleTableViewCell.xib; sourceTree = "<group>"; };
 		229B641724B6D66000BA76C7 /* HardTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardTableView.swift; sourceTree = "<group>"; };
@@ -134,6 +136,7 @@
 				F15A535B2070748200C2F7B6 /* ArticleViewController.swift */,
 				99DF26A621ACEAF7007D6788 /* ArticleViewModel.swift */,
 				99931E122127EE31006CAC45 /* StartingViewController.swift */,
+				2225B93224DCE4750023B649 /* IntroViewController.swift */,
 				226A57DD215B1E2E0029D798 /* TitleSubtitleTableViewCell.swift */,
 				226A57DE215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib */,
 				229B641724B6D66000BA76C7 /* HardTableView.swift */,
@@ -322,6 +325,7 @@
 				99DF26A721ACEAF7007D6788 /* ArticleViewModel.swift in Sources */,
 				229B641A24B6EC9100BA76C7 /* Model.swift in Sources */,
 				F15A535C2070748200C2F7B6 /* ArticleViewController.swift in Sources */,
+				2225B93324DCE4750023B649 /* IntroViewController.swift in Sources */,
 				F15A41971FCA7CA00040F11D /* request.swift in Sources */,
 				99DF267F21ACD3DA007D6788 /* AppDelegate.swift in Sources */,
 			);

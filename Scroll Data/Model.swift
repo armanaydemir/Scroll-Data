@@ -224,24 +224,40 @@ struct ArticleBlurb: JSONParseable {
 struct Settings: JSONParseable {
     
     private let defaultShowSessions = false
+    private let defaultShowIntro = false
     
     enum Key: String {
         case showReplays
+        case showIntro
     }
     
     let showSessions: Bool
+    let showIntro: Bool
     
     init(data: Any?) {
-        if let data = data as? [String : Any],
-            let showSessions = data[Key.showReplays.rawValue] as? Bool {
+        guard let data = data as? [String : Any] else {
+            self.showSessions = defaultShowSessions
+            self.showIntro = defaultShowIntro
+            return
+        }
+        
+        if let showSessions = data[Key.showReplays.rawValue] as? Bool {
             self.showSessions = showSessions
         } else {
             self.showSessions = defaultShowSessions
         }
+        
+        if let showIntro = data[Key.showIntro.rawValue] as? Bool {
+            self.showIntro = showIntro
+        } else {
+            self.showIntro = defaultShowIntro
+        }
+        
     }
     
     init() {
         self.showSessions = defaultShowSessions
+        self.showIntro = defaultShowIntro
     }
 }
 

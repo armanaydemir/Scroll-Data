@@ -89,6 +89,10 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
                     self.navigationItem.title = TableMode.articles.name()
                 }
                 
+                if settings.showIntro {
+                    self.performSegue(withIdentifier: "intro", sender: self)
+                }
+                
                 table.register(UINib.init(nibName: "TitleSubtitleTableViewCell", bundle: nil), forCellReuseIdentifier: "default")
                 table.rowHeight = UITableView.automaticDimension
             }
@@ -143,8 +147,10 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
                     loadIndicator.stopAnimating()
                     table.reloadData()
                     table.isHidden = false
-                    self.refreshControl.endRefreshing()
                 }
+            }
+            DispatchQueue.main.async {
+                self.refreshControl.endRefreshing()
             }
         }
     }
@@ -172,8 +178,10 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
                     loadIndicator.stopAnimating()
                     table.reloadData()
                     table.isHidden = false
-                    self.refreshControl.endRefreshing()
                 }
+            }
+            DispatchQueue.main.async {
+                self.refreshControl.endRefreshing()
             }
         }
     }
