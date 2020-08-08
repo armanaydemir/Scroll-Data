@@ -47,6 +47,15 @@ import UIKit
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        switch mode {
+        case .read(let vm):
+            vm.leavingArticle()
+        default:
+            break
+        }
+    }
+    
     @objc func logEvent(notification: Notification) {
         if let mode = self.mode, case Mode.read(let vm) = mode {
             vm.logEvent(notification: notification)
@@ -121,8 +130,7 @@ import UIKit
         let tableWidth = hardTableView.frame.size.width
 
         let normalLineLabelHeight: CGFloat = tableHeight  / CGFloat(maxVisibleLines)
-        let titleLabelHeight: CGFloat = tableHeight
-        let spacingLineLabelHeight: CGFloat = normalLineLabelHeight / CGFloat(4.0)
+        let spacingLineLabelHeight: CGFloat = normalLineLabelHeight
         
         let readableTextAspectRatio: CGFloat = 2
 
