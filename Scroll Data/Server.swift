@@ -74,7 +74,7 @@ struct Server {
             case .openArticle:
                 endpoint = "open_article"
             case .submitReadingDataBatch:
-                endpoint = "submit_data"
+                endpoint = "submit_data_batched"
             case .closeArticle:
                 endpoint = "close_article"
             case .openSession:

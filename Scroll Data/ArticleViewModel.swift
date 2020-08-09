@@ -109,7 +109,15 @@ class ReadArticleViewModel {
                          type: AppDelegate.deviceType(),
                          version: appVersion)
             .log()
-            .startRequest(completion: completion)
+            .startRequest { (result: Result<ReadingSession, Error>) in
+                switch result {
+                case .success(let readingSession):
+                    self.readingSession = readingSession
+                case .failure:
+                    break
+                }
+                completion(result)
+        }
     }
 
     func submitData(content_offset: CGFloat, first_index: CGFloat, last_index: CGFloat){
