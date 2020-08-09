@@ -10,7 +10,7 @@
         <!--Starting View Controller-->
         <scene sceneID="QCc-eC-Dzc">
             <objects>
-                <viewController id="mbO-Jk-rj2" customClass="StartingViewController" customModule="Replay_Scroll_Data" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="mbO-Jk-rj2" customClass="StartingViewController" customModule="Reader" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="aRf-OE-Oox"/>
                         <viewControllerLayoutGuide type="bottom" id="22z-Ve-phJ"/>
@@ -19,15 +19,15 @@
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="GD0-jN-B0g">
-                                <rect key="frame" x="502" y="673" width="20" height="20"/>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="GD0-jN-B0g">
+                                <rect key="frame" x="493.5" y="664.5" width="37" height="37"/>
                             </activityIndicatorView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ZxO-p4-z4r">
                                 <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </tableView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="ZxO-p4-z4r" firstAttribute="height" secondItem="xSG-2C-ts7" secondAttribute="height" id="5CO-YF-6nq"/>
                             <constraint firstItem="ZxO-p4-z4r" firstAttribute="width" secondItem="xSG-2C-ts7" secondAttribute="width" id="LkQ-Xl-Rad"/>
@@ -67,7 +67,7 @@
         <!--Article View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ArticleViewController" customModule="Replay_Scroll_Data" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ArticleViewController" customModule="Reader" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -77,23 +77,22 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="utz-ww-zxe">
-                                <rect key="frame" x="0.0" y="50" width="0.0" height="1"/>
+                                <rect key="frame" x="0.0" y="50" width="0.0" height="0.0"/>
                                 <color key="backgroundColor" systemColor="systemBlueColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" id="Gpz-iG-Nkk"/>
-                                    <constraint firstAttribute="height" constant="1" id="JMO-Ra-9kM"/>
+                                    <constraint firstAttribute="height" id="JMO-Ra-9kM"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2d6-TB-O24" customClass="HardTableView" customModule="Replay_Scroll_Data" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="51" width="1024" height="1315"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2d6-TB-O24" customClass="HardTableView" customModule="Reader" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="50" width="1024" height="1316"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </view>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="y80-SR-T2z">
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="y80-SR-T2z">
                                 <rect key="frame" x="493.5" y="664.5" width="37" height="37"/>
-                                <color key="color" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </activityIndicatorView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="utz-ww-zxe" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="5ke-oe-PCM"/>
                             <constraint firstAttribute="bottom" secondItem="2d6-TB-O24" secondAttribute="bottom" id="70W-Ph-OlD"/>

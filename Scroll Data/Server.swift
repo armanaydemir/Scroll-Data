@@ -23,14 +23,11 @@ struct Server {
         case articles
         case sessions
         case openArticle(articleID: String, UDID: String, startTime: Double, type: String, version: String)
-        case submitReadingData(articleID: String,
+        case submitReadingDataBatch(articleID: String,
             UDID: String,
             startTime: Double,
-            appeared: Double,
-            time: Double,
-            firstCell: CGFloat,
-            lastCell: CGFloat,
-            contentOffset: CGFloat)
+            sessionID: String,
+            batch: [AbsolutePageState])
         case closeArticle(articleID: String, UDID: String, startTime: Double, time: Double, sessionID: String, complete: Bool, isPortrait: Bool)
         case openSession(sessionID: String, UDID: String, type: String, version: String)
         case submitEvent(articleID: String,
@@ -76,7 +73,7 @@ struct Server {
                 endpoint = "sessions"
             case .openArticle:
                 endpoint = "open_article"
-            case .submitReadingData:
+            case .submitReadingDataBatch:
                 endpoint = "submit_data"
             case .closeArticle:
                 endpoint = "close_article"
@@ -92,7 +89,7 @@ struct Server {
             switch self {
             case .settings, .articles, .sessions:
                 return .get
-            case .openArticle, .openSession, .submitReadingData, .closeArticle, .submitEvent:
+            case .openArticle, .openSession, .submitReadingDataBatch, .closeArticle, .submitEvent:
                 return .post
             }
         }
@@ -111,15 +108,12 @@ struct Server {
                     "type": type,
                     "version": version
                 ]
-            case .submitReadingData(articleID: let articleID, UDID: let UDID, startTime: let startTime, appeared: let appeared, time: let time, firstCell: let firstCell, lastCell: let lastCell, contentOffset: let contentOffset):
+            case .submitReadingDataBatch(articleID: let articleID, UDID: let UDID, startTime: let startTime, sessionID: let sessionID, batch: let batch):
                 params = [  "UDID": UDID,
                             "article": articleID,
                             "startTime": startTime,
-                            "appeared": appeared,
-                            "time": time,
-                            "first_cell": firstCell,
-                            "last_cell": lastCell,
-                            "content_offset": contentOffset ]
+                            "session_id": sessionID,
+                            "data" : batch.map { $0.toDictionary() }]
                 
             case .closeArticle(articleID: let articleID, UDID: let UDID, startTime: let startTime, time: let time, sessionID: let sessionID, complete: let complete, isPortrait: let isPortrait):
                 params = [  "UDID": UDID,

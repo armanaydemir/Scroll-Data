@@ -31,8 +31,8 @@ struct SessionBlurb: JSONParseable {
 
     let udid: String?
     let articleID: String?
-    let startTime: Int?
-    let endTime: Int?
+    let startTime: Double?
+    let endTime: Double?
     let deviceType: String?
     let readerVersion: String?
     
@@ -44,16 +44,19 @@ struct SessionBlurb: JSONParseable {
         self.id = id
         self.article = try ArticleBlurb(data: data[Key.article_data.rawValue])
         
+        
+        
+        
         self.udid = data[Key.UDID.rawValue] as? String
         self.articleID = data[Key.article_id.rawValue] as? String
-        self.startTime = data[Key.startTime.rawValue] as? Int
-        self.endTime = data[Key.endTime.rawValue] as? Int
+        self.startTime = (data[Key.startTime.rawValue] as? Int)?.convertedTimeToRealTime()
+        self.endTime = (data[Key.endTime.rawValue] as? Int)?.convertedTimeToRealTime()
         self.deviceType = data[Key.type.rawValue] as? String
         self.readerVersion = data[Key.version.rawValue] as? String
     }
 }
 
-public struct AbsolutePageState: JSONParseable {
+public struct AbsolutePageState: JSONParseable, Equatable, Hashable {
     
     enum Key: String {
         case appeared
@@ -61,7 +64,10 @@ public struct AbsolutePageState: JSONParseable {
         case content_offset
         case first_cell
         case last_cell
+        case position
     }
+    
+    public let position: Int?
     
     public let startTime: TimeInterval
     public let duration: TimeInterval
@@ -80,8 +86,8 @@ public struct AbsolutePageState: JSONParseable {
             let contentOffset = data[Key.content_offset.rawValue] as? CGFloat
             else { throw ModelError.errorParsingJSON }
         
-        let appearTime = convertedTimeToRealTime(convertedTime: convertedAppearTime)
-        let momentDuration = convertedTimeToRealTime(convertedTime: convertedDuration)
+        let appearTime = convertedAppearTime.convertedTimeToRealTime()
+        let momentDuration = convertedDuration.convertedTimeToRealTime()
 
         self.startTime = appearTime
         self.duration = momentDuration
@@ -89,15 +95,31 @@ public struct AbsolutePageState: JSONParseable {
         self.contentOffset = contentOffset
         self.firstLine = firstCell
         self.lastLine = lastCell
+        
+        self.position = data[Key.position.rawValue] as? Int
     }
     
-    public init(startTime: TimeInterval, duration: TimeInterval, contentOffset: CGFloat, firstLine: CGFloat, lastLine: CGFloat) {
+    public init(startTime: TimeInterval, duration: TimeInterval, contentOffset: CGFloat, firstLine: CGFloat, lastLine: CGFloat, position: Int?) {
         self.startTime = startTime
         self.duration = duration
         
         self.contentOffset = contentOffset
         self.firstLine = firstLine
         self.lastLine = lastLine
+        self.position = position
+    }
+    
+    func toDictionary() -> [String : Any] {
+        return [ Key.appeared.rawValue : startTime.realTimeToConvertedTime(),
+                 Key.time.rawValue : duration.realTimeToConvertedTime(),
+                 Key.first_cell.rawValue : firstLine,
+                 Key.last_cell.rawValue : lastLine,
+                 Key.content_offset.rawValue : contentOffset,
+                 Key.position.rawValue : self.position ?? "" ]
+    }
+    
+    public static func < (lhs: AbsolutePageState, rhs: AbsolutePageState) -> Bool {
+        return lhs.startTime < rhs.startTime
     }
 }
 
@@ -133,7 +155,7 @@ struct Session: JSONParseable {
 }
 
 
-struct OpenArticle: JSONParseable {
+struct ReadingSession: JSONParseable {
     
     enum Key: String {
         case article_data
@@ -243,10 +265,32 @@ struct Settings: JSONParseable {
 }
 
 private let timeOffset = 100000000.0
-fileprivate func convertedTimeToRealTime(convertedTime: Int) -> TimeInterval {
-    return Double(convertedTime) / timeOffset
+
+extension Int {
+    func convertedTimeToRealTime() -> TimeInterval {
+        return Double(self) / timeOffset
+    }
 }
 
 public enum ModelError: Error {
     case errorParsingJSON
+}
+
+
+extension TimeInterval {
+    
+    func realTimeToConvertedTime() -> Int {
+        return Int(self*timeOffset)
+    }
+    
+    func asDate() -> Date {
+        return Date(timeIntervalSinceReferenceDate: self)
+    }
+    
+    func asDateString() -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .medium
+        return formatter.string(from: self.asDate())
+    }
 }

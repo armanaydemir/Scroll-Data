@@ -30,7 +30,7 @@ import UIKit
         
         spinner.hidesWhenStopped = true
         spinner.startAnimating()
-        
+        hardTableView.isHidden = true
         loadingBarView.isHidden = true
         
         self.hardTableView.delegate = self
@@ -44,6 +44,15 @@ import UIKit
             setUpReplayMode(viewModel: viewModel)
         case .none:
             print("Article mode not initialized correctly")
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        switch mode {
+        case .read(let vm):
+            vm.leavingArticle()
+        default:
+            break
         }
     }
     
@@ -63,8 +72,11 @@ import UIKit
             switch result {
             case .success(let articleResponse):
                 DispatchQueue.main.async {
-                    self.spinner.stopAnimating()
                     self.loadHardTableView(content: articleResponse.article.content, maxVisibleLines: articleResponse.visibleLines, includeSubmitButton: true)
+                    
+                    self.spinner.stopAnimating()
+                    self.hardTableView.isHidden = false
+                    
                     self.scrollViewDidScroll(self.hardTableView)
                 }
             case .failure(let error):
@@ -85,8 +97,12 @@ import UIKit
                     let totalDuration = playableSession.endTime - playableSession.startTime
                     timeLabel.text = "Session Length: \(Int(totalDuration.rounded(FloatingPointRoundingRule.toNearestOrAwayFromZero)))s"
                     self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: timeLabel)
-                    self.spinner.stopAnimating()
                     
+                    self.navigationItem.title = playableSession.startTime.asDateString()
+                    
+                    self.spinner.stopAnimating()
+                    self.hardTableView.isHidden = false
+
                     DispatchQueue.main.asyncAfter(deadline: .now()+1) {
                         //not animating loading bar for now, not working yet
                         //animateLoadingBar(totalDuration: totalDuration)
@@ -104,7 +120,7 @@ import UIKit
     func loadHardTableView(content: [String], maxVisibleLines: Int, includeSubmitButton: Bool) {
 
         let contentCells = createContentCells(content: content, maxVisibleLines: maxVisibleLines)
-        let buttonCell = [ createSubmitButtonCell(emptyPlaceholder: !includeSubmitButton) ]
+        let buttonCell = [ createSubmitButtonCell(totalHeight: hardTableView.bounds.height, emptyPlaceholder: !includeSubmitButton) ]
 
         hardTableView.cells = contentCells + buttonCell
     }
@@ -114,8 +130,7 @@ import UIKit
         let tableWidth = hardTableView.frame.size.width
 
         let normalLineLabelHeight: CGFloat = tableHeight  / CGFloat(maxVisibleLines)
-        let titleLabelHeight: CGFloat = tableHeight
-        let spacingLineLabelHeight: CGFloat = normalLineLabelHeight / CGFloat(4.0)
+        let spacingLineLabelHeight: CGFloat = normalLineLabelHeight
         
         let readableTextAspectRatio: CGFloat = 2
 
@@ -136,11 +151,8 @@ import UIKit
             let isSpacer = content == ""
 
             if isTitle {
-               label.numberOfLines = 0
-               label.font = baseFont.withTextStyle(.title1)!
-               label.textAlignment = .center
-               cellHeight = titleLabelHeight
-            } else if isSpacer{
+               return createTitleCell(totalHeight: tableHeight, title: content)
+            } else if isSpacer {
                cellHeight = spacingLineLabelHeight
             } else {
                 label.font = font
@@ -163,11 +175,42 @@ import UIKit
         return cells
     }
     
-    func createSubmitButtonCell(emptyPlaceholder: Bool = false) -> HardTableView.Cell {
+    func createTitleCell(totalHeight: CGFloat, title: String) -> HardTableView.Cell {
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
         
-        let buttonSpacing: CGFloat = 44
+        let label = UILabel(frame: CGRect.zero)
+        label.text = title
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = baseFont.withTextStyle(.title1)!
+        label.textAlignment = .center
+        label.numberOfLines = 0
+
+        
+        let caret = UIImageView()
+        caret.tintColor = UIColor.darkText
+        caret.image = UIImage(systemName: "chevron.down", withConfiguration: UIImage.SymbolConfiguration(scale: .large))
+        caret.translatesAutoresizingMaskIntoConstraints = false
+        
+        containerView.addSubview(label)
+        containerView.addSubview(caret)
+        
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            label.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: containerView.leadingAnchor, multiplier: 2),
+            caret.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            caret.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -32)
+        ])
+        
+        return HardTableView.Cell(view: containerView, height: totalHeight)
+    }
+    
+    func createSubmitButtonCell(totalHeight: CGFloat, emptyPlaceholder: Bool = false) -> HardTableView.Cell {
+        
+        let buttonTopSpacing: CGFloat = 44
         let buttonHeight: CGFloat = 64
-        let totalHeight: CGFloat = buttonHeight + 2 * buttonSpacing
+        let buttonBottomSpacing: CGFloat = totalHeight - buttonTopSpacing - buttonHeight
         
         let submitButton = UIButton(type: .system)
         submitButton.setTitle("Submit Reading", for: .normal)
@@ -180,12 +223,12 @@ import UIKit
 
         NSLayoutConstraint.activate([
            submitButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-           submitButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-           submitButton.topAnchor.constraint(lessThanOrEqualTo: containerView.topAnchor, constant: buttonSpacing),
+           submitButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: buttonTopSpacing),
+           submitButton.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -1*buttonBottomSpacing),
            submitButton.heightAnchor.constraint(equalToConstant: buttonHeight)
         ])
         
-        submitButton.isHidden = emptyPlaceholder
+        submitButton.isEnabled = !emptyPlaceholder
 
         return HardTableView.Cell(view: containerView, height: totalHeight)
     }

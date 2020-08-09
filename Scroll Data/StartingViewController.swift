@@ -35,6 +35,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
                 table.reloadData()
                 if sessions.isEmpty {
                     fetchSessions(fromEmpty: true)
+                } else {
+                    fetchSessions(fromEmpty: false)
                 }
             }
         }
@@ -206,7 +208,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         case .sessions:
             let session = self.sessions[indexPath.item]
             title = session.article.title
-            subtitle = "\(session.id) -  \(session.deviceType ?? "") - \(session.readerVersion ?? "")"
+            subtitle = "\(session.startTime?.asDateString() ?? "") - \(session.id) -  \(session.deviceType ?? "") - \(session.readerVersion ?? "")"
         }
         
         let attributes = [NSAttributedString.Key.font: baseFont.withTextStyle(.headline)!]
@@ -247,10 +249,6 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             case .sessions:
                 destination.mode = .replay(viewModel: SessionReplayViewModel(sessionID: self.link))
             }
-
-            guard let a = UIApplication.shared.delegate as? AppDelegate else {return}
-            a.autoRotate = false
-            a.orientation = UIDevice.current.orientation
         }
     }
 }
