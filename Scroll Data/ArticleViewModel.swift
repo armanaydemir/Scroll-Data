@@ -149,7 +149,6 @@ class ReadArticleViewModel {
                                     startTime: self.startTime*timeOffset,
                                     sessionID: readingSession.sessionID,
                                     batch: batch)
-            .log()
             .startRequest { (result : Result<GenericResponse, Swift.Error>) in
                 switch result {
                 case .success:

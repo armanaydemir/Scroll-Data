@@ -199,24 +199,38 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let title: String
         let subtitle: String
+        let lines: String
         
         switch tableMode {
         case .articles:
             let article = self.articles[indexPath.item]
             title = article.title
             subtitle = article.abstract ?? ""
+            if let lineCount = article.lineCount {
+                lines = "\(lineCount) lines"
+            } else {
+                lines = ""
+            }
         case .sessions:
             let session = self.sessions[indexPath.item]
             title = session.article.title
             subtitle = "\(session.startTime?.asDateString() ?? "") - \(session.id) -  \(session.deviceType ?? "") - \(session.readerVersion ?? "")"
+            if let start = session.startTime, let end = session.endTime {
+                let totalDuration = end - start
+                lines = "\(Int(totalDuration.rounded(FloatingPointRoundingRule.toNearestOrAwayFromZero)))s"
+            } else {
+                lines = ""
+            }
         }
         
         let attributes = [NSAttributedString.Key.font: baseFont.withTextStyle(.headline)!]
         let sub_at = [NSAttributedString.Key.font: baseFont.withTextStyle(.subheadline)!]
+        let lines_attributes = [NSAttributedString.Key.font: baseFont.withTextStyle(.caption1)!]
         let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
         if let cell: TitleSubtitleTableViewCell = cell as? TitleSubtitleTableViewCell {
             cell.title.attributedText = NSAttributedString.init(string:  title, attributes: attributes)
             cell.subtitle.attributedText = NSAttributedString.init(string: subtitle, attributes: sub_at)
+            cell.lines.attributedText = NSAttributedString(string: lines, attributes: lines_attributes)
         }
         return cell
     }

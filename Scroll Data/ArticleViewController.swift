@@ -95,7 +95,7 @@ import UIKit
                     let timeLabel = UILabel()
                     timeLabel.font = UIFont.systemFont(ofSize: 12)
                     let totalDuration = playableSession.endTime - playableSession.startTime
-                    timeLabel.text = "Session Length: \(Int(totalDuration.rounded(FloatingPointRoundingRule.toNearestOrAwayFromZero)))s"
+                    timeLabel.text = "\(Int(totalDuration.rounded(FloatingPointRoundingRule.toNearestOrAwayFromZero)))s"
                     self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: timeLabel)
                     
                     self.navigationItem.title = playableSession.startTime.asDateString()
@@ -261,7 +261,7 @@ import UIKit
 
         let stateTuples: [(state: RelativePageState, bounds: CGRect)] = session.states.compactMap { pageState in
             
-            print("\(pageState.firstLine), \(pageState.lastLine), \(pageState.relativeStartTime * totalDuration), \(pageState.relativeDuration * totalDuration), \(pageState.contentOffset)")
+//            print("\(pageState.firstLine), \(pageState.lastLine), \(pageState.relativeStartTime * totalDuration), \(pageState.relativeDuration * totalDuration), \(pageState.contentOffset)")
             
             guard let contentOffset = self.hardTableView.contentOffset(forFractionalIndex: pageState.firstLine, position: UITableView.ScrollPosition.top)
                 else { return nil }
