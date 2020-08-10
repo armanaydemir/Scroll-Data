@@ -10,9 +10,7 @@ import Foundation
 import CoreGraphics
 
 
-//Server session model
-
-private let timeOffset = 100000000.0
+private let defaultMaxLines = 28
 
 struct SessionBlurb: JSONParseable {
     
@@ -33,8 +31,8 @@ struct SessionBlurb: JSONParseable {
 
     let udid: String?
     let articleID: String?
-    let startTime: Int?
-    let endTime: Int?
+    let startTime: Double?
+    let endTime: Double?
     let deviceType: String?
     let readerVersion: String?
     
@@ -48,64 +46,14 @@ struct SessionBlurb: JSONParseable {
         
         self.udid = data[Key.UDID.rawValue] as? String
         self.articleID = data[Key.article_id.rawValue] as? String
-        self.startTime = data[Key.startTime.rawValue] as? Int
-        self.endTime = data[Key.endTime.rawValue] as? Int
+        self.startTime = (data[Key.startTime.rawValue] as? Int)?.convertedTimeToRealTime()
+        self.endTime = (data[Key.endTime.rawValue] as? Int)?.convertedTimeToRealTime()
         self.deviceType = data[Key.type.rawValue] as? String
         self.readerVersion = data[Key.version.rawValue] as? String
     }
 }
 
-public struct Session: JSONParseable {
-    
-    enum Key: String {
-        case session_data
-        case visible_lines
-    }
-    
-    public let absolutePageStates: [AbsolutePageState]
-    public let linesPerPage: Int
-
-    public let startTime: TimeInterval
-    public let endTime: TimeInterval
-    public let relativePageStates: [RelativePageState]
-    
-    public init(data: Any?) throws {
-        guard let sessionData = data as? [[String : Any]]
-            else { throw ModelError.errorParsingJSON }
-        
-        let linesPerPage = sessionData.last?[Key.visible_lines.rawValue] as? Int ?? defaultVisibleLines
-        let states: [AbsolutePageState] = try [AbsolutePageState].init(data: data)
-        
-        guard let firstState = states.first,
-            let lastState = states.last
-            else { throw ModelError.requiredContentsEmpty }
-        
-        let startTime = firstState.startTime
-        let endTime = lastState.startTime
-        
-        self.startTime = startTime
-        self.endTime = endTime
-        self.absolutePageStates = states
-        self.linesPerPage = linesPerPage
-        self.relativePageStates = states.map { $0.convertToRelative(sessionStartTime: startTime, totalSessionDuration: endTime - startTime)}
-    }
-    
-    public init(startTime: TimeInterval, endTime: TimeInterval, absolutePageStates: [AbsolutePageState], linesPerPage: Int) {
-        self.absolutePageStates = absolutePageStates
-        self.startTime = startTime
-        self.endTime = endTime
-        self.linesPerPage = linesPerPage
-        
-        self.relativePageStates = absolutePageStates.map { $0.convertToRelative(sessionStartTime: startTime, totalSessionDuration: endTime - startTime) }
-    }
-    
-    public func toDictionary() -> [String : Any] {
-        return [ Key.session_data.rawValue : absolutePageStates.map { $0.toDictionary() },
-                 Key.visible_lines.rawValue : linesPerPage ]
-    }
-}
-
-public struct AbsolutePageState: JSONParseable {
+public struct AbsolutePageState: JSONParseable, Equatable, Hashable {
     
     enum Key: String {
         case appeared
@@ -113,28 +61,30 @@ public struct AbsolutePageState: JSONParseable {
         case content_offset
         case first_cell
         case last_cell
+        case position
     }
+    
+    public let position: Int?
     
     public let startTime: TimeInterval
     public let duration: TimeInterval
     
     public let contentOffset: CGFloat
     
-    public let firstLine: Int
-    public let lastLine: Int
+    public let firstLine: CGFloat
+    public let lastLine: CGFloat
     
     public init(data: Any?) throws {
         guard let data = data as? [String : Any],
-            let unconvertedAppearTime = data[Key.appeared.rawValue] as? Int,
-            let firstCell = data[Key.first_cell.rawValue] as? Int,
-            let lastCell = data[Key.last_cell.rawValue] as? Int,
-            let unconvertedDuration = data[Key.time.rawValue] as? Int,
+            let convertedAppearTime = data[Key.appeared.rawValue] as? Int,
+            let firstCell = data[Key.first_cell.rawValue] as? CGFloat,
+            let lastCell = data[Key.last_cell.rawValue] as? CGFloat,
+            let convertedDuration = data[Key.time.rawValue] as? Int,
             let contentOffset = data[Key.content_offset.rawValue] as? CGFloat
             else { throw ModelError.errorParsingJSON }
         
-        let appearTime = Double(unconvertedAppearTime) / timeOffset
-        let momentDuration = Double(unconvertedDuration) / timeOffset
-
+        let appearTime = convertedAppearTime.convertedTimeToRealTime()
+        let momentDuration = convertedDuration.convertedTimeToRealTime()
 
         self.startTime = appearTime
         self.duration = momentDuration
@@ -142,75 +92,35 @@ public struct AbsolutePageState: JSONParseable {
         self.contentOffset = contentOffset
         self.firstLine = firstCell
         self.lastLine = lastCell
+        
+        self.position = data[Key.position.rawValue] as? Int
     }
     
-    public init(startTime: TimeInterval, duration: TimeInterval, contentOffset: CGFloat, firstLine: Int, lastLine: Int) {
+    public init(startTime: TimeInterval, duration: TimeInterval, contentOffset: CGFloat, firstLine: CGFloat, lastLine: CGFloat, position: Int?) {
         self.startTime = startTime
         self.duration = duration
         
         self.contentOffset = contentOffset
         self.firstLine = firstLine
         self.lastLine = lastLine
+        self.position = position
     }
     
-    public func toDictionary() -> [String : Any] {
-        return [ Key.appeared.rawValue : Int(startTime * timeOffset),
-                 Key.time.rawValue : Int(duration * timeOffset),
+    func toDictionary() -> [String : Any] {
+        return [ Key.appeared.rawValue : startTime.realTimeToConvertedTime(),
+                 Key.time.rawValue : duration.realTimeToConvertedTime(),
                  Key.first_cell.rawValue : firstLine,
                  Key.last_cell.rawValue : lastLine,
-                 Key.content_offset.rawValue : contentOffset ]
+                 Key.content_offset.rawValue : contentOffset,
+                 Key.position.rawValue : self.position ?? "" ]
     }
     
-    fileprivate func convertToRelative(sessionStartTime: TimeInterval, totalSessionDuration: TimeInterval) -> RelativePageState {
-        return RelativePageState(absolutePageState: self,
-                                 sessionStartTime: sessionStartTime,
-                                 totalSessionDuration: totalSessionDuration)
+    public static func < (lhs: AbsolutePageState, rhs: AbsolutePageState) -> Bool {
+        return lhs.startTime < rhs.startTime
     }
 }
 
-
-//Specific page state version for use in session playback
-
-public struct RelativePageState {
-    public let relativeStartTime: Double
-    public let relativeDuration: Double
-    
-    public let contentOffset: CGFloat
-    
-    public let firstLine: Int
-    public let lastLine: Int
-
-    
-    public init(absolutePageState: AbsolutePageState, sessionStartTime: TimeInterval, totalSessionDuration: TimeInterval) {
-        self.contentOffset = absolutePageState.contentOffset
-        self.firstLine = absolutePageState.firstLine
-        self.lastLine = absolutePageState.lastLine
-        
-        let relativeStartTime = (absolutePageState.startTime - sessionStartTime) / totalSessionDuration
-        let relativeDuration = (absolutePageState.duration - absolutePageState.startTime) / totalSessionDuration
-        
-        self.relativeStartTime = relativeStartTime
-        self.relativeDuration = relativeDuration
-    }
-    
-    
-}
-
-
-
-//Content
-
-private let textKey = "text"
-private let paragraphKey = "paragraph"
-private let firstWordIndexKey = "first_word_index"
-private let firstCharacterIndexKey = "first_character_index"
-private let spacerKey = "spacer"
-
-private let contentKey = "content"
-
-private let defaultVisibleLines = 28
-
-struct SessionReplayResponse: JSONParseable {
+struct Session: JSONParseable {
     
     enum Key: String {
         case session_data
@@ -218,77 +128,31 @@ struct SessionReplayResponse: JSONParseable {
         case max_lines
     }
     
-    let session: Session
+    let states: [AbsolutePageState]
     let article: Article
-    let visibleLines: Int
+    let maxLines: Int
     
     init(data: Any?) throws {
         guard let data = data as? [String : Any]
             else { throw ModelError.errorParsingJSON }
         
         self.article = try Article(data: data[Key.article_data.rawValue])
-        self.session = try Session(data: (data[Key.session_data.rawValue] as? [Any]))
+        self.states = try [AbsolutePageState].init(data: data[Key.session_data.rawValue])
 
-        let visibleLines: Double
+        let maxLines: Double
         if let v = data[Key.max_lines.rawValue] as? Double {
-            visibleLines = v
+            maxLines = v
         } else {
-            visibleLines = Double(defaultVisibleLines)
-            print("No visible lines count sent from server, using default of \(visibleLines)")
+            maxLines = Double(defaultMaxLines)
+            print("No visible lines count sent from server, using default of \(maxLines)")
         }
         
-        self.visibleLines = Int(visibleLines)
-    }
-}
-
-struct Content: Codable, JSONParseable {
-    let text: String
-    let paragraph: Int
-    let firstWordIndex: Int
-    let firstCharacterIndex: Int
-    let spacer: Bool
-    
-    
-    func toDictionary() -> [String : Any] {
-        return [
-            textKey : text,
-            paragraphKey : paragraph,
-            firstWordIndexKey : firstWordIndex,
-            firstCharacterIndexKey : firstCharacterIndex,
-            spacerKey : spacer,
-        ]
-    }
-    
-    init(data: Any?) throws {
-        guard let data = data as? [String : Any],
-            let text = data[textKey] as? String,
-            let paragraph = data[paragraphKey] as? Int,
-            let firstWordIndex = data[firstWordIndexKey] as? Int,
-            let firstCharacterIndex = data[firstCharacterIndexKey] as? Int,
-            let spacer = data[spacerKey] as? Bool
-            else { throw ModelError.errorParsingJSON }
-        
-        self.init(text: text,
-                  paragraph: paragraph,
-                  firstWordIndex: firstWordIndex,
-                  firstCharacterIndex: firstCharacterIndex,
-                  spacer: spacer)
-    }
-    
-    init(text: String, paragraph: Int, firstWordIndex: Int, firstCharacterIndex: Int, spacer: Bool) {
-        self.text = text
-        self.paragraph = paragraph
-        self.firstWordIndex = firstWordIndex
-        self.firstCharacterIndex = firstCharacterIndex
-        self.spacer = spacer
+        self.maxLines = Int(maxLines)
     }
 }
 
 
-
-
-
-struct OpenArticle: JSONParseable {
+struct ReadingSession: JSONParseable {
     
     enum Key: String {
         case article_data
@@ -305,7 +169,7 @@ struct OpenArticle: JSONParseable {
             let sessionID = data[Key.sessionID.rawValue] as? String
             else { throw ModelError.errorParsingJSON }
         
-        self.visibleLines = data[Key.max_lines.rawValue] as? Int ?? defaultVisibleLines
+        self.visibleLines = data[Key.max_lines.rawValue] as? Int ?? defaultMaxLines
         self.sessionID = sessionID
         self.article = try Article(data: data[Key.article_data.rawValue])
     }
@@ -343,6 +207,7 @@ struct ArticleBlurb: JSONParseable {
         case date_written
         case published_date
         case byline
+        case line_count
     }
     
     let title: String
@@ -353,6 +218,7 @@ struct ArticleBlurb: JSONParseable {
     let dateWritten: String?
     let publishedDate: String?
     let byline: String?
+    let lineCount: Int?
     
     init(data: Any?) throws {
         guard let data = data as? [String : Any],
@@ -369,6 +235,7 @@ struct ArticleBlurb: JSONParseable {
         self.dateWritten = data[Key.date_written.rawValue] as? String
         self.publishedDate = data[Key.published_date.rawValue] as? String
         self.byline = data[Key.byline.rawValue] as? String
+        self.lineCount = data[Key.line_count.rawValue] as? Int
     }
 }
 
@@ -397,9 +264,33 @@ struct Settings: JSONParseable {
     }
 }
 
+private let timeOffset = 100000000.0
 
+extension Int {
+    func convertedTimeToRealTime() -> TimeInterval {
+        return Double(self) / timeOffset
+    }
+}
 
 public enum ModelError: Error {
-    case requiredContentsEmpty
     case errorParsingJSON
+}
+
+
+extension TimeInterval {
+    
+    func realTimeToConvertedTime() -> Int {
+        return Int(self*timeOffset)
+    }
+    
+    func asDate() -> Date {
+        return Date(timeIntervalSinceReferenceDate: self)
+    }
+    
+    func asDateString() -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .medium
+        return formatter.string(from: self.asDate())
+    }
 }

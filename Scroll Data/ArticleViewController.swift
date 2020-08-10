@@ -23,16 +23,14 @@ import UIKit
     @IBOutlet weak var loadingBarView: UIView!
     @IBOutlet weak var loadingBarWidth: NSLayoutConstraint!
     
-    private var lastVisibleIndices = 0..<0
+    private var lastVisibleIndices: Range<CGFloat> = 0..<0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
-        
         spinner.hidesWhenStopped = true
         spinner.startAnimating()
-        
+        hardTableView.isHidden = true
         loadingBarView.isHidden = true
         
         self.hardTableView.delegate = self
@@ -49,13 +47,36 @@ import UIKit
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        switch mode {
+        case .read(let vm):
+            vm.leavingArticle()
+        default:
+            break
+        }
+    }
+    
+    @objc func logEvent(notification: Notification) {
+        if let mode = self.mode, case Mode.read(let vm) = mode {
+            vm.logEvent(notification: notification)
+        }
+    }
+    
     func setUpReadMode(viewModel: ReadArticleViewModel) {
+        NotificationCenter.default.addObserver(self, selector: #selector(logEvent(notification:)), name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(logEvent(notification:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(logEvent(notification:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(logEvent(notification:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+
         viewModel.fetchText { result in
             switch result {
             case .success(let articleResponse):
                 DispatchQueue.main.async {
-                    self.spinner.stopAnimating()
                     self.loadHardTableView(content: articleResponse.article.content, maxVisibleLines: articleResponse.visibleLines, includeSubmitButton: true)
+                    
+                    self.spinner.stopAnimating()
+                    self.hardTableView.isHidden = false
+                    
                     self.scrollViewDidScroll(self.hardTableView)
                 }
             case .failure(let error):
@@ -67,23 +88,27 @@ import UIKit
     func setUpReplayMode(viewModel: SessionReplayViewModel) {
         viewModel.fetchSessionReplay { result in
             switch result {
-            case .success(let sessionReplay):
+            case .success(let playableSession):
                 DispatchQueue.main.async {
-                    self.loadHardTableView(content: sessionReplay.article.content, maxVisibleLines: sessionReplay.visibleLines, includeSubmitButton: false)
+                    self.loadHardTableView(content: playableSession.article.content, maxVisibleLines: playableSession.maxLines, includeSubmitButton: false)
                     
                     let timeLabel = UILabel()
                     timeLabel.font = UIFont.systemFont(ofSize: 12)
-                    let totalDuration = sessionReplay.session.endTime - sessionReplay.session.startTime
-                    timeLabel.text = "Session Length: \(Int(totalDuration.rounded(FloatingPointRoundingRule.toNearestOrAwayFromZero)))s"
+                    let totalDuration = playableSession.endTime - playableSession.startTime
+                    timeLabel.text = "\(Int(totalDuration.rounded(FloatingPointRoundingRule.toNearestOrAwayFromZero)))s"
                     self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: timeLabel)
-                    self.spinner.stopAnimating()
                     
+                    self.navigationItem.title = playableSession.startTime.asDateString()
+                    
+                    self.spinner.stopAnimating()
+                    self.hardTableView.isHidden = false
+
                     DispatchQueue.main.asyncAfter(deadline: .now()+1) {
                         //not animating loading bar for now, not working yet
                         //animateLoadingBar(totalDuration: totalDuration)
                         
-                        self.startAutoScrolling(session: sessionReplay.session)
-                        print(sessionReplay.article.content.count)
+                        self.startAutoScrolling(session: playableSession)
+                        print(playableSession.article.content.count)
                     }    
                 }
             case .failure(let error):
@@ -95,7 +120,7 @@ import UIKit
     func loadHardTableView(content: [String], maxVisibleLines: Int, includeSubmitButton: Bool) {
 
         let contentCells = createContentCells(content: content, maxVisibleLines: maxVisibleLines)
-        let buttonCell = [ createSubmitButtonCell(emptyPlaceholder: !includeSubmitButton) ]
+        let buttonCell = [ createSubmitButtonCell(totalHeight: hardTableView.bounds.height, emptyPlaceholder: !includeSubmitButton) ]
 
         hardTableView.cells = contentCells + buttonCell
     }
@@ -105,8 +130,7 @@ import UIKit
         let tableWidth = hardTableView.frame.size.width
 
         let normalLineLabelHeight: CGFloat = tableHeight  / CGFloat(maxVisibleLines)
-        let titleLabelHeight: CGFloat = tableHeight
-        let spacingLineLabelHeight: CGFloat = normalLineLabelHeight / CGFloat(4.0)
+        let spacingLineLabelHeight: CGFloat = normalLineLabelHeight
         
         let readableTextAspectRatio: CGFloat = 2
 
@@ -127,11 +151,8 @@ import UIKit
             let isSpacer = content == ""
 
             if isTitle {
-               label.numberOfLines = 0
-               label.font = baseFont.withTextStyle(.title1)!
-               label.textAlignment = .center
-               cellHeight = titleLabelHeight
-            } else if isSpacer{
+               return createTitleCell(totalHeight: tableHeight, title: content)
+            } else if isSpacer {
                cellHeight = spacingLineLabelHeight
             } else {
                 label.font = font
@@ -154,11 +175,42 @@ import UIKit
         return cells
     }
     
-    func createSubmitButtonCell(emptyPlaceholder: Bool = false) -> HardTableView.Cell {
+    func createTitleCell(totalHeight: CGFloat, title: String) -> HardTableView.Cell {
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
         
-        let buttonSpacing: CGFloat = 44
+        let label = UILabel(frame: CGRect.zero)
+        label.text = title
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = baseFont.withTextStyle(.title1)!
+        label.textAlignment = .center
+        label.numberOfLines = 0
+
+        
+        let caret = UIImageView()
+        caret.tintColor = UIColor.darkText
+        caret.image = UIImage(systemName: "chevron.down", withConfiguration: UIImage.SymbolConfiguration(scale: .large))
+        caret.translatesAutoresizingMaskIntoConstraints = false
+        
+        containerView.addSubview(label)
+        containerView.addSubview(caret)
+        
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            label.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: containerView.leadingAnchor, multiplier: 2),
+            caret.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            caret.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -32)
+        ])
+        
+        return HardTableView.Cell(view: containerView, height: totalHeight)
+    }
+    
+    func createSubmitButtonCell(totalHeight: CGFloat, emptyPlaceholder: Bool = false) -> HardTableView.Cell {
+        
+        let buttonTopSpacing: CGFloat = 44
         let buttonHeight: CGFloat = 64
-        let totalHeight: CGFloat = buttonHeight + 2 * buttonSpacing
+        let buttonBottomSpacing: CGFloat = totalHeight - buttonTopSpacing - buttonHeight
         
         let submitButton = UIButton(type: .system)
         submitButton.setTitle("Submit Reading", for: .normal)
@@ -171,12 +223,12 @@ import UIKit
 
         NSLayoutConstraint.activate([
            submitButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-           submitButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-           submitButton.topAnchor.constraint(lessThanOrEqualTo: containerView.topAnchor, constant: buttonSpacing),
+           submitButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: buttonTopSpacing),
+           submitButton.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -1*buttonBottomSpacing),
            submitButton.heightAnchor.constraint(equalToConstant: buttonHeight)
         ])
         
-        submitButton.isHidden = emptyPlaceholder
+        submitButton.isEnabled = !emptyPlaceholder
 
         return HardTableView.Cell(view: containerView, height: totalHeight)
     }
@@ -201,29 +253,21 @@ import UIKit
         }
     }
     
-    func startAutoScrolling(session: Session) {
+    func startAutoScrolling(session: PlayableSession) {
         let totalDuration = session.endTime - session.startTime
         
         let tableWidth = hardTableView.bounds.width
         let tableHeight = hardTableView.bounds.height
 
-        let stateTuples: [(state: RelativePageState, bounds: CGRect)] = session.relativePageStates.compactMap { pageState in
+        let stateTuples: [(state: RelativePageState, bounds: CGRect)] = session.states.compactMap { pageState in
             
-            print("\(pageState.firstLine), \(pageState.lastLine), \(pageState.relativeStartTime * totalDuration), \(pageState.relativeDuration * totalDuration), \(pageState.contentOffset)")
+//            print("\(pageState.firstLine), \(pageState.lastLine), \(pageState.relativeStartTime * totalDuration), \(pageState.relativeDuration * totalDuration), \(pageState.contentOffset)")
             
-            if(pageState.lastLine > self.hardTableView.cells.count){
-                guard let contentOffset = self.hardTableView.contentOffset(forIndex: pageState.firstLine, position: UITableView.ScrollPosition.top)
-                    else { return nil }
-                
-                let rect = CGRect(x: contentOffset.x, y: contentOffset.y, width: tableWidth, height: tableHeight)
-                return (state: pageState, bounds: rect)
-            } else {
-                guard let contentOffset = self.hardTableView.contentOffset(forIndex: pageState.lastLine, position: UITableView.ScrollPosition.bottom)
-                    else { return nil }
-                
-                let rect = CGRect(x: contentOffset.x, y: contentOffset.y, width: tableWidth, height: tableHeight)
-                return (state: pageState, bounds: rect)
-            }
+            guard let contentOffset = self.hardTableView.contentOffset(forFractionalIndex: pageState.firstLine, position: UITableView.ScrollPosition.top)
+                else { return nil }
+
+            let rect = CGRect(x: contentOffset.x, y: contentOffset.y, width: tableWidth, height: tableHeight)
+            return (state: pageState, bounds: rect)
         }
         
         let animation = CAKeyframeAnimation(keyPath: "bounds")
@@ -276,7 +320,7 @@ extension ArticleViewController: UIScrollViewDelegate {
                 lastVisibleIndices = currentVisibleIndices
             }
             
-            vm.submitData(content_offset: scrollView.contentOffset.y, first_index: currentVisibleIndices.startIndex, last_index: currentVisibleIndices.endIndex - 1)
+            vm.submitData(content_offset: scrollView.contentOffset.y, first_index: currentVisibleIndices.lowerBound, last_index: currentVisibleIndices.upperBound)
         default: break
         }
     }

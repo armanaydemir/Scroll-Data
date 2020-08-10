@@ -28,13 +28,15 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             case .articles:
                 table.reloadData()
                 if articles.isEmpty {
-                    fetchData()
+                    fetchData(fromEmpty: true)
                 }
                 
             case .sessions:
                 table.reloadData()
                 if sessions.isEmpty {
-                    fetchSessions()
+                    fetchSessions(fromEmpty: true)
+                } else {
+                    fetchSessions(fromEmpty: false)
                 }
             }
         }
@@ -79,8 +81,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
                     segmentedControl.addTarget(self, action: #selector(self.switchedTable(segmentedControl:)), for: .valueChanged)
                     self.navigationItem.titleView = segmentedControl
                     switch self.tableMode {
-                        case .articles: self.fetchData()
-                        case .sessions: self.fetchSessions()
+                        case .articles: self.fetchData(fromEmpty: true)
+                        case .sessions: self.fetchSessions(fromEmpty: true)
                     }
                 } else {
                     self.tableMode = .articles
@@ -118,14 +120,16 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         }
     }
     
-    private func fetchSessions() {
+    private func fetchSessions(fromEmpty: Bool) {
         guard let table = self.table, let loadIndicator = self.loadIndicator else {
              print("couldn't connect starting vc outlets! bad things coming.....")
              return
         }
         
-        self.table.isHidden = true
-        loadIndicator.startAnimating()
+        if fromEmpty {
+            self.table.isHidden = true
+            loadIndicator.startAnimating()
+        }
         
         Server.Request.sessions.log().startRequest { (result: Result<[SessionBlurb], Swift.Error>) in
             switch result {
@@ -145,14 +149,16 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         }
     }
     
-    private func fetchData() {
+    private func fetchData(fromEmpty: Bool) {
         guard let table = self.table, let loadIndicator = self.loadIndicator else {
             print("couldn't connect starting vc outlets! bad things coming.....")
             return
         }
         
-        self.table.isHidden = true
-        loadIndicator.startAnimating() //POST
+        if fromEmpty {
+            self.table.isHidden = true
+            loadIndicator.startAnimating() //POST
+        }
         
         Server.Request.articles.log().startRequest { (result: Result<[ArticleBlurb], Swift.Error>) in
             switch result {
@@ -175,9 +181,9 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     @objc private func refreshData(_ sender: Any) {
         switch tableMode {
         case .articles:
-            fetchData()
+            fetchData(fromEmpty: false)
         case .sessions:
-            fetchSessions()
+            fetchSessions(fromEmpty: false)
         }
     }
     
@@ -193,24 +199,38 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let title: String
         let subtitle: String
+        let lines: String
         
         switch tableMode {
         case .articles:
             let article = self.articles[indexPath.item]
             title = article.title
             subtitle = article.abstract ?? ""
+            if let lineCount = article.lineCount {
+                lines = "\(lineCount) lines"
+            } else {
+                lines = ""
+            }
         case .sessions:
             let session = self.sessions[indexPath.item]
             title = session.article.title
-            subtitle = "\(session.id) -  \(session.deviceType ?? "") - \(session.readerVersion ?? "")"
+            subtitle = "\(session.startTime?.asDateString() ?? "") - \(session.id) -  \(session.deviceType ?? "") - \(session.readerVersion ?? "")"
+            if let start = session.startTime, let end = session.endTime {
+                let totalDuration = end - start
+                lines = "\(Int(totalDuration.rounded(FloatingPointRoundingRule.toNearestOrAwayFromZero)))s"
+            } else {
+                lines = ""
+            }
         }
         
         let attributes = [NSAttributedString.Key.font: baseFont.withTextStyle(.headline)!]
         let sub_at = [NSAttributedString.Key.font: baseFont.withTextStyle(.subheadline)!]
+        let lines_attributes = [NSAttributedString.Key.font: baseFont.withTextStyle(.caption1)!]
         let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
         if let cell: TitleSubtitleTableViewCell = cell as? TitleSubtitleTableViewCell {
             cell.title.attributedText = NSAttributedString.init(string:  title, attributes: attributes)
             cell.subtitle.attributedText = NSAttributedString.init(string: subtitle, attributes: sub_at)
+            cell.lines.attributedText = NSAttributedString(string: lines, attributes: lines_attributes)
         }
         return cell
     }
@@ -243,10 +263,6 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             case .sessions:
                 destination.mode = .replay(viewModel: SessionReplayViewModel(sessionID: self.link))
             }
-
-            guard let a = UIApplication.shared.delegate as? AppDelegate else {return}
-            a.autoRotate = false
-            a.orientation = UIDevice.current.orientation
         }
     }
 }

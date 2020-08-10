@@ -233,14 +233,14 @@
 				TargetAttributes = {
 					99AE42FD21A6763600E42415 = {
 						CreatedOnToolsVersion = 10.1;
-						DevelopmentTeam = 82MGRMGP93;
+						DevelopmentTeam = 5L59H5CS9G;
 						LastSwiftMigration = 1030;
 						ProvisioningStyle = Automatic;
 						TestTargetID = F169BDD21EA696CB00C528C7;
 					};
 					F169BDD21EA696CB00C528C7 = {
 						CreatedOnToolsVersion = 8.3.1;
-						DevelopmentTeam = R76ADJ3JV7;
+						DevelopmentTeam = N466ERUP4U;
 						LastSwiftMigration = 0910;
 						ProvisioningStyle = Automatic;
 					};
@@ -377,7 +377,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 82MGRMGP93;
+				DEVELOPMENT_TEAM = 5L59H5CS9G;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ScrollDataArticleTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
@@ -401,7 +401,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 82MGRMGP93;
+				DEVELOPMENT_TEAM = 5L59H5CS9G;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ScrollDataArticleTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
@@ -536,9 +536,9 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = R76ADJ3JV7;
+				DEVELOPMENT_TEAM = N466ERUP4U;
 				INFOPLIST_FILE = "Scroll Data/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 0.3.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "Arman-Aydemir.Replay-Scroll-Data";
@@ -559,9 +559,9 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = R76ADJ3JV7;
+				DEVELOPMENT_TEAM = N466ERUP4U;
 				INFOPLIST_FILE = "Scroll Data/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 0.3.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "Arman-Aydemir.Replay-Scroll-Data";
