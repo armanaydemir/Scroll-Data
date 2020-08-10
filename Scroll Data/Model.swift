@@ -44,9 +44,6 @@ struct SessionBlurb: JSONParseable {
         self.id = id
         self.article = try ArticleBlurb(data: data[Key.article_data.rawValue])
         
-        
-        
-        
         self.udid = data[Key.UDID.rawValue] as? String
         self.articleID = data[Key.article_id.rawValue] as? String
         self.startTime = (data[Key.startTime.rawValue] as? Int)?.convertedTimeToRealTime()
@@ -210,6 +207,7 @@ struct ArticleBlurb: JSONParseable {
         case date_written
         case published_date
         case byline
+        case line_count
     }
     
     let title: String
@@ -220,6 +218,7 @@ struct ArticleBlurb: JSONParseable {
     let dateWritten: String?
     let publishedDate: String?
     let byline: String?
+    let lineCount: Int?
     
     init(data: Any?) throws {
         guard let data = data as? [String : Any],
@@ -236,6 +235,7 @@ struct ArticleBlurb: JSONParseable {
         self.dateWritten = data[Key.date_written.rawValue] as? String
         self.publishedDate = data[Key.published_date.rawValue] as? String
         self.byline = data[Key.byline.rawValue] as? String
+        self.lineCount = data[Key.line_count.rawValue] as? Int
     }
 }
 
