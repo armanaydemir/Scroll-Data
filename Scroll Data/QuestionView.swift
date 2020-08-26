@@ -20,32 +20,24 @@ struct Question {
         questionLabel.text = question
         questionLabel.font = UIFont.systemFont(ofSize: 12).withTextStyle(.headline)
         
+        
         let optionViews = options.map { self.createOptionView(withText: $0) }
         
-        let stack = UIStackView(arrangedSubviews: [questionLabel] + optionViews)
-        stack.axis = .vertical
-        stack.spacing = 16
-        stack.alignment = .leading
-        stack.setCustomSpacing(32, after: questionLabel)
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        return stack
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.createVerticalStack(withViews: [UIView.VerticalStackItem(view: questionLabel, spacingAbove: 0)] + optionViews, horizontalMargins: 0)
+        return view
     }
     
-    private func createOptionView(withText text: String) -> UIView {
-        let button = UIButton(type: .custom)
-        button.isHighlighted = false
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.titleLabel?.numberOfLines = 0
-        button.setTitle(text, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 12).withTextStyle(.subheadline)
-        
-        let textColor = UIColor.black
-        button.setTitleColor(textColor, for: .normal)
-        button.setTitleColor(textColor.withAlphaComponent(0.5), for: .highlighted)
-        
+    private func createOptionView(withText text: String) -> UIView.VerticalStackItem {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        label.text = text
+        label.font = UIFont.systemFont(ofSize: 12).withTextStyle(.subheadline)
         NSLayoutConstraint.activate([
-            button.heightAnchor.constraint(greaterThanOrEqualToConstant: 44)
+            label.heightAnchor.constraint(greaterThanOrEqualToConstant: 44)
         ])
-        return button
+        return UIView.VerticalStackItem(view: label, spacingAbove: 4)
     }
 }
