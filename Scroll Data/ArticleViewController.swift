@@ -45,6 +45,8 @@ import UIKit
         case .none:
             print("Article mode not initialized correctly")
         }
+        
+        performSegue(withIdentifier: "questions", sender: self)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -234,14 +236,14 @@ import UIKit
     }
     
     @objc func submitData(_ sender: UIButton) {
-        
+
         switch self.mode {
         case .read(let vm):
             vm.closeArticle(complete: true)
         default:
             break
         }
-        
+
         _ = navigationController?.popViewController(animated: true)
     }
     
