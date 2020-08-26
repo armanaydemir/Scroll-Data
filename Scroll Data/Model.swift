@@ -12,7 +12,7 @@ import CoreGraphics
 
 private let defaultMaxLines = 28
 
-struct SessionBlurb: JSONParseable {
+struct SessionBlurb: JSONParseable, UID {
     
     enum Key: String {
         case UDID
@@ -293,4 +293,13 @@ extension TimeInterval {
         formatter.timeStyle = .medium
         return formatter.string(from: self.asDate())
     }
+}
+
+
+protocol UID: Equatable {
+    var id: String { get }
+}
+
+func ==<T: UID>(lhs: T, rhs: T) -> Bool {
+    return lhs.id == rhs.id
 }
