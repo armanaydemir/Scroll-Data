@@ -12,14 +12,21 @@ class QuestionsViewModel {
     let questions: [QuestionViewModel]
     
     init(questions: [Question]) {
-//        let questions = Array(0..<10).map {
-//            Question(id: "\($0)",
-//                text: "\($0) What is going on?",
-//                options: [
-//                    Question.Option(id: "0", text: "apsodiufpas paoisduf aps"),
-//                    Question.Option(id: "1", text: "poaiusdf poaisduf paosdiuf aposdiuf apsodiuf apsdoifu aspdoifu aspdoif uapsdof iapaosdiuf apsodiuf")
+//        let testQuestions: [Question] = Array(0..<10).compactMap { number in
+//            let dict: [String : Any] = [ "id" : "\(number)",
+//                "text" : "\(number) What is going on?",
+//                "options" : [
+//                    [
+//                        "id" : "0",
+//                        "text" : "poaiusdf poaisduf paosdiuf aposdiuf apsodiuf apsdoifu aspdoifu aspdoif uapsdof iapaosdiuf apsodiuf"
+//                    ],
+//                    [
+//                        "id" : "1",
+//                        "text" : "apsodiuf apsdoifu aspdoifu aspdoif uapsdof iapaosdiuf apsodiuf"
+//                    ]
 //                ]
-//            )
+//            ]
+//            return try? Question(data: dict)
 //        }
         
         self.questions = questions.map { QuestionViewModel(question: $0, selectedOption: nil) }
