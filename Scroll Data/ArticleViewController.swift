@@ -45,14 +45,25 @@ import UIKit
         case .none:
             print("Article mode not initialized correctly")
         }
-        
-        performSegue(withIdentifier: "questions", sender: self)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         switch mode {
         case .read(let vm):
             vm.leavingArticle()
+        default:
+            break
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        switch self.mode {
+        case .read(let readVM):
+            if segue.identifier == "questions",
+                let questionsVC = segue.destination as? QuestionsViewController,
+                let questions = readVM.readingSession?.questions {
+                questionsVC.vm = QuestionsViewModel(questions: questions)
+            }
         default:
             break
         }
@@ -215,7 +226,7 @@ import UIKit
         let buttonBottomSpacing: CGFloat = totalHeight - buttonTopSpacing - buttonHeight
         
         let submitButton = UIButton(type: .system)
-        submitButton.setTitle("Submit Reading", for: .normal)
+        submitButton.setTitle("Complete Reading", for: .normal)
         submitButton.translatesAutoresizingMaskIntoConstraints = false
         submitButton.addTarget(self, action: #selector(self.submitData(_:)), for: .touchUpInside)
         
@@ -240,11 +251,17 @@ import UIKit
         switch self.mode {
         case .read(let vm):
             vm.closeArticle(complete: true)
+
+            if vm.readingSession?.questions != nil {
+                performSegue(withIdentifier: "questions", sender: self)
+            } else {
+                _ = navigationController?.popViewController(animated: true)
+            }
         default:
-            break
+            _ = navigationController?.popViewController(animated: true)
+
         }
 
-        _ = navigationController?.popViewController(animated: true)
     }
     
     private func animateLoadingBar(totalDuration: TimeInterval) {

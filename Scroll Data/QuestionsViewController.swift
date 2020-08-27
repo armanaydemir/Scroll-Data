@@ -10,7 +10,7 @@ import UIKit
 
 class QuestionsViewController: UITableViewController {
     
-    let vm = QuestionsViewModel()
+    var vm: QuestionsViewModel!
     
     var items = [UIView.VerticalStackItem]()
 

@@ -158,11 +158,13 @@ struct ReadingSession: JSONParseable {
         case article_data
         case max_lines
         case sessionID
+        case questions
     }
     
     let visibleLines: Int
     let sessionID: String
     let article: Article
+    let questions: [Question]?
     
     init(data: Any?) throws {
         guard let data = data as? [String : Any],
@@ -172,6 +174,52 @@ struct ReadingSession: JSONParseable {
         self.visibleLines = data[Key.max_lines.rawValue] as? Int ?? defaultMaxLines
         self.sessionID = sessionID
         self.article = try Article(data: data[Key.article_data.rawValue])
+        self.questions = try? [Question].init(data: data[Key.questions.rawValue])
+    }
+}
+
+struct Question: JSONParseable, UID {
+    
+    enum Key: String {
+        case id
+        case text
+        case options
+    }
+    
+    let id: String
+    let text: String
+    let options: [Option]
+    
+    init(data: Any?) throws {
+        guard let data = data as? [String : Any],
+            let id = data[Key.id.rawValue] as? String,
+            let text = data[Key.text.rawValue] as? String
+            else { throw ModelError.errorParsingJSON }
+        
+        self.id = id
+        self.text = text
+        self.options = try [Option].init(data: data[Key.options.rawValue])
+    }
+    
+    struct Option: JSONParseable, UID {
+        
+        enum Key: String {
+            case id
+            case text
+        }
+        
+        let id: String
+        let text: String
+        
+        init(data: Any?) throws {
+            guard let data = data as? [String : Any],
+                let id = data[Key.id.rawValue] as? String,
+                let text = data[Key.text.rawValue] as? String
+                else { throw ModelError.errorParsingJSON }
+            
+            self.id = id
+            self.text = text
+        }
     }
 }
 
