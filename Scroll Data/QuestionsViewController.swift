@@ -16,37 +16,34 @@ class QuestionsViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-            
-//        let scrollView = UIScrollView()
-//        scrollView.translatesAutoresizingMaskIntoConstraints = false
-//        view.addSubview(scrollView)
-//        NSLayoutConstraint.activate([
-//            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
-//            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-//            scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-//            scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
-//        ])
-        
-//        let titleViews = createTitleViews(withTitle: "Review", subtitle: "Please answer the following questions regarding the reading.")
-        
-//        let allViews: [UIView.VerticalStackItem] = titleViews + vm.questions.map { $0.question }.map { UIView.VerticalStackItem(view: $0.createView(), spacingAbove: 64) }
-        
-//        scrollView.createVerticalStack(withViews: allViews, horizontalMargins: 0)
-        
         
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return vm.questions.count
+        return vm.questions.count + 2
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return vm.questions[section].question.options.count
+        switch section {
+        case 0:
+            return 0
+        case vm.questions.count + 1:
+            return 1
+        default:
+            return vm.questions[section - 1].question.options.count
+        }
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return vm.questions[section].question.text
+        switch section {
+        case 0:
+            return "Please answer the following questions regarding the article."
+        case vm.questions.count + 1:
+            return nil
+        default:
+            return vm.questions[section - 1].question.text
+        }
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -55,20 +52,44 @@ class QuestionsViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        let questionVM = vm.questions[indexPath.section]
-        let option = questionVM.question.options[indexPath.item]
-        cell.textLabel?.text = option.text
-        cell.textLabel?.numberOfLines = 0
-        cell.setSelected(questionVM.isOptionSelected(option), animated: true)
+
+        switch indexPath.section {
+        case 1..<vm.questions.count + 1:
+            let questionVM = vm.questions[indexPath.section - 1]
+            let option = questionVM.question.options[indexPath.item]
+            
+            cell.textLabel?.text = option.text
+            cell.textLabel?.textColor = UIColor.darkText
+            cell.textLabel?.numberOfLines = 0
+            cell.textLabel?.font = UIFont.systemFont(ofSize: 12).withTextStyle(.body)
+            
+            if questionVM.isOptionSelected(option) {
+                cell.backgroundColor = UIColor.systemGray4
+            } else {
+                cell.backgroundColor = UIColor.systemBackground
+            }
+            
+        default:
+            cell.textLabel?.text = "Submit Answers"
+            cell.textLabel?.numberOfLines = 0
+            cell.textLabel?.textColor = UIColor.systemBlue
+            cell.textLabel?.font = UIFont.systemFont(ofSize: 12).withTextStyle(.headline)
+        }
+        
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let questionVM = vm.questions[indexPath.section]
-        let option = questionVM.question.options[indexPath.item]
-        
-        questionVM.selectOption(option)
-        tableView.reloadData()
+        switch indexPath.section {
+        case 0..<vm.questions.count + 1:
+            let questionVM = vm.questions[indexPath.section - 1]
+            let option = questionVM.question.options[indexPath.item]
+            
+            questionVM.selectOption(option)
+            tableView.reloadSections(IndexSet(integer: indexPath.section), with: .none)
+        default:
+            print("submit answers")
+        }
     }
     
     private func createTitleViews(withTitle title: String, subtitle: String) -> [UIView.VerticalStackItem] {
@@ -117,9 +138,5 @@ extension QuestionViewModel {
             label.heightAnchor.constraint(greaterThanOrEqualToConstant: 44)
         ])
         return UIView.VerticalStackItem(view: label, spacingAbove: 4)
-    }
-    
-    func optionTapped(_ option: Question.Option) {
-//        selectOption(option)
     }
 }

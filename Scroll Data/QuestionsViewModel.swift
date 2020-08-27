@@ -31,7 +31,6 @@ class QuestionViewModel {
     private var selectedOption: Question.Option?
     
     func isOptionSelected(_ option: Question.Option) -> Bool {
-        if selectedOption != nil { print("selected") }
         return option == selectedOption
     }
     
