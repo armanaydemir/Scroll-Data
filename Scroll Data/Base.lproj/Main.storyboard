@@ -110,7 +110,7 @@
                         <outlet property="loadingBarView" destination="utz-ww-zxe" id="C5e-Jq-rSS"/>
                         <outlet property="loadingBarWidth" destination="Gpz-iG-Nkk" id="LLq-bD-KU9"/>
                         <outlet property="spinner" destination="y80-SR-T2z" id="u7m-WR-EOU"/>
-                        <segue destination="t2b-ui-Bco" kind="presentation" identifier="questions" id="bkl-n0-OiO"/>
+                        <segue destination="t2b-ui-Bco" kind="show" identifier="questions" id="bkl-n0-OiO"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -122,7 +122,7 @@
             <objects>
                 <tableViewController id="t2b-ui-Bco" customClass="QuestionsViewController" customModule="Reader" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" allowsSelectionDuringEditing="YES" allowsMultipleSelection="YES" allowsMultipleSelectionDuringEditing="YES" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="Gbf-w9-OaH">
-                        <rect key="frame" x="0.0" y="0.0" width="712" height="1006.9200564096436"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <connections>
@@ -130,6 +130,7 @@
                             <outlet property="delegate" destination="t2b-ui-Bco" id="wrO-ZV-hBL"/>
                         </connections>
                     </tableView>
+                    <navigationItem key="navigationItem" id="jsB-2k-XDd"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="C1M-O5-a2I" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

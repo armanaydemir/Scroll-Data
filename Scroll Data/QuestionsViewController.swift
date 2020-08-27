@@ -17,6 +17,7 @@ class QuestionsViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationItem.title = "Article Review"
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
     
