@@ -52,18 +52,21 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     var link = ""
     
     
-    
     @IBOutlet weak var loadIndicator: UIActivityIndicatorView!
     
     @IBOutlet weak var table: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
         guard let table = self.table, let _ = self.loadIndicator else {
             print("couldn't connect starting vc outlets! bad things coming.....")
             return
         }
+        
+        //in order to not let user go back to intro vc
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = false
         
         loadIndicator.startAnimating()
         table.isHidden = true;
@@ -73,7 +76,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         table.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
         
-        checkSettings { settings in
+        UserInfo.shared.fetchSettings { settings in
             DispatchQueue.main.async {
                 if settings.showSessions {
                     let segmentedControl = UISegmentedControl.init(items: [TableMode.articles.name(), TableMode.sessions.name()])
@@ -91,19 +94,6 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
                 
                 table.register(UINib.init(nibName: "TitleSubtitleTableViewCell", bundle: nil), forCellReuseIdentifier: "default")
                 table.rowHeight = UITableView.automaticDimension
-            }
-        }
-
-    }
-    
-    private func checkSettings(completion: @escaping (_ settings: Settings) -> Void) {
-        Server.Request.settings.startRequest { (result: Result<Settings, Swift.Error>) in
-            switch result {
-            case .success(let settings):
-                completion(settings)
-            case .failure(let error):
-                print(error)
-                completion(Settings()) //return the defaults if there's an issue
             }
         }
     }
