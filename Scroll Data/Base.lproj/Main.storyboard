@@ -169,6 +169,9 @@
                                                                 </constraints>
                                                                 <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
                                                                 <state key="normal" title="I AGREE"/>
+                                                                <connections>
+                                                                    <action selector="agreeTapped:" destination="vI0-L3-1CF" eventType="touchUpInside" id="fAx-Va-7pT"/>
+                                                                </connections>
                                                             </button>
                                                         </subviews>
                                                     </stackView>

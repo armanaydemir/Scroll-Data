@@ -12,6 +12,7 @@ class UserInfo {
     
     enum Key: String {
         case agreed_to_terms
+        case email
     }
     
     var agreedToTerms: Bool {
@@ -20,6 +21,15 @@ class UserInfo {
         }
         set {
             UserDefaults.standard.set(newValue, forKey: Key.agreed_to_terms.rawValue)
+        }
+    }
+    
+    var email: String? {
+        get {
+            return UserDefaults.standard.string(forKey: Key.email.rawValue)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: Key.email.rawValue)
         }
     }
     

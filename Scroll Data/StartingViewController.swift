@@ -52,18 +52,21 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
     var link = ""
     
     
-    
     @IBOutlet weak var loadIndicator: UIActivityIndicatorView!
     
     @IBOutlet weak var table: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
         guard let table = self.table, let _ = self.loadIndicator else {
             print("couldn't connect starting vc outlets! bad things coming.....")
             return
         }
+        
+        //in order to not let user go back to intro vc
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = false
         
         loadIndicator.startAnimating()
         table.isHidden = true;

@@ -55,10 +55,25 @@ class IntroViewController: UIViewController {
         
         emailTextField.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
         emailTextField.addTarget(self, action: #selector(textFieldEditingDidEnd), for: .editingDidEnd)
+        emailTextField.addTarget(self, action: #selector(textFieldActionTriggered), for: .primaryActionTriggered)
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self)
+    }
+    
+    @IBAction func agreeTapped(_ sender: Any) {
+        userInfo.agreedToTerms = true
+        
+        let email = emailTextField.text ?? ""
+        userInfo.email = email
+        Server.Request.submitEmail(email: email).startRequest { (result : Result<GenericResponse, Swift.Error>) in print(result) }
+        
+        performSegue(withIdentifier: "start", sender: self)
+    }
+    
+    @objc private func textFieldActionTriggered() {
+        emailTextField.endEditing(true)
     }
     
     @objc private func textFieldChanged() {

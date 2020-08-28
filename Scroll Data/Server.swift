@@ -35,6 +35,7 @@ struct Server {
             startTime: Double,
             time: Double,
             eventType: String)
+        case submitEmail(email: String)
         
         typealias Completion<T: JSONParseable> = (Result<T, Swift.Error>) -> Void
         
@@ -81,6 +82,8 @@ struct Server {
                 endpoint = "session_replay"
             case .submitEvent:
                 endpoint = "submit_event"
+            case .submitEmail:
+                endpoint = "submit_email"
             }
             return serverURL + endpoint
         }
@@ -89,7 +92,7 @@ struct Server {
             switch self {
             case .settings, .articles, .sessions:
                 return .get
-            case .openArticle, .openSession, .submitReadingDataBatch, .closeArticle, .submitEvent:
+            case .openArticle, .openSession, .submitReadingDataBatch, .closeArticle, .submitEvent, .submitEmail:
                 return .post
             }
         }
@@ -137,6 +140,8 @@ struct Server {
                             "startTime": startTime,
                             "time": time,
                             "event_type": eventType ]
+            case .submitEmail(let email):
+                params = [ "email": email ]
                 
             }
             
