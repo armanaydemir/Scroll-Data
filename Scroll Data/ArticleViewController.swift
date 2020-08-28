@@ -61,8 +61,9 @@ import UIKit
         case .read(let readVM):
             if segue.identifier == "questions",
                 let questionsVC = segue.destination as? QuestionsViewController,
-                let questions = readVM.readingSession?.questions {
-                questionsVC.vm = QuestionsViewModel(questions: questions)
+                let questions = readVM.readingSession?.questions,
+                let sessionID = readVM.readingSession?.sessionID {
+                questionsVC.vm = QuestionsViewModel(sessionID: sessionID, questions: questions)
             }
         default:
             break

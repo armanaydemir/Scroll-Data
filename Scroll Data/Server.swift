@@ -36,6 +36,7 @@ struct Server {
             time: Double,
             eventType: String)
         case submitEmail(email: String)
+        case submitAnswers(sessionID: String, answers: [(questionID: String, optionID: String)])
         
         typealias Completion<T: JSONParseable> = (Result<T, Swift.Error>) -> Void
         
@@ -84,6 +85,8 @@ struct Server {
                 endpoint = "submit_event"
             case .submitEmail:
                 endpoint = "submit_email"
+            case .submitAnswers:
+                endpoint = "submit_answers"
             }
             return serverURL + endpoint
         }
@@ -92,7 +95,7 @@ struct Server {
             switch self {
             case .settings, .articles, .sessions:
                 return .get
-            case .openArticle, .openSession, .submitReadingDataBatch, .closeArticle, .submitEvent, .submitEmail:
+            case .openArticle, .openSession, .submitReadingDataBatch, .closeArticle, .submitEvent, .submitEmail, .submitAnswers:
                 return .post
             }
         }
@@ -142,7 +145,15 @@ struct Server {
                             "event_type": eventType ]
             case .submitEmail(let email):
                 params = [ "email": email ]
-                
+            case .submitAnswers(let sessionID, let answers):
+                let answersDict = answers.reduce([String : Any]()) { result, element in
+                    var result = result
+                    result["question_id"] = element.questionID
+                    result["option_id"] = element.optionID
+                    return result
+                }
+                params = [ "session_id": sessionID,
+                           "answers": answersDict ]
             }
             
             return params

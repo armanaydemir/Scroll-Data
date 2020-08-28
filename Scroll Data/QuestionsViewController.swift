@@ -17,6 +17,10 @@ class QuestionsViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //no back button
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+        
         navigationItem.title = "Article Review"
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
@@ -95,7 +99,15 @@ class QuestionsViewController: UITableViewController {
 
         case totalSections() - 1:
             if vm.canSubmit() {
-                vm.submitAnswers()
+                vm.submitAnswers { success in
+                    if success {
+                        if let home = (UIApplication.shared.delegate as? AppDelegate)?.homeViewController {
+                            self.navigationController?.popToViewController(home, animated: true)
+                        } else {
+                            self.dismiss(animated: true, completion: nil)
+                        }
+                    }
+                }
             } else {
                 tableView.deselectRow(at: indexPath, animated: false)
             }

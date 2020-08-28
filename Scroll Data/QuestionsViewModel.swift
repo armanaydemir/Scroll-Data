@@ -10,8 +10,10 @@ import UIKit
 
 class QuestionsViewModel {
     let questions: [QuestionViewModel]
+    let sessionID: String
     
-    init(questions: [Question]) {
+    init(sessionID: String, questions: [Question]) {
+        self.sessionID = sessionID
         self.questions = questions.map { QuestionViewModel(question: $0, selectedOption: nil) }
     }
     
@@ -19,8 +21,20 @@ class QuestionsViewModel {
         return questions.filter { $0.selectedOption == nil }.isEmpty
     }
     
-    func submitAnswers() {
+    func submitAnswers(completion: @escaping (_ success: Bool) -> Void) {
+        let answers: [(questionID: String, optionID: String)] = questions.map { questionVM in
+            return (questionID: questionVM.question.id, optionID: questionVM.selectedOption?.id ?? "")
+        }
         
+        Server.Request.submitAnswers(sessionID: sessionID, answers: answers).startRequest { (result: Result<GenericResponse, Swift.Error>) in
+            switch result {
+            case .success(_):
+                completion(true)
+            case .failure(let error):
+                print(error)
+                completion(false)
+            }
+        }
     }
 }
 

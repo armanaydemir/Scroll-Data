@@ -64,6 +64,8 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
             return
         }
         
+        (UIApplication.shared.delegate as? AppDelegate)?.homeViewController = self
+        
         //in order to not let user go back to intro vc
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         navigationController?.interactivePopGestureRecognizer?.isEnabled = false
