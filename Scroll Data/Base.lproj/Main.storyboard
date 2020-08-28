@@ -206,6 +206,9 @@
                                 <viewLayoutGuide key="contentLayoutGuide" id="O84-Dq-h95"/>
                                 <viewLayoutGuide key="frameLayoutGuide" id="I2W-3n-D70"/>
                             </scrollView>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="mRn-ig-trM">
+                                <rect key="frame" x="493.5" y="664.5" width="37" height="37"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -213,6 +216,8 @@
                             <constraint firstItem="6v2-hO-z2g" firstAttribute="leading" secondItem="F4c-lW-1g0" secondAttribute="leading" id="PGb-TT-Tpb"/>
                             <constraint firstItem="6v2-hO-z2g" firstAttribute="top" secondItem="dg0-6x-KYZ" secondAttribute="bottom" id="UE3-re-cTS"/>
                             <constraint firstAttribute="trailing" secondItem="6v2-hO-z2g" secondAttribute="trailing" id="WfX-SC-vLf"/>
+                            <constraint firstItem="mRn-ig-trM" firstAttribute="centerX" secondItem="F4c-lW-1g0" secondAttribute="centerX" id="ZW2-0T-XUX"/>
+                            <constraint firstItem="mRn-ig-trM" firstAttribute="centerY" secondItem="F4c-lW-1g0" secondAttribute="centerY" id="dkC-R7-xmY"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="nAT-5c-S3U"/>
@@ -221,6 +226,7 @@
                         <outlet property="agreeLabel" destination="IYV-9u-duM" id="kzM-io-f1t"/>
                         <outlet property="emailTextField" destination="fgx-Ob-p6l" id="ead-0J-68d"/>
                         <outlet property="scrollView" destination="6v2-hO-z2g" id="nb5-ry-RNg"/>
+                        <outlet property="spinner" destination="mRn-ig-trM" id="rvF-0i-Ih5"/>
                         <outlet property="webView" destination="fXw-Jf-d9c" id="hDJ-fN-2fu"/>
                         <segue destination="mbO-Jk-rj2" kind="show" identifier="start" animates="NO" id="aj7-Gg-ztd"/>
                     </connections>

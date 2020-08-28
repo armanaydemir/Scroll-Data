@@ -10,6 +10,8 @@ import UIKit
 
 class UserInfo {
     
+    static let shared = UserInfo()
+    
     enum Key: String {
         case agreed_to_terms
         case email
@@ -33,7 +35,28 @@ class UserInfo {
         }
     }
     
+    private var settings: Settings?
     
-    init() {}
+    private init() {}
+    
+    
+    func fetchSettings(completion: @escaping (_ settings: Settings) -> Void) {
+        if let settings = self.settings {
+            completion(settings)
+        } else {
+            Server.Request.settings.startRequest { (result: Result<Settings, Swift.Error>) in
+                switch result {
+                case .success(let settings):
+                    self.settings = settings
+                    completion(settings)
+                case .failure(let error):
+                    print(error)
+                    let settings = Settings()
+                    self.settings = settings
+                    completion(settings) //return the defaults if there's an issue
+                }
+            }
+        }
+    }
 
 }
