@@ -174,7 +174,25 @@ struct ReadingSession: JSONParseable {
         self.visibleLines = data[Key.max_lines.rawValue] as? Int ?? defaultMaxLines
         self.sessionID = sessionID
         self.article = try Article(data: data[Key.article_data.rawValue])
-        self.questions = try? [Question].init(data: data[Key.questions.rawValue])
+        
+        
+        let testQuestions: [Question] = Array(0..<10).compactMap { number in
+            let dict: [String : Any] = [ "id" : "\(number)",
+                "text" : "\(number) What is going on?",
+                "options" : [
+                    [
+                        "id" : "0",
+                        "text" : "poaiusdf poaisduf paosdiuf aposdiuf apsodiuf apsdoifu aspdoifu aspdoif uapsdof iapaosdiuf apsodiuf"
+                    ],
+                    [
+                        "id" : "1",
+                        "text" : "apsodiuf apsdoifu aspdoifu aspdoif uapsdof iapaosdiuf apsodiuf"
+                    ]
+                ]
+            ]
+            return try? Question(data: dict)
+        }
+        self.questions = testQuestions//try? [Question].init(data: data[Key.questions.rawValue])
     }
 }
 

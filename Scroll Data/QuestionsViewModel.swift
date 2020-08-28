@@ -12,24 +12,11 @@ class QuestionsViewModel {
     let questions: [QuestionViewModel]
     
     init(questions: [Question]) {
-//        let testQuestions: [Question] = Array(0..<10).compactMap { number in
-//            let dict: [String : Any] = [ "id" : "\(number)",
-//                "text" : "\(number) What is going on?",
-//                "options" : [
-//                    [
-//                        "id" : "0",
-//                        "text" : "poaiusdf poaisduf paosdiuf aposdiuf apsodiuf apsdoifu aspdoifu aspdoif uapsdof iapaosdiuf apsodiuf"
-//                    ],
-//                    [
-//                        "id" : "1",
-//                        "text" : "apsodiuf apsdoifu aspdoifu aspdoif uapsdof iapaosdiuf apsodiuf"
-//                    ]
-//                ]
-//            ]
-//            return try? Question(data: dict)
-//        }
-        
         self.questions = questions.map { QuestionViewModel(question: $0, selectedOption: nil) }
+    }
+    
+    func canSubmit() -> Bool {
+        return questions.filter { $0.selectedOption == nil }.isEmpty
     }
     
     func submitAnswers() {
@@ -39,7 +26,7 @@ class QuestionsViewModel {
 
 class QuestionViewModel {
     let question: Question
-    private var selectedOption: Question.Option?
+    fileprivate var selectedOption: Question.Option?
     
     func isOptionSelected(_ option: Question.Option) -> Bool {
         return option == selectedOption

@@ -21,15 +21,19 @@ class QuestionsViewController: UITableViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
     
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    private func totalSections() -> Int {
         return vm.questions.count + 2
+    }
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return totalSections()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
             return 0
-        case vm.questions.count + 1:
+        case totalSections() - 1:
             return 1
         default:
             return vm.questions[section - 1].question.options.count
@@ -40,7 +44,7 @@ class QuestionsViewController: UITableViewController {
         switch section {
         case 0:
             return "Please answer the following questions regarding the article."
-        case vm.questions.count + 1:
+        case totalSections() - 1:
             return nil
         default:
             return vm.questions[section - 1].question.text
@@ -55,7 +59,19 @@ class QuestionsViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
 
         switch indexPath.section {
-        case 1..<vm.questions.count + 1:
+        case totalSections() - 1:
+            cell.textLabel?.text = "Submit Answers"
+            cell.textLabel?.numberOfLines = 0
+            let textColor: UIColor
+            if vm.canSubmit() {
+                textColor = UIColor.systemBlue
+            } else {
+                textColor = UIColor.systemGray
+            }
+            cell.textLabel?.textColor = textColor
+            cell.textLabel?.font = UIFont.systemFont(ofSize: 12).withTextStyle(.headline)
+            cell.backgroundColor = UIColor.systemBackground
+        default:
             let questionVM = vm.questions[indexPath.section - 1]
             let option = questionVM.question.options[indexPath.item]
             
@@ -69,12 +85,6 @@ class QuestionsViewController: UITableViewController {
             } else {
                 cell.backgroundColor = UIColor.systemBackground
             }
-            
-        default:
-            cell.textLabel?.text = "Submit Answers"
-            cell.textLabel?.numberOfLines = 0
-            cell.textLabel?.textColor = UIColor.systemBlue
-            cell.textLabel?.font = UIFont.systemFont(ofSize: 12).withTextStyle(.headline)
         }
         
         return cell
@@ -82,14 +92,19 @@ class QuestionsViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.section {
-        case 0..<vm.questions.count + 1:
+
+        case totalSections() - 1:
+            if vm.canSubmit() {
+                vm.submitAnswers()
+            } else {
+                tableView.deselectRow(at: indexPath, animated: false)
+            }
+        default:
             let questionVM = vm.questions[indexPath.section - 1]
             let option = questionVM.question.options[indexPath.item]
             
             questionVM.selectOption(option)
-            tableView.reloadSections(IndexSet(integer: indexPath.section), with: .none)
-        default:
-            print("submit answers")
+            tableView.reloadData()
         }
     }
 }
