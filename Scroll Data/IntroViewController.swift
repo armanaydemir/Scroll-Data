@@ -24,6 +24,8 @@ class IntroViewController: UIViewController {
         super.viewDidLoad()
         
         navigationItem.title = "Human Research Study"
+        
+        agreeButton.isEnabled = false
 
         if userInfo.agreedToTerms {
             performSegue(withIdentifier: "start", sender: self)
@@ -32,22 +34,62 @@ class IntroViewController: UIViewController {
         }
         
         let adjustToKeyboard: (Notification) -> Void = { notification in
-            if let value = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-                let frame = value.cgRectValue
-                let newInsets = UIEdgeInsets(top: 0, left: 0, bottom: frame.height, right: 0)
-                self.scrollView.contentInset = newInsets
-                self.scrollView.scrollIndicatorInsets = newInsets
+            guard let value = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+            
+            let keyboardScreenEndFrame = value.cgRectValue
+            let keyboardViewEndFrame = self.view.convert(keyboardScreenEndFrame, from: self.view.window)
+
+            let newInsets: UIEdgeInsets
+            if notification.name == UIResponder.keyboardWillHideNotification {
+                newInsets = .zero
+            } else {
+                newInsets = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height - self.view.safeAreaInsets.bottom, right: 0)
             }
+            
+            self.scrollView.contentInset = newInsets
+            self.scrollView.scrollIndicatorInsets = newInsets
         }
         
         NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: nil, using: adjustToKeyboard)
         NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: nil, using: adjustToKeyboard)
+        
+        emailTextField.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
+        emailTextField.addTarget(self, action: #selector(textFieldEditingDidEnd), for: .editingDidEnd)
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
+    
+    @objc private func textFieldChanged() {
+        agreeButton.isEnabled = textFieldTextIsValidEmail()
+        if emailTextField.textColor != UIColor.darkText && textFieldTextIsValidEmail() {
+            emailTextField.textColor = UIColor.darkText
+        }
+    }
+    
+    @objc private func textFieldEditingDidEnd() {
+        if !textFieldTextIsValidEmail() {
+            emailTextField.textColor = UIColor.systemRed
+        } else {
+            emailTextField.textColor = UIColor.darkText
 
+        }
+    }
+    
+    private func textFieldTextIsValidEmail() -> Bool {
+        return emailTextField.text?.isValidEmail() ?? false
+    }
+
+}
+
+
+extension String {
+    func isValidEmail() -> Bool {
+        let emailFormat = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailFormat)
+        return emailPredicate.evaluate(with: self)
+    }
 }
 
 

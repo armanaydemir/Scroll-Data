@@ -129,15 +129,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6v2-hO-z2g">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" keyboardDismissMode="interactive" translatesAutoresizingMaskIntoConstraints="NO" id="6v2-hO-z2g">
                                 <rect key="frame" x="0.0" y="50" width="1024" height="1316"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZCn-GG-65R">
                                         <rect key="frame" x="0.0" y="0.0" width="1024" height="1316"/>
                                         <subviews>
                                             <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fXw-Jf-d9c">
-                                                <rect key="frame" x="0.0" y="0.0" width="1024" height="1131.5"/>
-                                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <rect key="frame" x="32" y="0.0" width="960" height="1131.5"/>
                                                 <wkWebViewConfiguration key="configuration">
                                                     <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
                                                     <wkPreferences key="preferences"/>
@@ -161,7 +160,7 @@
                                                                     <constraint firstAttribute="height" constant="44" id="PSr-oD-Mcd"/>
                                                                 </constraints>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                                <textInputTraits key="textInputTraits" textContentType="email"/>
+                                                                <textInputTraits key="textInputTraits" keyboardType="emailAddress" returnKeyType="done" textContentType="email"/>
                                                             </textField>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wJX-5w-ZSh">
                                                                 <rect key="frame" x="0.0" y="80.5" width="803.5" height="64"/>
@@ -182,13 +181,12 @@
                                                 </constraints>
                                             </view>
                                         </subviews>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                         <constraints>
                                             <constraint firstItem="fXw-Jf-d9c" firstAttribute="top" secondItem="ZCn-GG-65R" secondAttribute="top" id="2DK-uC-vgh"/>
                                             <constraint firstItem="fXw-Jf-d9c" firstAttribute="bottom" secondItem="8lh-Bq-aED" secondAttribute="top" id="U2g-0y-Tez"/>
-                                            <constraint firstAttribute="trailing" secondItem="fXw-Jf-d9c" secondAttribute="trailing" id="ifb-4G-IJo"/>
+                                            <constraint firstItem="fXw-Jf-d9c" firstAttribute="centerX" secondItem="ZCn-GG-65R" secondAttribute="centerX" id="WJT-Jg-olJ"/>
                                             <constraint firstItem="8lh-Bq-aED" firstAttribute="leading" secondItem="ZCn-GG-65R" secondAttribute="leading" id="jd8-XI-h1Y"/>
-                                            <constraint firstItem="fXw-Jf-d9c" firstAttribute="leading" secondItem="ZCn-GG-65R" secondAttribute="leading" id="trb-qX-xjR"/>
+                                            <constraint firstItem="fXw-Jf-d9c" firstAttribute="leading" secondItem="ZCn-GG-65R" secondAttribute="leading" constant="32" id="trb-qX-xjR"/>
                                             <constraint firstAttribute="bottom" secondItem="8lh-Bq-aED" secondAttribute="bottom" id="viJ-yM-jWW"/>
                                             <constraint firstAttribute="trailing" secondItem="8lh-Bq-aED" secondAttribute="trailing" id="wNk-J6-JvO"/>
                                         </constraints>
