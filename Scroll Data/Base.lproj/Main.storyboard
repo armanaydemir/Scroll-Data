@@ -129,56 +129,97 @@
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fXw-Jf-d9c">
-                                <rect key="frame" x="0.0" y="50" width="1024" height="1188"/>
-                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <wkWebViewConfiguration key="configuration">
-                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
-                                    <wkPreferences key="preferences"/>
-                                </wkWebViewConfiguration>
-                            </wkWebView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8eu-s1-I0p">
-                                <rect key="frame" x="158" y="1238" width="708.5" height="128"/>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6v2-hO-z2g">
+                                <rect key="frame" x="0.0" y="50" width="1024" height="1316"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wJX-5w-ZSh">
-                                        <rect key="frame" x="620.5" y="32" width="88" height="64"/>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZCn-GG-65R">
+                                        <rect key="frame" x="0.0" y="0.0" width="1024" height="1316"/>
+                                        <subviews>
+                                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fXw-Jf-d9c">
+                                                <rect key="frame" x="0.0" y="0.0" width="1024" height="1131.5"/>
+                                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <wkWebViewConfiguration key="configuration">
+                                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                                    <wkPreferences key="preferences"/>
+                                                </wkWebViewConfiguration>
+                                            </wkWebView>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8lh-Bq-aED">
+                                                <rect key="frame" x="0.0" y="1131.5" width="1024" height="184.5"/>
+                                                <subviews>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="XVI-iP-r3l">
+                                                        <rect key="frame" x="110.5" y="20" width="803.5" height="144.5"/>
+                                                        <subviews>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="If you understand and agree to the terms of the app, please enter your email and tap the &quot;I Agree&quot; button." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IYV-9u-duM">
+                                                                <rect key="frame" x="0.0" y="0.0" width="803.5" height="20.5"/>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                                <nil key="textColor"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email address" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fgx-Ob-p6l">
+                                                                <rect key="frame" x="0.0" y="28.5" width="803.5" height="44"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="44" id="PSr-oD-Mcd"/>
+                                                                </constraints>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                                <textInputTraits key="textInputTraits" textContentType="email"/>
+                                                            </textField>
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wJX-5w-ZSh">
+                                                                <rect key="frame" x="0.0" y="80.5" width="803.5" height="64"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="64" id="aao-Uz-O99"/>
+                                                                </constraints>
+                                                                <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
+                                                                <state key="normal" title="I AGREE"/>
+                                                            </button>
+                                                        </subviews>
+                                                    </stackView>
+                                                </subviews>
+                                                <constraints>
+                                                    <constraint firstItem="XVI-iP-r3l" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="8lh-Bq-aED" secondAttribute="leading" constant="20" symbolic="YES" id="SPc-tv-KDe"/>
+                                                    <constraint firstItem="XVI-iP-r3l" firstAttribute="centerY" secondItem="8lh-Bq-aED" secondAttribute="centerY" id="eFC-99-gz0"/>
+                                                    <constraint firstItem="XVI-iP-r3l" firstAttribute="centerX" secondItem="8lh-Bq-aED" secondAttribute="centerX" id="hle-U8-cry"/>
+                                                    <constraint firstItem="XVI-iP-r3l" firstAttribute="top" secondItem="8lh-Bq-aED" secondAttribute="top" constant="20" symbolic="YES" id="izG-HV-pwb"/>
+                                                </constraints>
+                                            </view>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="64" id="aao-Uz-O99"/>
+                                            <constraint firstItem="fXw-Jf-d9c" firstAttribute="top" secondItem="ZCn-GG-65R" secondAttribute="top" id="2DK-uC-vgh"/>
+                                            <constraint firstItem="fXw-Jf-d9c" firstAttribute="bottom" secondItem="8lh-Bq-aED" secondAttribute="top" id="U2g-0y-Tez"/>
+                                            <constraint firstAttribute="trailing" secondItem="fXw-Jf-d9c" secondAttribute="trailing" id="ifb-4G-IJo"/>
+                                            <constraint firstItem="8lh-Bq-aED" firstAttribute="leading" secondItem="ZCn-GG-65R" secondAttribute="leading" id="jd8-XI-h1Y"/>
+                                            <constraint firstItem="fXw-Jf-d9c" firstAttribute="leading" secondItem="ZCn-GG-65R" secondAttribute="leading" id="trb-qX-xjR"/>
+                                            <constraint firstAttribute="bottom" secondItem="8lh-Bq-aED" secondAttribute="bottom" id="viJ-yM-jWW"/>
+                                            <constraint firstAttribute="trailing" secondItem="8lh-Bq-aED" secondAttribute="trailing" id="wNk-J6-JvO"/>
                                         </constraints>
-                                        <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                        <state key="normal" title="I AGREE"/>
-                                    </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="If you understand and agree to the terms of the app, tap the &quot;I Agree&quot; button." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IYV-9u-duM">
-                                        <rect key="frame" x="0.0" y="54" width="588.5" height="20.5"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
+                                    </view>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="wJX-5w-ZSh" firstAttribute="centerY" secondItem="8eu-s1-I0p" secondAttribute="centerY" id="3rk-dz-SmN"/>
-                                    <constraint firstItem="IYV-9u-duM" firstAttribute="top" relation="greaterThanOrEqual" secondItem="8eu-s1-I0p" secondAttribute="top" constant="20" symbolic="YES" id="6Op-Ii-Yet"/>
-                                    <constraint firstAttribute="height" constant="128" id="6TQ-Xj-a30"/>
-                                    <constraint firstItem="IYV-9u-duM" firstAttribute="leading" secondItem="8eu-s1-I0p" secondAttribute="leading" id="VB5-Ti-koj"/>
-                                    <constraint firstItem="IYV-9u-duM" firstAttribute="centerY" secondItem="wJX-5w-ZSh" secondAttribute="centerY" id="cer-Vk-u0n"/>
-                                    <constraint firstAttribute="trailing" secondItem="wJX-5w-ZSh" secondAttribute="trailing" id="jNz-jD-2eZ"/>
-                                    <constraint firstItem="wJX-5w-ZSh" firstAttribute="leading" secondItem="IYV-9u-duM" secondAttribute="trailing" constant="32" id="jcr-dW-mON"/>
+                                    <constraint firstItem="ZCn-GG-65R" firstAttribute="centerX" secondItem="6v2-hO-z2g" secondAttribute="centerX" id="AKl-2z-5JY"/>
+                                    <constraint firstItem="ZCn-GG-65R" firstAttribute="leading" secondItem="O84-Dq-h95" secondAttribute="leading" id="FAh-dq-Kpj"/>
+                                    <constraint firstItem="ZCn-GG-65R" firstAttribute="top" secondItem="O84-Dq-h95" secondAttribute="top" id="U3e-Vs-sMR"/>
+                                    <constraint firstItem="O84-Dq-h95" firstAttribute="trailing" secondItem="ZCn-GG-65R" secondAttribute="trailing" id="gWo-Uy-r50"/>
+                                    <constraint firstItem="ZCn-GG-65R" firstAttribute="centerY" secondItem="6v2-hO-z2g" secondAttribute="centerY" id="haH-cx-9HT"/>
+                                    <constraint firstItem="ZCn-GG-65R" firstAttribute="bottom" secondItem="O84-Dq-h95" secondAttribute="bottom" id="mF9-pX-UEW"/>
                                 </constraints>
-                            </view>
+                                <viewLayoutGuide key="contentLayoutGuide" id="O84-Dq-h95"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="I2W-3n-D70"/>
+                            </scrollView>
                         </subviews>
                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="fXw-Jf-d9c" firstAttribute="bottom" secondItem="8eu-s1-I0p" secondAttribute="top" id="3bW-VK-AiM"/>
-                            <constraint firstAttribute="trailing" secondItem="fXw-Jf-d9c" secondAttribute="trailing" id="70K-JM-w7z"/>
-                            <constraint firstItem="fXw-Jf-d9c" firstAttribute="top" secondItem="dg0-6x-KYZ" secondAttribute="bottom" id="IJ5-pj-0mk"/>
-                            <constraint firstItem="fXw-Jf-d9c" firstAttribute="leading" secondItem="F4c-lW-1g0" secondAttribute="leading" id="euQ-y1-PEc"/>
-                            <constraint firstItem="8eu-s1-I0p" firstAttribute="centerX" secondItem="F4c-lW-1g0" secondAttribute="centerX" id="jcC-53-9vz"/>
-                            <constraint firstItem="QiC-eP-GYT" firstAttribute="top" secondItem="8eu-s1-I0p" secondAttribute="bottom" id="ref-gO-5tu"/>
-                            <constraint firstItem="8eu-s1-I0p" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="F4c-lW-1g0" secondAttribute="leading" constant="20" symbolic="YES" id="wog-Ex-hIY"/>
+                            <constraint firstAttribute="bottom" secondItem="6v2-hO-z2g" secondAttribute="bottom" id="3ck-pJ-MJq"/>
+                            <constraint firstItem="6v2-hO-z2g" firstAttribute="leading" secondItem="F4c-lW-1g0" secondAttribute="leading" id="PGb-TT-Tpb"/>
+                            <constraint firstItem="6v2-hO-z2g" firstAttribute="top" secondItem="dg0-6x-KYZ" secondAttribute="bottom" id="UE3-re-cTS"/>
+                            <constraint firstAttribute="trailing" secondItem="6v2-hO-z2g" secondAttribute="trailing" id="WfX-SC-vLf"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="nAT-5c-S3U"/>
                     <connections>
+                        <outlet property="agreeButton" destination="wJX-5w-ZSh" id="D1b-2T-CF1"/>
+                        <outlet property="agreeLabel" destination="IYV-9u-duM" id="kzM-io-f1t"/>
+                        <outlet property="emailTextField" destination="fgx-Ob-p6l" id="ead-0J-68d"/>
+                        <outlet property="scrollView" destination="6v2-hO-z2g" id="nb5-ry-RNg"/>
                         <outlet property="webView" destination="fXw-Jf-d9c" id="hDJ-fN-2fu"/>
                         <segue destination="mbO-Jk-rj2" kind="show" identifier="start" animates="NO" id="aj7-Gg-ztd"/>
                     </connections>

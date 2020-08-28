@@ -11,7 +11,12 @@ import WebKit
 
 class IntroViewController: UIViewController {
 
+    
     @IBOutlet weak var webView: WKWebView!
+    @IBOutlet weak var agreeButton: UIButton!
+    @IBOutlet weak var agreeLabel: UILabel!
+    @IBOutlet weak var emailTextField: UITextField!
+    @IBOutlet weak var scrollView: UIScrollView!
     
     let userInfo = UserInfo()
     
@@ -19,12 +24,28 @@ class IntroViewController: UIViewController {
         super.viewDidLoad()
         
         navigationItem.title = "Human Research Study"
-        
+
         if userInfo.agreedToTerms {
             performSegue(withIdentifier: "start", sender: self)
         } else {
             webView.loadHTMLString(defaultIntroHTML, baseURL: nil)
-        }   
+        }
+        
+        let adjustToKeyboard: (Notification) -> Void = { notification in
+            if let value = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+                let frame = value.cgRectValue
+                let newInsets = UIEdgeInsets(top: 0, left: 0, bottom: frame.height, right: 0)
+                self.scrollView.contentInset = newInsets
+                self.scrollView.scrollIndicatorInsets = newInsets
+            }
+        }
+        
+        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: nil, using: adjustToKeyboard)
+        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: nil, using: adjustToKeyboard)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
 }
