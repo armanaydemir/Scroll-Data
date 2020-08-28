@@ -198,22 +198,13 @@ import UIKit
         label.font = baseFont.withTextStyle(.title1)!
         label.textAlignment = .center
         label.numberOfLines = 0
-
-        
-        let caret = UIImageView()
-        caret.tintColor = UIColor.darkText
-        caret.image = UIImage(systemName: "chevron.down", withConfiguration: UIImage.SymbolConfiguration(scale: .large))
-        caret.translatesAutoresizingMaskIntoConstraints = false
         
         containerView.addSubview(label)
-        containerView.addSubview(caret)
         
         NSLayoutConstraint.activate([
             label.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
             label.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             label.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: containerView.leadingAnchor, multiplier: 2),
-            caret.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            caret.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -32)
         ])
         
         return HardTableView.Cell(view: containerView, height: totalHeight)
