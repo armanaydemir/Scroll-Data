@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="67l-c2-P28">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="67l-c2-P28">
     <device id="ipad12_9" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -57,7 +56,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
-                        <segue destination="mbO-Jk-rj2" kind="relationship" relationship="rootViewController" id="2cK-e5-fRU"/>
+                        <segue destination="vI0-L3-1CF" kind="relationship" relationship="rootViewController" id="WKt-sf-e03"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="X35-VT-wl5" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -105,6 +104,7 @@
                         </constraints>
                     </view>
                     <toolbarItems/>
+                    <navigationItem key="navigationItem" id="2C9-F1-7Qa"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="hardTableView" destination="2d6-TB-O24" id="4NM-W6-XB3"/>
@@ -116,6 +116,76 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="275.9765625" y="220.93704245973643"/>
+        </scene>
+        <!--Intro View Controller-->
+        <scene sceneID="wB9-uK-3Qk">
+            <objects>
+                <viewController id="vI0-L3-1CF" customClass="IntroViewController" customModule="Reader" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="dg0-6x-KYZ"/>
+                        <viewControllerLayoutGuide type="bottom" id="QiC-eP-GYT"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="F4c-lW-1g0">
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fXw-Jf-d9c">
+                                <rect key="frame" x="0.0" y="50" width="1024" height="1188"/>
+                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <wkWebViewConfiguration key="configuration">
+                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                    <wkPreferences key="preferences"/>
+                                </wkWebViewConfiguration>
+                            </wkWebView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8eu-s1-I0p">
+                                <rect key="frame" x="158" y="1238" width="708.5" height="128"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wJX-5w-ZSh">
+                                        <rect key="frame" x="620.5" y="32" width="88" height="64"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="64" id="aao-Uz-O99"/>
+                                        </constraints>
+                                        <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
+                                        <state key="normal" title="I AGREE"/>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="If you understand and agree to the terms of the app, tap the &quot;I Agree&quot; button." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IYV-9u-duM">
+                                        <rect key="frame" x="0.0" y="54" width="588.5" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="wJX-5w-ZSh" firstAttribute="centerY" secondItem="8eu-s1-I0p" secondAttribute="centerY" id="3rk-dz-SmN"/>
+                                    <constraint firstItem="IYV-9u-duM" firstAttribute="top" relation="greaterThanOrEqual" secondItem="8eu-s1-I0p" secondAttribute="top" constant="20" symbolic="YES" id="6Op-Ii-Yet"/>
+                                    <constraint firstAttribute="height" constant="128" id="6TQ-Xj-a30"/>
+                                    <constraint firstItem="IYV-9u-duM" firstAttribute="leading" secondItem="8eu-s1-I0p" secondAttribute="leading" id="VB5-Ti-koj"/>
+                                    <constraint firstItem="IYV-9u-duM" firstAttribute="centerY" secondItem="wJX-5w-ZSh" secondAttribute="centerY" id="cer-Vk-u0n"/>
+                                    <constraint firstAttribute="trailing" secondItem="wJX-5w-ZSh" secondAttribute="trailing" id="jNz-jD-2eZ"/>
+                                    <constraint firstItem="wJX-5w-ZSh" firstAttribute="leading" secondItem="IYV-9u-duM" secondAttribute="trailing" constant="32" id="jcr-dW-mON"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="fXw-Jf-d9c" firstAttribute="bottom" secondItem="8eu-s1-I0p" secondAttribute="top" id="3bW-VK-AiM"/>
+                            <constraint firstAttribute="trailing" secondItem="fXw-Jf-d9c" secondAttribute="trailing" id="70K-JM-w7z"/>
+                            <constraint firstItem="fXw-Jf-d9c" firstAttribute="top" secondItem="dg0-6x-KYZ" secondAttribute="bottom" id="IJ5-pj-0mk"/>
+                            <constraint firstItem="fXw-Jf-d9c" firstAttribute="leading" secondItem="F4c-lW-1g0" secondAttribute="leading" id="euQ-y1-PEc"/>
+                            <constraint firstItem="8eu-s1-I0p" firstAttribute="centerX" secondItem="F4c-lW-1g0" secondAttribute="centerX" id="jcC-53-9vz"/>
+                            <constraint firstItem="QiC-eP-GYT" firstAttribute="top" secondItem="8eu-s1-I0p" secondAttribute="bottom" id="ref-gO-5tu"/>
+                            <constraint firstItem="8eu-s1-I0p" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="F4c-lW-1g0" secondAttribute="leading" constant="20" symbolic="YES" id="wog-Ex-hIY"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="nAT-5c-S3U"/>
+                    <connections>
+                        <outlet property="webView" destination="fXw-Jf-d9c" id="hDJ-fN-2fu"/>
+                        <segue destination="mbO-Jk-rj2" kind="show" identifier="start" animates="NO" id="aj7-Gg-ztd"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="LJX-ez-ZmH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-240" y="-629"/>
         </scene>
     </scenes>
 </document>
