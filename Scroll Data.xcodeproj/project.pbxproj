@@ -11,6 +11,8 @@
 		2239D75324F9776600BDCD1E /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2239D75224F9776600BDCD1E /* IntroViewController.swift */; };
 		2239D75624F978B800BDCD1E /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2239D75524F978B800BDCD1E /* WebKit.framework */; };
 		2239D75824F979BB00BDCD1E /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2239D75724F979BB00BDCD1E /* UserInfo.swift */; };
+		2239D75A24FB0A0100BDCD1E /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2239D75924FB0A0100BDCD1E /* SettingsTableViewController.swift */; };
+		2239D75C24FB108B00BDCD1E /* TermsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2239D75B24FB108B00BDCD1E /* TermsViewController.swift */; };
 		223EB1AB24F6E988000E1FA0 /* QuestionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 223EB1AA24F6E988000E1FA0 /* QuestionsViewController.swift */; };
 		223EB1AD24F6F961000E1FA0 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 223EB1AC24F6F961000E1FA0 /* UIView.swift */; };
 		223EB1AF24F70156000E1FA0 /* QuestionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 223EB1AE24F70156000E1FA0 /* QuestionsViewModel.swift */; };
@@ -54,6 +56,8 @@
 		2239D75224F9776600BDCD1E /* IntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
 		2239D75524F978B800BDCD1E /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		2239D75724F979BB00BDCD1E /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
+		2239D75924FB0A0100BDCD1E /* SettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
+		2239D75B24FB108B00BDCD1E /* TermsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsViewController.swift; sourceTree = "<group>"; };
 		223EB1AA24F6E988000E1FA0 /* QuestionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionsViewController.swift; sourceTree = "<group>"; };
 		223EB1AC24F6F961000E1FA0 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		223EB1AE24F70156000E1FA0 /* QuestionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionsViewModel.swift; sourceTree = "<group>"; };
@@ -159,6 +163,8 @@
 				99DF26A621ACEAF7007D6788 /* ArticleViewModel.swift */,
 				223EB1AE24F70156000E1FA0 /* QuestionsViewModel.swift */,
 				223EB1AA24F6E988000E1FA0 /* QuestionsViewController.swift */,
+				2239D75924FB0A0100BDCD1E /* SettingsTableViewController.swift */,
+				2239D75B24FB108B00BDCD1E /* TermsViewController.swift */,
 				226A57DD215B1E2E0029D798 /* TitleSubtitleTableViewCell.swift */,
 				226A57DE215B1E2E0029D798 /* TitleSubtitleTableViewCell.xib */,
 				2239D75724F979BB00BDCD1E /* UserInfo.swift */,
@@ -353,6 +359,8 @@
 				99DF26A721ACEAF7007D6788 /* ArticleViewModel.swift in Sources */,
 				229B641A24B6EC9100BA76C7 /* Model.swift in Sources */,
 				F15A535C2070748200C2F7B6 /* ArticleViewController.swift in Sources */,
+				2239D75A24FB0A0100BDCD1E /* SettingsTableViewController.swift in Sources */,
+				2239D75C24FB108B00BDCD1E /* TermsViewController.swift in Sources */,
 				2239D75324F9776600BDCD1E /* IntroViewController.swift in Sources */,
 				F15A41971FCA7CA00040F11D /* request.swift in Sources */,
 				99DF267F21ACD3DA007D6788 /* AppDelegate.swift in Sources */,

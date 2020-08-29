@@ -70,6 +70,10 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         navigationController?.interactivePopGestureRecognizer?.isEnabled = false
         
+        let config = UIImage.SymbolConfiguration(scale: .medium)
+        let info = UIImage(systemName: "info.circle", withConfiguration: config)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: info?.withTintColor(UIColor.darkText, renderingMode: .alwaysOriginal), style: .plain, target: self, action: #selector(settingsTapped))
+        
         loadIndicator.startAnimating()
         table.isHidden = true;
         table.accessibilityIdentifier = "startingTable"
@@ -100,6 +104,9 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         }
     }
     
+    @objc private func settingsTapped() {
+        performSegue(withIdentifier: "settings", sender: self)
+    }
     
     @objc private func switchedTable(segmentedControl: UISegmentedControl) {
         switch segmentedControl.selectedSegmentIndex {

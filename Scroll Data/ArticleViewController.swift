@@ -217,7 +217,12 @@ import UIKit
         let buttonHeight: CGFloat = 64
         let buttonBottomSpacing: CGFloat = totalHeight - buttonTopSpacing - buttonHeight
         
-        let submitButton = UIButton(type: .system)
+        let submitButton = UIButton(type: .custom)
+        submitButton.setBackgroundColor(UIColor.systemBlue, for: .normal)
+        submitButton.layer.cornerRadius = 4
+        let insetSpacing: CGFloat = 16
+        submitButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: insetSpacing, bottom: 0, right: insetSpacing)
+        submitButton.clipsToBounds = true
         submitButton.setTitle("Complete Reading", for: .normal)
         submitButton.translatesAutoresizingMaskIntoConstraints = false
         submitButton.addTarget(self, action: #selector(self.submitData(_:)), for: .touchUpInside)

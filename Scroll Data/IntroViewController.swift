@@ -29,6 +29,9 @@ class IntroViewController: UIViewController {
         scrollView.isHidden = true
         agreeButton.isEnabled = false
         
+        agreeButton.setBackgroundColor(UIColor.systemBlue, for: .normal)
+        agreeButton.layer.cornerRadius = 4
+        
         if userInfo.agreedToTerms {
             showArticles()
         } else {

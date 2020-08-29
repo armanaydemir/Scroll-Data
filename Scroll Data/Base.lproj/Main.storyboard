@@ -41,11 +41,72 @@
                         <outlet property="loadIndicator" destination="GD0-jN-B0g" id="Qe5-vR-DdF"/>
                         <outlet property="table" destination="ZxO-p4-z4r" id="ufa-8X-OgO"/>
                         <segue destination="BYZ-38-t0r" kind="show" identifier="startReading" id="Yfa-VD-xhn"/>
+                        <segue destination="D5S-4G-XPp" kind="show" identifier="settings" id="mTU-dl-Hhp"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QdG-nT-2Hg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-799" y="84"/>
+        </scene>
+        <!--Settings Table View Controller-->
+        <scene sceneID="L7r-tX-gEs">
+            <objects>
+                <tableViewController id="D5S-4G-XPp" customClass="SettingsTableViewController" customModule="Reader" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="2AD-dc-uDv">
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <sections/>
+                        <connections>
+                            <outlet property="dataSource" destination="D5S-4G-XPp" id="crj-oB-sAT"/>
+                            <outlet property="delegate" destination="D5S-4G-XPp" id="wMu-xb-uYX"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="Xaq-2v-EwY"/>
+                    <connections>
+                        <segue destination="tiq-7U-jGR" kind="show" identifier="terms" id="4oa-oP-JKl"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cng-Ew-hAL" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-799" y="851"/>
+        </scene>
+        <!--Terms View Controller-->
+        <scene sceneID="7uM-Wq-HpJ">
+            <objects>
+                <viewController id="tiq-7U-jGR" customClass="TermsViewController" customModule="Reader" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="tF6-WL-MeI"/>
+                        <viewControllerLayoutGuide type="bottom" id="Z6z-5x-KHm"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="wWL-4h-W1s">
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gNr-qf-REl">
+                                <rect key="frame" x="0.0" y="50" width="1024" height="1316"/>
+                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <wkWebViewConfiguration key="configuration">
+                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                    <wkPreferences key="preferences"/>
+                                </wkWebViewConfiguration>
+                            </wkWebView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="gNr-qf-REl" firstAttribute="top" secondItem="tF6-WL-MeI" secondAttribute="bottom" id="9ON-bb-0l9"/>
+                            <constraint firstAttribute="bottom" secondItem="gNr-qf-REl" secondAttribute="bottom" id="Lyn-IE-KKa"/>
+                            <constraint firstItem="gNr-qf-REl" firstAttribute="leading" secondItem="wWL-4h-W1s" secondAttribute="leading" id="bPf-pd-K01"/>
+                            <constraint firstAttribute="trailing" secondItem="gNr-qf-REl" secondAttribute="trailing" id="c0C-tq-EDu"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="zbF-Ze-144"/>
+                    <connections>
+                        <outlet property="webView" destination="gNr-qf-REl" id="zH6-tm-j1h"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="GU8-vb-WC1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-25" y="931"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="2Ub-qL-TS5">
@@ -182,7 +243,7 @@
                                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                 <textInputTraits key="textInputTraits" keyboardType="emailAddress" returnKeyType="done" textContentType="email"/>
                                                             </textField>
-                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wJX-5w-ZSh">
+                                                            <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wJX-5w-ZSh">
                                                                 <rect key="frame" x="0.0" y="80.5" width="803.5" height="64"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="64" id="aao-Uz-O99"/>
