@@ -101,10 +101,12 @@ class QuestionsViewController: UITableViewController {
             if vm.canSubmit() {
                 vm.submitAnswers { success in
                     if success {
-                        if let home = (UIApplication.shared.delegate as? AppDelegate)?.homeViewController {
-                            self.navigationController?.popToViewController(home, animated: true)
-                        } else {
-                            self.dismiss(animated: true, completion: nil)
+                        DispatchQueue.main.async {
+                            if let home = (UIApplication.shared.delegate as? AppDelegate)?.homeViewController {
+                                self.navigationController?.popToViewController(home, animated: true)
+                            } else {
+                                self.dismiss(animated: true, completion: nil)
+                            }
                         }
                     }
                 }
