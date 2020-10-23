@@ -146,10 +146,10 @@ struct Server {
             case .submitEmail(let email):
                 params = [ "email": email ]
             case .submitAnswers(let sessionID, let answers):
-                let answersDict = answers.reduce([String : Any]()) { result, element in
-                    var result = result
-                    result["question_id"] = element.questionID
-                    result["option_id"] = element.optionID
+                let answersDict: [[String: String]] = answers.map() { questionID, optionID in
+                    var result: [String: String] = [:]
+                    result["question_id"] = questionID
+                    result["option_id"] = optionID
                     return result
                 }
                 params = [ "session_id": sessionID,
