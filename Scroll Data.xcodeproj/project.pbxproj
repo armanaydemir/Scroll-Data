@@ -580,7 +580,7 @@
 				INFOPLIST_FILE = "Scroll Data/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.3.7;
+				MARKETING_VERSION = 0.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "Arman-Aydemir.Replay-Scroll-Data";
 				PRODUCT_NAME = Reader;
 				PROVISIONING_PROFILE = "";
@@ -603,7 +603,7 @@
 				INFOPLIST_FILE = "Scroll Data/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.3.7;
+				MARKETING_VERSION = 0.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "Arman-Aydemir.Replay-Scroll-Data";
 				PRODUCT_NAME = Reader;
 				PROVISIONING_PROFILE = "";
