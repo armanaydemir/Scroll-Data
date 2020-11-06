@@ -13,14 +13,14 @@ class SettingsTableViewController: UITableViewController {
     
     enum Option: Int, CaseIterable {
         case viewTerms = 0
-        case contact = 1
+//        case contact = 1
         
         func label() -> String {
             switch self {
             case .viewTerms:
                 return "View Terms"
-            case .contact:
-                return "Contact Us"
+//            case .contact:
+//                return "Contact Us"
             }
         }
     }
@@ -57,14 +57,14 @@ class SettingsTableViewController: UITableViewController {
         switch cellOption {
         case .viewTerms:
             performSegue(withIdentifier: "terms", sender: self)
-        case .contact:
-            let emailTitle = "Reader Research Inquiry"
-            let to = ["arman.aydemir@colorado.edu"]
-            let mailComposer = MFMailComposeViewController()
-            mailComposer.mailComposeDelegate = self
-            mailComposer.setSubject(emailTitle)
-            mailComposer.setToRecipients(to)
-            self.present(mailComposer, animated: true, completion: nil)
+//        case .contact:
+//            let emailTitle = "Reader Research Inquiry"
+//            let to = ["arman.aydemir@colorado.edu"]
+//            let mailComposer = MFMailComposeViewController()
+//            mailComposer.mailComposeDelegate = self
+//            mailComposer.setSubject(emailTitle)
+//            mailComposer.setToRecipients(to)
+//            self.present(mailComposer, animated: true, completion: nil)
         case .none:
             break
         }
