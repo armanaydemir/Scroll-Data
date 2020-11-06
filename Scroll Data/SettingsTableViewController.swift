@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MessageUI
 
 class SettingsTableViewController: UITableViewController {
     
@@ -57,10 +58,24 @@ class SettingsTableViewController: UITableViewController {
         case .viewTerms:
             performSegue(withIdentifier: "terms", sender: self)
         case .contact:
-            UIApplication.shared.open(URL(string: "mailto:arman.aydemir@colorado.edu?subject=Reader Research Inquiry")!, options: [:], completionHandler: nil)
+            let emailTitle = "Reader Research Inquiry"
+            let to = ["arman.aydemir@colorado.edu"]
+            let mailComposer = MFMailComposeViewController()
+            mailComposer.mailComposeDelegate = self
+            mailComposer.setSubject(emailTitle)
+            mailComposer.setToRecipients(to)
+            self.present(mailComposer, animated: true, completion: nil)
         case .none:
             break
         }
     }
 
+}
+
+
+extension SettingsTableViewController: MFMailComposeViewControllerDelegate {
+    
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        self.dismiss(animated: true, completion: nil)
+    }
 }
