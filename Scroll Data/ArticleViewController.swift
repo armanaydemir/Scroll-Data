@@ -56,6 +56,20 @@ import UIKit
         }
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        switch self.mode {
+        case .read(let readVM):
+            if segue.identifier == "questions",
+                let questionsVC = segue.destination as? QuestionsViewController,
+                let questions = readVM.readingSession?.questions,
+                let sessionID = readVM.readingSession?.sessionID {
+                questionsVC.vm = QuestionsViewModel(sessionID: sessionID, questions: questions)
+            }
+        default:
+            break
+        }
+    }
+    
     @objc func logEvent(notification: Notification) {
         if let mode = self.mode, case Mode.read(let vm) = mode {
             vm.logEvent(notification: notification)
@@ -185,22 +199,13 @@ import UIKit
         label.font = baseFont.withTextStyle(.title1)!
         label.textAlignment = .center
         label.numberOfLines = 0
-
-        
-        let caret = UIImageView()
-        caret.tintColor = UIColor.darkText
-        caret.image = UIImage(systemName: "chevron.down", withConfiguration: UIImage.SymbolConfiguration(scale: .large))
-        caret.translatesAutoresizingMaskIntoConstraints = false
         
         containerView.addSubview(label)
-        containerView.addSubview(caret)
         
         NSLayoutConstraint.activate([
             label.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
             label.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             label.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: containerView.leadingAnchor, multiplier: 2),
-            caret.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            caret.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -32)
         ])
         
         return HardTableView.Cell(view: containerView, height: totalHeight)
@@ -212,8 +217,13 @@ import UIKit
         let buttonHeight: CGFloat = 64
         let buttonBottomSpacing: CGFloat = totalHeight - buttonTopSpacing - buttonHeight
         
-        let submitButton = UIButton(type: .system)
-        submitButton.setTitle("Submit Reading", for: .normal)
+        let submitButton = UIButton(type: .custom)
+        submitButton.setBackgroundColor(UIColor.systemBlue, for: .normal)
+        submitButton.layer.cornerRadius = 4
+        let insetSpacing: CGFloat = 16
+        submitButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: insetSpacing, bottom: 0, right: insetSpacing)
+        submitButton.clipsToBounds = true
+        submitButton.setTitle("Complete Reading", for: .normal)
         submitButton.translatesAutoresizingMaskIntoConstraints = false
         submitButton.addTarget(self, action: #selector(self.submitData(_:)), for: .touchUpInside)
         
@@ -234,15 +244,21 @@ import UIKit
     }
     
     @objc func submitData(_ sender: UIButton) {
-        
+
         switch self.mode {
         case .read(let vm):
             vm.closeArticle(complete: true)
+
+            if vm.readingSession?.questions != nil {
+                performSegue(withIdentifier: "questions", sender: self)
+            } else {
+                _ = navigationController?.popViewController(animated: true)
+            }
         default:
-            break
+            _ = navigationController?.popViewController(animated: true)
+
         }
-        
-        _ = navigationController?.popViewController(animated: true)
+
     }
     
     private func animateLoadingBar(totalDuration: TimeInterval) {

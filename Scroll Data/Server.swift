@@ -35,6 +35,8 @@ struct Server {
             startTime: Double,
             time: Double,
             eventType: String)
+        case submitEmail(email: String)
+        case submitAnswers(sessionID: String, answers: [(questionID: String, optionID: String)])
         
         typealias Completion<T: JSONParseable> = (Result<T, Swift.Error>) -> Void
         
@@ -81,6 +83,10 @@ struct Server {
                 endpoint = "session_replay"
             case .submitEvent:
                 endpoint = "submit_event"
+            case .submitEmail:
+                endpoint = "submit_email"
+            case .submitAnswers:
+                endpoint = "submit_answers"
             }
             return serverURL + endpoint
         }
@@ -89,7 +95,7 @@ struct Server {
             switch self {
             case .settings, .articles, .sessions:
                 return .get
-            case .openArticle, .openSession, .submitReadingDataBatch, .closeArticle, .submitEvent:
+            case .openArticle, .openSession, .submitReadingDataBatch, .closeArticle, .submitEvent, .submitEmail, .submitAnswers:
                 return .post
             }
         }
@@ -137,7 +143,17 @@ struct Server {
                             "startTime": startTime,
                             "time": time,
                             "event_type": eventType ]
-                
+            case .submitEmail(let email):
+                params = [ "email": email ]
+            case .submitAnswers(let sessionID, let answers):
+                let answersDict: [[String: String]] = answers.map() { questionID, optionID in
+                    var result: [String: String] = [:]
+                    result["question_id"] = questionID
+                    result["option_id"] = optionID
+                    return result
+                }
+                params = [ "session_id": sessionID,
+                           "answers": answersDict ]
             }
             
             return params
