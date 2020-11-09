@@ -72,7 +72,7 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         
         let config = UIImage.SymbolConfiguration(scale: .medium)
         let info = UIImage(systemName: "info.circle", withConfiguration: config)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: info?.withTintColor(UIColor.darkText, renderingMode: .alwaysOriginal), style: .plain, target: self, action: #selector(settingsTapped))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: info?.withTintColor(UIColor.label, renderingMode: .alwaysOriginal), style: .plain, target: self, action: #selector(settingsTapped))
         
         loadIndicator.startAnimating()
         table.isHidden = true;

@@ -80,7 +80,6 @@ class QuestionsViewController: UITableViewController {
             let option = questionVM.question.options[indexPath.item]
             
             cell.textLabel?.text = option.text
-            cell.textLabel?.textColor = UIColor.darkText
             cell.textLabel?.numberOfLines = 0
             cell.textLabel?.font = UIFont.systemFont(ofSize: 12).withTextStyle(.body)
             
