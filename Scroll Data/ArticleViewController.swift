@@ -332,7 +332,7 @@ extension ArticleViewController: UIScrollViewDelegate {
         case .read(let vm):
             let currentVisibleIndices = hardTableView.visibleIndices()
             if lastVisibleIndices != currentVisibleIndices {
-                print("\(hardTableView.visibleIndices())")
+                //print("\(hardTableView.visibleIndices())")
                 lastVisibleIndices = currentVisibleIndices
             }
             

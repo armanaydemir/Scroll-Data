@@ -104,6 +104,16 @@ class StartingViewController: UIViewController, UITableViewDataSource, UITableVi
         }
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidLoad()
+        table.reloadData()
+        if articles.isEmpty {
+            fetchData(fromEmpty: true)
+        }else{
+            fetchData(fromEmpty: false)
+        }
+    }
+    
     @objc private func settingsTapped() {
         performSegue(withIdentifier: "settings", sender: self)
     }
