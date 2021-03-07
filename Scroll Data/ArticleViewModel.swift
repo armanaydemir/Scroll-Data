@@ -193,7 +193,7 @@ class ReadArticleViewModel {
     }
     
     @objc func logEvent(notification: Notification) {
-        
+        guard let readingSession = self.readingSession else { return }
         let eventType: String
         
         switch notification.name {
@@ -211,7 +211,8 @@ class ReadArticleViewModel {
         }
         
         Server.Request
-            .submitEvent(articleID: self.articleLink,
+            .submitEvent(sessionID: readingSession.sessionID,
+                         articleID: self.articleLink,
                          UDID: UDID,
                          startTime: self.startTime,
                          time: CFAbsoluteTimeGetCurrent()*timeOffset,

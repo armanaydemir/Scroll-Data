@@ -30,7 +30,7 @@ struct Server {
             batch: [AbsolutePageState])
         case closeArticle(articleID: String, UDID: String, startTime: Double, time: Double, sessionID: String, complete: Bool, isPortrait: Bool)
         case openSession(sessionID: String, UDID: String, type: String, version: String)
-        case submitEvent(articleID: String,
+        case submitEvent(sessionID: String, articleID: String,
             UDID: String,
             startTime: Double,
             time: Double,
@@ -137,8 +137,9 @@ struct Server {
                      "type": type,
                      "version": version
                  ]
-            case .submitEvent(let articleID, let UDID, let startTime, let time, let eventType):
-                params = [  "UDID": UDID,
+            case .submitEvent(let sessionID, let articleID, let UDID, let startTime, let time, let eventType):
+                params = [  "session_id": sessionID,
+                            "UDID": UDID,
                             "article": articleID,
                             "startTime": startTime,
                             "time": time,

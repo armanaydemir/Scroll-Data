@@ -273,7 +273,7 @@
 					};
 					F169BDD21EA696CB00C528C7 = {
 						CreatedOnToolsVersion = 8.3.1;
-						DevelopmentTeam = N466ERUP4U;
+						DevelopmentTeam = R76ADJ3JV7;
 						LastSwiftMigration = 0910;
 						ProvisioningStyle = Automatic;
 					};
@@ -577,7 +577,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_TEAM = N466ERUP4U;
+				DEVELOPMENT_TEAM = R76ADJ3JV7;
 				INFOPLIST_FILE = "Scroll Data/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -601,7 +601,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_TEAM = N466ERUP4U;
+				DEVELOPMENT_TEAM = R76ADJ3JV7;
 				INFOPLIST_FILE = "Scroll Data/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
