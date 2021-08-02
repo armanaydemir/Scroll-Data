@@ -387,15 +387,15 @@ fileprivate let backupIntroHTML = """
 <p><span style="font-weight: 400;">The purpose of this research is to understand the relationship between the understanding of a presented text and the subject&rsquo;s annotations of and interactions with the text. </span><span style="font-weight: 400;">By conducting a series of such experiments, we hope to enhance online textbooks so as to facilitate students&rsquo; long-term understanding and retention of textbook content.</span></p>
 <p>&nbsp;</p>
 <h2><strong><em>How long will the research last?</em></strong></h2>
-<p><span style="font-weight: 400;">We expect that this research study will last for 3 years.</span></p>
+<p><span style="font-weight: 400;">We expect that this research study will last for up to 3 months.</span></p>
 <h2><strong><em>How many people will be studied?</em></strong></h2>
-<p><span style="font-weight: 400;">We expect about 40 people will be in this research study.</span></p>
+<p><span style="font-weight: 400;">We expect 45 people will be in this research study.</span></p>
 <h2><strong><em>What happens if I say yes, I want to be in this research?</em></strong></h2>
 <ul>
 <li style="font-weight: 400;"><span style="font-weight: 400;">You will be using your own portable device to complete the study at a time of your choosing.</span></li>
-<li style="font-weight: 400;"><span style="font-weight: 400;">This app will allow you to read articles from a news source or science magazine or biology textbook. The app will also allow you to quiz yourself on material you have previously read.&nbsp;</span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">This app will allow you to read articles from a news source or science magazine or biology textbook. The app will also allow you to take a short survey on material you have previously read.&nbsp;</span></li>
 <li style="font-weight: 400;"><span style="font-weight: 400;">When and how much you use this app, and when and whether you take quizzes will be up to you.</span></li>
-<li style="font-weight: 400;"><span style="font-weight: 400;">We will record your screen interactions and annotations along with your apple ID. No other personal data will be requested.</span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">We will record your screen interactions and annotations along with your email address. No other personal data will be requested.</span></li>
 </ul>
 <h2><strong><em>What happens if I do not want to be in this research?</em></strong></h2>
 <p><span style="font-weight: 400;">You can leave the research at any time and it will not be held against you.</span></p>
@@ -407,7 +407,7 @@ fileprivate let backupIntroHTML = """
 <h2><strong><em>Can I be removed from the research without my OK?</em></strong></h2>
 <p><span style="font-weight: 400;">The person in charge of the research study or the sponsor can remove you from the research study without your approval. Possible reasons for removal include the inability to follow study procedures.</span></p>
 <h2><strong><em>What else do I need to know?</em></strong></h2>
-<p><span style="font-weight: 400;">If you agree to take part in this research study, we will offer you a $50 Amazon gift card following 10 hours of use of the app.&nbsp;</span></p>
+<p><span style="font-weight: 400;">If you agree to take part in this research study, we will offer you a $40 Amazon gift card following completion of the study.&nbsp;</span></p>
 <p><span style="font-weight: 400;">If you wish to learn more about the results of this research you can contact Arman Aydemir arman.aydemir@colorado.edu.</span></p>
 <p><br /><br /></p>
 """
